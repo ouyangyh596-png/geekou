@@ -30,7 +30,10 @@ function CybertruckModel({ colour }) {
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       object.material = materials.map(source => {
         const material = source.clone()
-        material.color.set(colour); material.metalness = 0.9; material.roughness = 0.3
+        material.color.set(colour)
+        material.metalness = 0.68
+        material.roughness = 0.24
+        material.envMapIntensity = 1.8
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
         material.side = THREE.DoubleSide; material.transparent = false; material.opacity = 1; material.depthWrite = true
         material.needsUpdate = true

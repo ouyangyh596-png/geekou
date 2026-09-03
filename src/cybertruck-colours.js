@@ -12,7 +12,7 @@ export const classicColours = [
   { id: 'twilight-purple', name: 'Twilight Purple', hex: '#433C72' },
   { id: 'silver', name: 'Silver', hex: '#A7B1B6' },
   { id: 'dark-blue', name: 'Dark Blue', hex: '#183C73' },
-  { id: 'dark-green', name: 'Dark Green', hex: '#173F35' },
+  { id: 'dark-green', name: 'Dark Green', hex: '#1E6B3A' },
   { id: 'tungsten-steel', name: 'Tungsten Steel', hex: '#525C67' },
   { id: 'rose-gold', name: 'Rose Gold', hex: '#C88678' }
 ]
