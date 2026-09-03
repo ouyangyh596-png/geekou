@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Environment, OrbitControls, useGLTF } from '@react-three/drei'
+import { Center, Environment, OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { CYBERTRUCK_MODEL_PATH, isLikelyCybertruckBodyMaterial } from '../cybertruck-colours.js'
 
@@ -67,15 +67,9 @@ function CybertruckModel({ colour }) {
     bodyMaterials.current.forEach(material => material.color.set(colour))
   }, [colour])
 
-  const bounds = useMemo(() => {
-    scene.updateMatrixWorld(true)
-    const box = new THREE.Box3().setFromObject(scene)
-    const size = box.getSize(new THREE.Vector3())
-    const center = box.getCenter(new THREE.Vector3())
-    return { scale: 3.2 / Math.max(size.x, size.y, size.z), center }
-  }, [scene])
-
-  return <primitive object={scene} scale={bounds.scale} position={[-bounds.center.x * bounds.scale, -bounds.center.y * bounds.scale, -bounds.center.z * bounds.scale]} />
+  // Keep the GLB's Blender-authored root transform intact. Center performs
+  // the final presentation-only fit without applying a second translation.
+  return <Center disableY><primitive object={scene} scale={2.8} /></Center>
 }
 
 function Loading() { return <div className="cybertruck-loading">Loading surface study…</div> }
