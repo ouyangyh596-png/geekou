@@ -30,7 +30,11 @@ function CybertruckModel({ colour }) {
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       object.material = materials.map(source => {
         const material = source.clone()
-        material.color.set(colour)
+        // The GLB has no colour map intended for the paint preview; remove a
+        // possible inherited map/vertex tint so the chosen surface colour is visible.
+        material.map = null
+        material.vertexColors = false
+        material.color.copy(new THREE.Color(colour))
         material.metalness = 0.42
         material.roughness = 0.22
         material.envMapIntensity = 1.35
