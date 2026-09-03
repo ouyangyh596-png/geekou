@@ -35,11 +35,9 @@ function CybertruckModel({ colour }) {
         material.map = null
         material.vertexColors = false
         material.color.copy(new THREE.Color(colour))
-        material.metalness = 0.42
-        material.roughness = 0.22
+        material.metalness = 1
+        material.roughness = 0.205
         material.envMapIntensity = 1.35
-        material.emissive.set(colour)
-        material.emissiveIntensity = 0.12
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
         // Preserve Blender's alpha/transparent settings exactly; only colour is interactive.
         material.needsUpdate = true
