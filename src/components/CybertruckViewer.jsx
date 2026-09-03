@@ -33,6 +33,9 @@ function CybertruckModel({ colour }) {
     const candidates = []
     scene.traverse(object => {
       if (!object.isMesh) return
+      // The GLB has a rotated/scaled root node; disable stale local bounds
+      // so body panels are not incorrectly culled after that transform.
+      object.frustumCulled = false
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       const isBody = materials.some(material => isLikelyCybertruckBodyMaterial(`${object.name} ${material?.name || ''}`))
       if (isBody) candidates.push({ object, materials })
