@@ -28,22 +28,25 @@ function CybertruckModel({ colour }) {
       const name = `${object.name} ${object.material?.name || ''}`
       if (!/^(body|car_paint)|body_mat|car_paint_mat/i.test(name)) return
       object.material = mapMaterialShape(object.material, source => {
-        const material = source.clone()
-        // Keep Blender's complete material, including its transparency
-        // contract. Only the paint colour and reflective finish are changed.
+        const material = new THREE.MeshPhysicalMaterial({
+          color: colour,
+          metalness: 1,
+          roughness: 0.205,
+          clearcoat: 0.28,
+          clearcoatRoughness: 0.2,
+          roughnessMap: microRoughness,
+          envMapIntensity: 1.35,
+          side: source.side,
+        })
+        // The exported body material contains an out-of-range specular factor.
+        // Rebuild the paint shader, but preserve Blender's alpha contract.
         material.name = source.name
-        // The GLB has no colour map intended for the paint preview; remove a
-        // possible inherited map/vertex tint so the chosen surface colour is visible.
-        material.map = null
-        material.vertexColors = false
-        material.color.set(colour)
-        material.metalness = 1
-        material.roughness = 0.205
-        material.envMapIntensity = 1.35
-        material.roughnessMap = microRoughness
-        material.clearcoat = 0.28
-        material.clearcoatRoughness = 0.2
-        // Preserve Blender's alpha/transparent settings exactly; only colour is interactive.
+        material.opacity = source.opacity
+        material.transparent = source.transparent
+        material.alphaTest = source.alphaTest
+        material.depthWrite = source.depthWrite
+        material.depthTest = source.depthTest
+        material.blending = source.blending
         material.needsUpdate = true
         return material
       })
@@ -55,7 +58,7 @@ function CybertruckModel({ colour }) {
 export default function CybertruckViewer({ colour }) {
   return <div className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview">
     <Canvas camera={{ position: [0, 1.25, 6.4], fov: 32 }} dpr={[1, 1.8]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={null}><hemisphereLight skyColor="#eef7ff" groundColor="#24352a" intensity={2.2} /><ambientLight intensity={0.55} /><directionalLight position={[4, 6, 4]} intensity={5.5} color="#fff4e7" /><directionalLight position={[-4, 2, -2]} intensity={3.2} color="#9fc8ff" /><directionalLight position={[0, 1, -6]} intensity={2.8} color="#d8fff0" /><Environment preset="studio" environmentIntensity={2.4} /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
+      <Suspense fallback={null}><hemisphereLight skyColor="#eef7ff" groundColor="#24352a" intensity={2.2} /><ambientLight intensity={0.55} /><directionalLight position={[4, 6, 4]} intensity={5.5} color="#fff4e7" /><directionalLight position={[-4, 2, -2]} intensity={3.2} color="#9fc8ff" /><directionalLight position={[0, 1, -6]} intensity={2.8} color="#d8fff0" /><Environment preset="forest" environmentIntensity={1.8} /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
     </Canvas>
   </div>
 }
