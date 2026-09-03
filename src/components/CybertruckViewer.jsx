@@ -47,6 +47,10 @@ function CybertruckModel({ colour }) {
       object.material = materials.map(material => {
         const next = material.clone()
         next.color.set(colour)
+        next.side = THREE.DoubleSide
+        next.transparent = false
+        next.opacity = 1
+        next.depthWrite = true
         next.metalness = 0.88
         next.roughness = 0.28
         next.roughnessMap = microTexture
@@ -64,6 +68,7 @@ function CybertruckModel({ colour }) {
   }, [colour])
 
   const bounds = useMemo(() => {
+    scene.updateMatrixWorld(true)
     const box = new THREE.Box3().setFromObject(scene)
     const size = box.getSize(new THREE.Vector3())
     const center = box.getCenter(new THREE.Vector3())
