@@ -17,6 +17,8 @@ export const classicColours = [
   { id: 'rose-gold', name: 'Rose Gold', hex: '#C88678' }
 ]
 
+export const DEFAULT_CLASSIC_COLOUR = classicColours.find(colour => colour.id === 'dark-green').hex
+
 const excludedMaterialWords = /glass|window|tire|tyre|wheel|rubber|lamp|light|headlight|taillight|interior|seat|trim|chrome|metallic/i
 const bodyMaterialWords = /body|paint|panel|hood|roof|door|fender|bumper|chassis|car/i
 

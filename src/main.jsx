@@ -12,7 +12,7 @@ import { familyMedia, homeMedia } from './media-manifest.js';
 import { productImageAlt } from './product-media.js';
 import PPFScrollSequence from './components/PPFScrollSequence.jsx';
 import CybertruckViewer from './components/CybertruckViewer.jsx';
-import { classicColours } from './cybertruck-colours.js';
+import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
 
 const products = catalogProducts;
 const categories = Object.entries(brochureSeries).map(([slug, info]) => ({
@@ -166,7 +166,7 @@ function MaterialStory() {
 function ProductShowcase() {
   const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedColour, setSelectedColour] = useState(classicColours[0].hex);
+  const [selectedColour, setSelectedColour] = useState(DEFAULT_CLASSIC_COLOUR);
   const [isShuffling, setIsShuffling] = useState(false);
   const selectedCategory = categories[selectedIndex];
   const isClassicColours = selectedCategory.slug === 'car-wrapping' && selectedCategory.info.series.some(([name]) => name === 'Super Chrome Film Classic Colours');
@@ -226,7 +226,7 @@ function ProductTable({ items }) {
 
 function CategoryPage({ category, series }) {
   const { t } = useLanguage();
-  const [selectedColour, setSelectedColour] = useState(classicColours[0].hex);
+  const [selectedColour, setSelectedColour] = useState(DEFAULT_CLASSIC_COLOUR);
   const { info } = category;
   const activeSeries = series || (info.series.length === 1 ? info.series[0][0] : '');
   const items = products.filter(product => product.category === category.slug && (!activeSeries || product.group === activeSeries));
