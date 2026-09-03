@@ -11,6 +11,8 @@ import { languageOptions, useLanguage } from './language.js';
 import { familyMedia, homeMedia } from './media-manifest.js';
 import { productImageAlt } from './product-media.js';
 import PPFScrollSequence from './components/PPFScrollSequence.jsx';
+import CybertruckViewer from './components/CybertruckViewer.jsx';
+import { classicColours } from './cybertruck-colours.js';
 
 const products = catalogProducts;
 const categories = Object.entries(brochureSeries).map(([slug, info]) => ({
@@ -164,8 +166,10 @@ function MaterialStory() {
 function ProductShowcase() {
   const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedColour, setSelectedColour] = useState(classicColours[0].hex);
   const [isShuffling, setIsShuffling] = useState(false);
   const selectedCategory = categories[selectedIndex];
+  const isClassicColours = selectedCategory.slug === 'car-wrapping' && selectedCategory.info.series.some(([name]) => name === 'Super Chrome Film Classic Colours');
   const selectedMedia = familyMedia[selectedCategory.slug];
   const selectedModels = products
     .filter(product => product.category === selectedCategory.slug)
@@ -208,7 +212,11 @@ function ProductShowcase() {
     }
   };
 
-  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} FAMILIES</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`Select ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button><a href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}><div className="stack-card-content" key={selectedCategory.slug}><img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="lazy" decoding="async" /><span className="stack-index">{String(selectedIndex + 1).padStart(2, '0')}</span><strong>{selectedCategory.name}</strong><small>{selectedCategory.description}</small><ul className="stack-model-list">{selectedModels.map(model => <li key={model}>{model}</li>)}</ul><span className="stack-cta">Explore products <ArrowUpRight size={20} /></span></div></a><button className="stack-card stack-card-next" type="button" aria-label={`Select ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className="stack-controls"><button type="button" aria-label="Previous product family" onClick={() => selectOffset(-1)}><span aria-hidden="true">←</span></button><button type="button" aria-label="Next product family" onClick={() => selectOffset(1)}><span aria-hidden="true">→</span></button></div></div></section>;
+  const activeCard = <div className="stack-card stack-card-active"><div className="stack-card-content" key={selectedCategory.slug}>
+    {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="lazy" decoding="async" />}
+    <div className="stack-card-copy"><span className="stack-index">{String(selectedIndex + 1).padStart(2, '0')}</span><strong>{selectedCategory.name}</strong><small>{selectedCategory.description}</small><ul className="stack-model-list">{selectedModels.map(model => <li key={model}>{model}</li>)}</ul>{isClassicColours && <div className="cybertruck-swatches" aria-label="Classic colour choices">{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}<span className="stack-cta">Explore products <ArrowUpRight size={20} /></span></div>
+  </div></div>;
+  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} FAMILIES</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`Select ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? activeCard : <a href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`Select ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className="stack-controls"><button type="button" aria-label="Previous product family" onClick={() => selectOffset(-1)}><span aria-hidden="true">←</span></button><button type="button" aria-label="Next product family" onClick={() => selectOffset(1)}><span aria-hidden="true">→</span></button></div></div></section>;
 }
 
 function ProductTable({ items }) {

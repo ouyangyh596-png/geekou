@@ -3,7 +3,33 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": { "dev": "vite", "server": "node server/index.mjs", "start": "NODE_ENV=production node server/index.mjs", "build": "vite build", "preview": "vite preview", "validate:content": "node scripts/validate-content.mjs", "test-language": "node scripts/test-language.mjs", "test-scroll": "node scripts/test-scroll-navigation.mjs", "test-request-validation": "node scripts/test-request-validation.mjs", "test-api": "node scripts/test-api.mjs", "test-media": "node scripts/test-media-manifest.mjs", "test-product-media": "node scripts/test-product-media-semantics.mjs", "test-home-media": "node scripts/test-home-media.mjs", "test-category-media": "node scripts/test-category-media.mjs", "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs", "test-rendered-ui": "node scripts/test-rendered-ui.mjs" },
-  "dependencies": { "@vitejs/plugin-react": "latest", "vite": "latest", "react": "latest", "react-dom": "latest", "lucide-react": "latest" },
-  "devDependencies": {}
+  "scripts": {
+    "dev": "vite",
+    "server": "node server/index.mjs",
+    "start": "NODE_ENV=production node server/index.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "validate:content": "node scripts/validate-content.mjs",
+    "test-language": "node scripts/test-language.mjs",
+    "test-scroll": "node scripts/test-scroll-navigation.mjs",
+    "test-request-validation": "node scripts/test-request-validation.mjs",
+    "test-api": "node scripts/test-api.mjs",
+    "test-media": "node scripts/test-media-manifest.mjs",
+    "test-product-media": "node scripts/test-product-media-semantics.mjs",
+    "test-home-media": "node scripts/test-home-media.mjs",
+    "test-category-media": "node scripts/test-category-media.mjs",
+    "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
+    "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+    "test-cybertruck": "node scripts/test-cybertruck-config.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "three": "^0.185.1",
+    "vite": "latest"
+  }
 }
