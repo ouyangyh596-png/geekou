@@ -51,7 +51,7 @@ function CybertruckModel({ colour }) {
 export default function CybertruckViewer({ colour }) {
   return <div className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview">
     <Canvas camera={{ position: [0, 1.25, 6.4], fov: 32 }} dpr={[1, 1.8]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={null}><ambientLight intensity={1.1} /><directionalLight position={[4, 6, 4]} intensity={3.2} /><directionalLight position={[-4, 2, -2]} intensity={1.5} color="#8fb8ff" /><Environment preset="city" /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
+      <Suspense fallback={null}><hemisphereLight skyColor="#eef7ff" groundColor="#24352a" intensity={2.2} /><ambientLight intensity={0.55} /><directionalLight position={[4, 6, 4]} intensity={5.5} color="#fff4e7" /><directionalLight position={[-4, 2, -2]} intensity={3.2} color="#9fc8ff" /><directionalLight position={[0, 1, -6]} intensity={2.8} color="#d8fff0" /><Environment preset="city" /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
     </Canvas>
   </div>
 }
