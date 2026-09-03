@@ -37,7 +37,7 @@ function CybertruckModel({ colour }) {
         material.emissive.set(colour)
         material.emissiveIntensity = 0.12
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
-        material.side = THREE.DoubleSide; material.transparent = false; material.opacity = 1; material.depthWrite = true
+        // Preserve Blender's alpha/transparent settings exactly; only colour is interactive.
         material.needsUpdate = true
         return material
       })
