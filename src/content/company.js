@@ -1,19 +1,12 @@
-export const companyProfile = {
-  eyebrow: 'SO-FINE / ESTABLISHED 2005',
-  title: '20 years of industrial expertise.',
-  paragraphs: [
-    'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
-    'Our modern production facilities, well-equipped R&D laboratory and quality-control system combine carefully selected domestic and imported raw materials with deep adhesive and coating expertise.',
-    'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing applications.'
-  ]
-}
+import { englishSiteContent } from './site-content.js'
 
-export const capabilities = [
-  ['01', 'Established in 2005', 'Two decades of focused experience in self-adhesive materials.'],
-  ['02', 'R&D and quality control', 'Dedicated laboratory testing and controlled production standards.'],
-  ['03', 'Integrated manufacturing', 'Material handling, coating expertise, manufacturing, sales and service.'],
-  ['04', 'Application expertise', 'Solutions for digital printing, signage and automotive detailing.']
-]
+export const companyProfile = englishSiteContent.company
+
+export const capabilities = englishSiteContent.technology.capabilities.map(({ name, description }, index) => [
+  String(index + 1).padStart(2, '0'),
+  name,
+  description
+])
 
 export const contactDetails = {
   factoryName: 'ZHEJIANG SO-FINE SELF-ADHESIVE PRODUCTS CO., LTD.',
