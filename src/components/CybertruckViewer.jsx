@@ -69,7 +69,7 @@ function CybertruckModel({ colour }) {
 
   // Keep the GLB's Blender-authored root transform intact. Center performs
   // the final presentation-only fit without applying a second translation.
-  return <Center disableY><primitive object={scene} scale={2.8} /></Center>
+  return <Center disableY><primitive object={scene} scale={0.55} /></Center>
 }
 
 function Loading() { return <div className="cybertruck-loading">Loading surface study…</div> }
@@ -86,7 +86,6 @@ export default function CybertruckViewer({ colour }) {
         <OrbitControls enablePan={false} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} />
       </Suspense>
     </Canvas>
-    <Suspense fallback={<Loading />}><Loading /></Suspense>
   </div>
 }
 
