@@ -22,7 +22,18 @@ export const englishSiteContent = {
       { name: '01 / MATERIAL DETAIL', description: 'Red self-adhesive material roll detail' },
       { name: '02 / ILLUMINATED SIGNAGE', description: 'Illuminated storefront light box and backlit window graphics at night' },
       { name: '03 / AUTOMOTIVE FINISH', description: 'Matte red wrapped sports car photographed outdoors' }
-    ]
+    ],
+    ppfSequence: {
+      presentationLabel: 'PPF product motion presentation',
+      kicker: 'SO-FINE / PPF SYSTEM',
+      titleLead: 'Protection',
+      titleEmphasis: 'in motion.',
+      description: 'Paint protection film engineered for clarity, resilience and a precise finish across every curve.',
+      action: 'Explore PPF',
+      canvasLabelPrefix: 'SO-FINE paint protection film rendering frame',
+      progressLabelPrefix: 'Frame',
+      progressLabelInfix: 'of'
+    }
   },
   technology: {
     kicker: 'THE SO-FINE DIFFERENCE',
