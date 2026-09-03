@@ -240,4 +240,7 @@ html:has(.home-page){scroll-snap-type:none}
 .cybertruck-swatches { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0 4px; max-width: 360px; }
 .cybertruck-swatches button { width: 19px; height: 19px; padding: 0; border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: var(--swatch); box-shadow: 0 0 0 2px transparent; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
 .cybertruck-swatches button:hover, .cybertruck-swatches button.is-selected { transform: scale(1.16); box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(9,61,107,.55); }
+.cybertruck-picker-label { display:flex; justify-content:space-between; max-width:210px; margin-top:24px; color:var(--ink); font-size:12px; font-weight:700; }
+.cybertruck-picker-label span { color:var(--muted); font-weight:400; }
+.cybertruck-color-picker { width:230px; height:34px; margin-top:10px; padding:0; border:1px solid rgba(9,43,75,.2); border-radius:5px; background:linear-gradient(90deg,#ef3340,#ffdb00,#30c65b,#14b8e6,#6449de,#ef3340); cursor:pointer; }
 @media (max-width: 800px) { .cybertruck-config { width:calc(100% - 40px); min-height:600px; padding:18px; } .cybertruck-config > div:first-child { left:18px; bottom:18px; } .cybertruck-viewer { height:550px; border-radius:18px; } .cybertruck-swatches { max-width:270px; } }
