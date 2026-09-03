@@ -31,9 +31,11 @@ function CybertruckModel({ colour }) {
       object.material = materials.map(source => {
         const material = source.clone()
         material.color.set(colour)
-        material.metalness = 0.68
-        material.roughness = 0.24
-        material.envMapIntensity = 1.8
+        material.metalness = 0.42
+        material.roughness = 0.22
+        material.envMapIntensity = 1.35
+        material.emissive.set(colour)
+        material.emissiveIntensity = 0.12
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
         material.side = THREE.DoubleSide; material.transparent = false; material.opacity = 1; material.depthWrite = true
         material.needsUpdate = true
