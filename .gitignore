@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+dist/
+tmp/
+.DS_Store
+*.log
+
+# Local/generated source archives and extracted brochure files
+.brochure-unzip/
+.sofine-source.html
+
+# Duplicated packaged copy of the site; the root project is the source of truth
+SO-FINE-Website-Package/

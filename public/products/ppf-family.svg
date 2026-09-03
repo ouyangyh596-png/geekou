@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Abstract paint protection film roll">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#071f3e"/>
+      <stop offset=".52" stop-color="#0b4f87"/>
+      <stop offset="1" stop-color="#8cd7ee"/>
+    </linearGradient>
+    <linearGradient id="roll" x1="0" y1="0" x2="1" y2=".5">
+      <stop stop-color="#dff8ff"/>
+      <stop offset=".26" stop-color="#438ac1"/>
+      <stop offset=".62" stop-color="#e8fbff"/>
+      <stop offset="1" stop-color="#15568c"/>
+    </linearGradient>
+    <radialGradient id="core">
+      <stop stop-color="#ffffff"/>
+      <stop offset=".48" stop-color="#bcecff"/>
+      <stop offset=".52" stop-color="#1a6199"/>
+      <stop offset="1" stop-color="#071f3e"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#night)"/>
+  <path d="M-110 692C178 359 411 617 638 327s380-220 672-53v526H-110Z" fill="none" stroke="#8de6f2" stroke-opacity=".35" stroke-width="18"/>
+  <path d="M-72 756C231 404 428 725 688 405s387-193 612-73" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="7"/>
+  <g transform="rotate(12 627 400)">
+    <rect x="207" y="250" width="680" height="300" rx="150" fill="url(#roll)" stroke="#bff6ff" stroke-opacity=".82" stroke-width="8"/>
+    <ellipse cx="887" cy="400" rx="150" ry="150" fill="url(#core)" stroke="#d6f8ff" stroke-width="8"/>
+    <ellipse cx="887" cy="400" rx="55" ry="55" fill="#09274a"/>
+    <path d="M252 310h534" stroke="#fff" stroke-opacity=".72" stroke-width="15" stroke-linecap="round"/>
+    <path d="M247 485h518" stroke="#002a55" stroke-opacity=".3" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <path d="m144 195 73 73 126-153" fill="none" stroke="#67d9df" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1044" cy="156" r="92" fill="#fff" opacity=".12"/>
+</svg>

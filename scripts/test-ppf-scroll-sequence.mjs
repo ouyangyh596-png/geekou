@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+
+const component = readFileSync(new URL('../src/components/PPFScrollSequence.jsx', import.meta.url), 'utf8')
+const main = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
+
+for (const marker of ['ppf-sequence-sticky', 'requestAnimationFrame', 'prefers-reduced-motion', 'PPF_SEQUENCE', 'new Image', 'drawImage', 'canvas']) {
+  assert.match(component, new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), marker)
+}
+assert.match(component, /window\.scrollY/)
+assert.match(component, /frameIndex/)
+assert.match(main, /<PPFScrollSequence\s*\/>/)
+const styles = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
+assert.match(styles, /\.ppf-sequence[^}]*background:#0b3154/)
+assert.match(styles, /\.ppf-sequence-stage[^}]*width:100%/)
+assert.match(styles, /\.ppf-sequence-inner[^}]*position:relative/)
+assert.match(styles, /\.ppf-sequence-sticky\{[^}]*position:sticky/)
+assert.match(component, /PPF_SEQUENCE\.forEach/)
+assert.match(component, /ppf-sequence-copy--top/)
+assert.match(styles, /\.ppf-sequence-copy--top[^}]*position:relative/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*mix-blend-mode:screen/)
+assert.match(styles, /\.ppf-sequence-copy--top[^}]*left:50%/)
+assert.match(styles, /\.ppf-sequence-copy--top[^}]*text-align:center/)
+assert.match(styles, /\.ppf-sequence-copy--top[^}]*opacity:calc/)
+assert.match(styles, /\.ppf-sequence-inner[^}]*height:100%/)
+assert.match(styles, /\.ppf-sequence-stage[^}]*height:100vh/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*aspect-ratio:16 \/ 9/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*width:auto/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*max-width:100%/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*max-height:100%/)
+assert.match(styles, /\.ppf-sequence-copy--top h2[^}]*font-size:clamp\(42px/)
+assert.match(styles, /\.ppf-sequence-copy--top>p:not\(\.kicker\)[^}]*font-size:clamp\(/)
+assert.match(styles, /\.ppf-sequence-inner[^}]*min-width:0/)
+assert.match(styles, /\.ppf-sequence-stage[^}]*min-width:0/)
+assert.match(styles, /\.ppf-sequence-canvas[^}]*min-width:0/)
+console.log('PPF scroll sequence structure PASS')
