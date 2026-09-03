@@ -1,90 +1,50 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Center, Environment, OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { CYBERTRUCK_MODEL_PATH, isLikelyCybertruckBodyMaterial } from '../cybertruck-colours.js'
+import { CYBERTRUCK_MODEL_PATH } from '../cybertruck-colours.js'
 
-const excludedName = name => /glass|window|tire|tyre|wheel|rubber|lamp|light|headlight|taillight|interior|seat|trim|chrome|metallic/i.test(name)
-
-function makeMicroTexture() {
+function createMicroRoughness() {
   const size = 32
   const data = new Uint8Array(size * size * 4)
-  for (let i = 0; i < data.length; i += 4) {
-    const value = 112 + Math.floor(Math.random() * 96)
-    data[i] = value; data[i + 1] = value; data[i + 2] = value; data[i + 3] = 255
+  for (let index = 0; index < data.length; index += 4) {
+    const grain = 128 + Math.floor(Math.random() * 72)
+    data[index] = grain; data[index + 1] = grain; data[index + 2] = grain; data[index + 3] = 255
   }
   const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat)
-  texture.wrapS = THREE.RepeatWrapping
-  texture.wrapT = THREE.RepeatWrapping
-  texture.repeat.set(18, 18)
-  texture.needsUpdate = true
+  texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping
+  texture.repeat.set(22, 22); texture.needsUpdate = true
   return texture
 }
 
 function CybertruckModel({ colour }) {
   const { scene } = useGLTF(CYBERTRUCK_MODEL_PATH)
-  const bodyMaterials = useRef([])
-  const microTexture = useMemo(() => makeMicroTexture(), [])
-
-  useEffect(() => () => microTexture.dispose(), [microTexture])
-
+  const microRoughness = useMemo(createMicroRoughness, [])
+  useEffect(() => () => microRoughness.dispose(), [microRoughness])
   useEffect(() => {
-    bodyMaterials.current = []
-    const candidates = []
     scene.traverse(object => {
       if (!object.isMesh) return
-      // The GLB has a rotated/scaled root node; disable stale local bounds
-      // so body panels are not incorrectly culled after that transform.
       object.frustumCulled = false
+      const name = `${object.name} ${object.material?.name || ''}`
+      if (!/^(body|car_paint)|body_mat|car_paint_mat/i.test(name)) return
       const materials = Array.isArray(object.material) ? object.material : [object.material]
-      const isBody = materials.some(material => isLikelyCybertruckBodyMaterial(`${object.name} ${material?.name || ''}`))
-      if (isBody) candidates.push({ object, materials })
-      else if (!materials.some(material => excludedName(`${object.name} ${material?.name || ''}`)) && materials.some(material => material?.transparent !== true)) candidates.push({ object, materials, fallback: true })
-    })
-    const named = candidates.filter(candidate => !candidate.fallback)
-    const selected = named.length ? named : candidates.slice(0, Math.max(1, Math.ceil(candidates.length * 0.55)))
-    selected.forEach(({ object, materials }) => {
-      object.material = materials.map(material => {
-        const next = material.clone()
-        next.color.set(colour)
-        next.side = THREE.DoubleSide
-        next.transparent = false
-        next.opacity = 1
-        next.depthWrite = true
-        next.metalness = 0.88
-        next.roughness = 0.28
-        next.roughnessMap = microTexture
-        next.clearcoat = 0.32
-        next.clearcoatRoughness = 0.18
-        next.needsUpdate = true
-        bodyMaterials.current.push(next)
-        return next
+      object.material = materials.map(source => {
+        const material = source.clone()
+        material.color.set(colour); material.metalness = 0.9; material.roughness = 0.3
+        material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
+        material.side = THREE.DoubleSide; material.transparent = false; material.opacity = 1; material.depthWrite = true
+        material.needsUpdate = true
+        return material
       })
     })
-  }, [scene, colour, microTexture])
-
-  useEffect(() => {
-    bodyMaterials.current.forEach(material => material.color.set(colour))
-  }, [colour])
-
-  // Keep the GLB's Blender-authored root transform intact. Center performs
-  // the final presentation-only fit without applying a second translation.
+  }, [scene, colour, microRoughness])
   return <Center disableY><primitive object={scene} scale={0.55} /></Center>
 }
-
-function Loading() { return <div className="cybertruck-loading">Loading surface study…</div> }
 
 export default function CybertruckViewer({ colour }) {
   return <div className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview">
     <Canvas camera={{ position: [4.2, 2.1, 4.8], fov: 32 }} dpr={[1, 1.8]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={null}>
-        <ambientLight intensity={1.1} />
-        <directionalLight position={[4, 6, 4]} intensity={3.2} />
-        <directionalLight position={[-4, 2, -2]} intensity={1.5} color="#8fb8ff" />
-        <Environment preset="city" />
-        <CybertruckModel colour={colour} />
-        <OrbitControls enablePan={false} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} />
-      </Suspense>
+      <Suspense fallback={null}><ambientLight intensity={1.1} /><directionalLight position={[4, 6, 4]} intensity={3.2} /><directionalLight position={[-4, 2, -2]} intensity={1.5} color="#8fb8ff" /><Environment preset="city" /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
     </Canvas>
   </div>
 }
