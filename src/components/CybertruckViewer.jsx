@@ -29,13 +29,28 @@ function CybertruckModel({ colour }) {
       if (!/^(body|car_paint)|body_mat|car_paint_mat/i.test(name)) return
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       object.material = materials.map(source => {
-        const material = source.clone()
+        const material = new THREE.MeshPhysicalMaterial()
+        // Keep the source material's transparency contract intact. The
+        // interactive colour must never alter alpha or blending behaviour.
+        material.transparent = source.transparent
+        material.opacity = source.opacity
+        material.alphaTest = source.alphaTest
+        material.depthWrite = source.depthWrite
+        material.depthTest = source.depthTest
+        material.side = source.side
+        material.blending = source.blending
+        material.name = source.name
         // The GLB has no colour map intended for the paint preview; remove a
         // possible inherited map/vertex tint so the chosen surface colour is visible.
         material.map = null
         material.vertexColors = false
         material.color.copy(new THREE.Color(colour))
-        material.metalness = 1
+        // Blender's studio view contributes a coloured reflected highlight. Add
+        // a restrained paint-colour bounce so the same colour remains visible
+        // in the browser's neutral environment; alpha is intentionally untouched.
+        material.emissive.copy(new THREE.Color(colour))
+        material.emissiveIntensity = 0.35
+        material.metalness = 0.82
         material.roughness = 0.205
         material.envMapIntensity = 1.35
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
@@ -51,7 +66,7 @@ function CybertruckModel({ colour }) {
 export default function CybertruckViewer({ colour }) {
   return <div className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview">
     <Canvas camera={{ position: [0, 1.25, 6.4], fov: 32 }} dpr={[1, 1.8]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={null}><hemisphereLight skyColor="#eef7ff" groundColor="#24352a" intensity={2.2} /><ambientLight intensity={0.55} /><directionalLight position={[4, 6, 4]} intensity={5.5} color="#fff4e7" /><directionalLight position={[-4, 2, -2]} intensity={3.2} color="#9fc8ff" /><directionalLight position={[0, 1, -6]} intensity={2.8} color="#d8fff0" /><Environment preset="city" /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
+      <Suspense fallback={null}><hemisphereLight skyColor="#eef7ff" groundColor="#24352a" intensity={2.2} /><ambientLight intensity={0.55} /><directionalLight position={[4, 6, 4]} intensity={5.5} color="#fff4e7" /><directionalLight position={[-4, 2, -2]} intensity={3.2} color="#9fc8ff" /><directionalLight position={[0, 1, -6]} intensity={2.8} color="#d8fff0" /><Environment preset="studio" environmentIntensity={2.4} /><CybertruckModel colour={colour} /><OrbitControls enablePan={false} target={[0, 0.15, 0]} minDistance={3.2} maxDistance={7.5} enableDamping dampingFactor={0.08} /></Suspense>
     </Canvas>
   </div>
 }
