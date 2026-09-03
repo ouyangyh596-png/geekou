@@ -29,28 +29,16 @@ function CybertruckModel({ colour }) {
       if (!/^(body|car_paint)|body_mat|car_paint_mat/i.test(name)) return
       const materials = Array.isArray(object.material) ? object.material : [object.material]
       object.material = materials.map(source => {
-        const material = new THREE.MeshPhysicalMaterial()
-        // Keep the source material's transparency contract intact. The
-        // interactive colour must never alter alpha or blending behaviour.
-        material.transparent = source.transparent
-        material.opacity = source.opacity
-        material.alphaTest = source.alphaTest
-        material.depthWrite = source.depthWrite
-        material.depthTest = source.depthTest
-        material.side = source.side
-        material.blending = source.blending
+        const material = source.clone()
+        // Keep Blender's complete material, including its transparency
+        // contract. Only the paint colour and reflective finish are changed.
         material.name = source.name
         // The GLB has no colour map intended for the paint preview; remove a
         // possible inherited map/vertex tint so the chosen surface colour is visible.
         material.map = null
         material.vertexColors = false
         material.color.copy(new THREE.Color(colour))
-        // Blender's studio view contributes a coloured reflected highlight. Add
-        // a restrained paint-colour bounce so the same colour remains visible
-        // in the browser's neutral environment; alpha is intentionally untouched.
-        material.emissive.copy(new THREE.Color(colour))
-        material.emissiveIntensity = 0.35
-        material.metalness = 0.82
+        material.metalness = 1
         material.roughness = 0.205
         material.envMapIntensity = 1.35
         material.roughnessMap = microRoughness; material.clearcoat = 0.28; material.clearcoatRoughness = 0.2
