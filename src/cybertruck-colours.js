@@ -26,3 +26,7 @@ export function isLikelyCybertruckBodyMaterial(name = '') {
   if (excludedMaterialWords.test(name)) return false
   return bodyMaterialWords.test(name)
 }
+
+export function mapMaterialShape(material, transform) {
+  return Array.isArray(material) ? material.map(transform) : transform(material)
+}
