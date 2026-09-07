@@ -2,7 +2,7 @@ export const CYBERTRUCK_MODEL_PATH = '/models/Tesla_Cybertruck3.glb'
 
 export const classicColours = [
   { id: 'china-red', name: 'China Red', hex: '#A0000F' },
-  { id: 'maillard-copper', name: 'Maillard Copper', hex: '#A95729' },
+  { id: 'maillard-copper', name: 'Maillard Copper', hex: '#34270F' },
   { id: 'purple-gold', name: 'Purple Gold', hex: '#AD5400' },
   { id: 'bluish-green', name: 'Bluish Green', hex: '#3D8C87' },
   { id: 'bright-yellow', name: 'Bright Yellow', hex: '#E9BF25' },
@@ -11,7 +11,7 @@ export const classicColours = [
   { id: 'green', name: 'Green', hex: '#2B7653' },
   { id: 'twilight-purple', name: 'Twilight Purple', hex: '#5E1287' },
   { id: 'silver', name: 'Silver', hex: '#B4B4B4' },
-  { id: 'dark-blue', name: 'Dark Blue', hex: '#183C73' },
+  { id: 'dark-blue', name: 'Dark Blue', hex: '#00164D' },
   { id: 'dark-green', name: 'Dark Green', hex: '#003816' },
   { id: 'tungsten-steel', name: 'Tungsten Steel', hex: '#646464' },
   { id: 'rose-gold', name: 'Rose Gold', hex: '#C88678' }

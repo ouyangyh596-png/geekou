@@ -6,7 +6,9 @@ assert.ok(classicColours.length >= 6)
 assert.equal(classicColours[0].id, 'china-red')
 const expectedClassicColours = new Map([
   ['burgundy-red', '#640000'],
+  ['maillard-copper', '#34270F'],
   ['dark-green', '#003816'],
+  ['dark-blue', '#00164D'],
   ['silver', '#B4B4B4'],
   ['china-red', '#A0000F'],
   ['tungsten-steel', '#646464'],
