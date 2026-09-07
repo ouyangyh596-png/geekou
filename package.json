@@ -21,7 +21,9 @@
     "test-category-media": "node scripts/test-category-media.mjs",
     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
-    "test-cybertruck": "node scripts/test-cybertruck-config.mjs"
+    "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
+    "test-polish": "node scripts/test-site-polish.mjs",
+    "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-category-media && pnpm test-accessibility-assets"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

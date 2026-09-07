@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { PPF_SEQUENCE } from '../ppf-sequence.js'
+import { englishSiteContent } from '../content/site-content.js'
+
+const content = englishSiteContent.home.ppfSequence
 
 function drawFrame(canvas, image) {
   if (!canvas || !image.complete || !image.naturalWidth) return
@@ -107,19 +110,19 @@ export default function PPFScrollSequence() {
 
   const displayIndex = reducedMotion ? initialFrame : frameIndex
   const copyProgress = Math.min(progress * 3, 1)
-  return <section className="ppf-sequence" ref={sectionRef} aria-label="PPF product motion presentation">
+  return <section className="ppf-sequence" ref={sectionRef} aria-label={content.presentationLabel}>
     <div className="ppf-sequence-track">
       <div className="ppf-sequence-sticky">
         <div className="ppf-sequence-inner">
           <div className="ppf-sequence-copy ppf-sequence-copy--top" style={{ '--copy-progress': copyProgress }}>
-            <p className="kicker">SO-FINE / PPF SYSTEM</p>
-            <h2>Protection<br /><em>in motion.</em></h2>
-            <p>Paint protection film engineered for clarity, resilience and a precise finish across every curve.</p>
-            <a className="text-link" href="#category=ppf">Explore PPF <ArrowUpRight size={16} /></a>
+            <p className="kicker">{content.kicker}</p>
+            <h2>{content.titleLead}<br /><em>{content.titleEmphasis}</em></h2>
+            <p>{content.description}</p>
+            <a className="text-link" href="#category=ppf">{content.action} <ArrowUpRight size={16} /></a>
           </div>
           <div className="ppf-sequence-stage">
-            <canvas ref={canvasRef} className="ppf-sequence-canvas" aria-label={`SO-FINE paint protection film rendering frame ${displayIndex + 1}`} width="1920" height="1080" />
-            <div className="ppf-sequence-progress" aria-label={`Frame ${displayIndex + 1} of ${PPF_SEQUENCE.length}`}>
+            <canvas ref={canvasRef} className="ppf-sequence-canvas" aria-label={`${content.canvasLabelPrefix} ${displayIndex + 1}`} width="1920" height="1080" />
+            <div className="ppf-sequence-progress" aria-label={`${content.progressLabelPrefix} ${displayIndex + 1} ${content.progressLabelInfix} ${PPF_SEQUENCE.length}`}>
               <span style={{ transform: `scaleX(${reducedMotion ? 0 : progress})` }} />
               <b>{String(displayIndex + 1).padStart(3, '0')}</b><i>/</i><b>{String(PPF_SEQUENCE.length).padStart(3, '0')}</b>
             </div>

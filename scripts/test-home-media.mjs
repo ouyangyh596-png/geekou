@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { englishSiteContent as content } from '../src/content/site-content.js';
 
 const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
@@ -15,16 +16,18 @@ assert.match(main, /<source src="\/media\/home\/hero-factory\.mp4" type="video\/
 assert.match(styles, /\.landing-image video\{[^}]*object-fit:cover/, 'the landing video fills the responsive hero without distortion');
 assert.match(styles, /html:has\(\.home-page\)\{scroll-snap-type:none\}/, 'homepage scroll snapping is disabled');
 
-assert.match(main, /<div className="landing-brand-logos">[\s\S]*<h1 className="landing-title">SUPER CHROME FILM<\/h1>/, 'the visible hero lockup contains the requested brand logos and title');
-assert.match(main, /homeMedia\.signage\} alt="Illuminated storefront light box and backlit window graphics at night"/, 'the signage alt describes the installed illuminated scene');
+assert.equal(content.home.heroTitle, 'SUPER CHROME FILM');
+assert.match(main, /<div className="landing-brand-logos">[\s\S]*<h1 className="landing-title">\{content.home.heroTitle\}<\/h1>/, 'the visible hero lockup binds the brand title');
+assert.equal(content.home.materialItems[1].description, 'Illuminated storefront light box and backlit window graphics at night');
+assert.match(main, /homeMedia\.signage\} alt=\{content.home.materialItems\[1\].description\}/, 'the signage alt binds the installed illuminated scene');
 assert.match(
   main,
-  /homeMedia\.automotive\} alt="Matte red wrapped sports car photographed outdoors"/,
+  /homeMedia\.automotive\} alt=\{content.home.materialItems\[2\].description\}/,
   'the automotive tile alt describes the visible wrapped vehicle'
 );
 assert.match(
   main,
-  /<span>03 \/ AUTOMOTIVE FINISH<\/span>/,
+  /<span>\{content.home.materialItems\[2\].name\}<\/span>/,
   'the automotive tile label identifies the visible vehicle finish'
 );
 assert.match(main, /const \[selectedIndex, setSelectedIndex\] = useState\(0\);/, 'ProductShowcase owns the selected family index');
@@ -42,15 +45,15 @@ assert.match(main, /<div className="stack-controls">/, 'stack controls use the r
 assert.match(main, /className="stack-card stack-card-prev"/, 'the previous family card is rendered');
 assert.match(main, /className="stack-card stack-card-active"/, 'the active family card is rendered');
 assert.match(main, /className="stack-card stack-card-next"/, 'the next family card is rendered');
-assert.match(main, /<button type="button" aria-label="Previous product family" onClick=\{\(\) => selectOffset\(-1\)\}>/, 'the previous control has its exact accessible label');
-assert.match(main, /<button type="button" aria-label="Next product family" onClick=\{\(\) => selectOffset\(1\)\}>/, 'the next control has its exact accessible label');
+assert.match(main, /<button type="button" aria-label=\{content.products.previousFamily\} onClick=\{\(\) => selectOffset\(-1\)\}>/, 'the previous control binds its accessible label');
+assert.match(main, /<button type="button" aria-label=\{content.products.nextFamily\} onClick=\{\(\) => selectOffset\(1\)\}>/, 'the next control binds its accessible label');
 assert.match(main, /<a href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active" onClick=\{handleActiveClick\}>/, 'the active card remains the category navigation anchor');
 assert.match(main, /key=\{selectedCategory\.slug\}/, 'active card content is keyed by the selected slug for entry animation');
 assert.match(main, /<img src=\{selectedMedia\.preview\} alt=\{selectedMedia\.alt\} width="1200" height="800" loading="lazy" decoding="async" \/>/, 'the centre stage retains mapped selected media and alt text');
 assert.match(main, /<span className="stack-index">\{String\(selectedIndex \+ 1\)\.padStart\(2, '0'\)\}<\/span>/, 'the active card shows the selected family index');
 assert.match(main, /<strong>\{selectedCategory\.name\}<\/strong><small>\{selectedCategory\.description\}<\/small>/, 'the active card shows the selected name and description');
 assert.match(main, /<ul className="stack-model-list">\{selectedModels\.map\(model => <li key=\{model\}>\{model\}<\/li>\)\}<\/ul>/, 'the active card renders selected model codes');
-assert.match(main, /<span className="stack-cta">Explore products <ArrowUpRight size=\{20\} \/><\/span>/, 'the active card contains the explore CTA');
+assert.match(main, /<span className="stack-cta">\{content.products.exploreProducts\} <ArrowUpRight size=\{20\} \/><\/span>/, 'the active card contains the explore CTA');
 assert.match(main, /if \(event\.key === 'ArrowLeft'\) \{\s*event\.preventDefault\(\);\s*selectOffset\(-1\);\s*\} else if \(event\.key === 'ArrowRight'\) \{\s*event\.preventDefault\(\);\s*selectOffset\(1\);\s*\}/, 'only horizontal arrow keys are intercepted, leaving Enter centre-link navigation intact');
 assert.doesNotMatch(main, /product-carousel/, 'the carousel implementation is completely removed');
 assert.match(

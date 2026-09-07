@@ -16,8 +16,8 @@ assert.match(
 );
 assert.match(
   main,
-  /<img src=\{product\.image\} alt=\{productImageAlt\(product, product\.image\)\} loading="lazy" decoding="async"/,
-  'product-grid images use fallback-aware alt text and load efficiently'
+  /<ProductTable items=\{items\} \/>/,
+  'the selected series displays its product specification table'
 );
 assert.match(
   main,
@@ -26,8 +26,8 @@ assert.match(
 );
 assert.match(
   main,
-  /href=\{'#product=' \+ product\.slug\}/,
-  'product detail hash links remain available'
+  /href=\{'#product=' \+ item\.slug\}/,
+  'product codes link to their full detail pages'
 );
 assert.match(main, /href="#products"/, 'the all-families hash link remains available');
 

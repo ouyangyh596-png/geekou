@@ -2,19 +2,26 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import './styles.css';
+import './polish.css';
 import { catalogProducts } from './catalog.js';
 import { brochureSeries } from './brochure-data.js';
 import { companyProfile, capabilities, contactDetails } from './content/company.js';
+import { englishSiteContent } from './content/site-content.js';
 import { readInquiryError } from './inquiry-errors.js';
 import { decideHashNavigation, isHomeRoute } from './scroll-navigation.js';
 import { languageOptions, useLanguage } from './language.js';
 import { familyMedia, homeMedia } from './media-manifest.js';
 import { productImageAlt } from './product-media.js';
 import PPFScrollSequence from './components/PPFScrollSequence.jsx';
-import CybertruckViewer from './components/CybertruckViewer.jsx';
+import PreviewBoundary from './components/PreviewBoundary.jsx';
 import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
+const LazyCybertruckViewer = React.lazy(() => import('./components/CybertruckViewer.jsx'));
+function CybertruckViewer(props) {
+  return <PreviewBoundary><React.Suspense fallback={<div className="cybertruck-viewer viewer-placeholder" role="status">Loading 3D preview…</div>}><LazyCybertruckViewer {...props} /></React.Suspense></PreviewBoundary>;
+}
 
 const products = catalogProducts;
+const content = englishSiteContent;
 const categories = Object.entries(brochureSeries).map(([slug, info]) => ({
   slug,
   name: info.displayName,
@@ -49,12 +56,12 @@ function Header() {
       <a href="#contact" onClick={event => go('#contact', event)}>{t('contact')}</a>
     </nav>
     <div className="header-actions">
-      <select className="language-select" aria-label="Language" value={lang} onChange={event => change(event.target.value)}>
+      <select className="language-select" aria-label={content.navigation.languageLabel} value={lang} onChange={event => change(event.target.value)}>
         {languageOptions.map(([label, value]) => <option key={value} value={value}>{label}</option>)}
       </select>
       <a className="header-cta" href="#contact" onClick={event => go('#contact', event)}>{t('talk')} <ArrowUpRight size={15} /></a>
     </div>
-    <button className="menu" type="button" aria-label={open ? 'Close navigation' : 'Open navigation'} aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
+    <button className="menu" type="button" aria-label={open ? content.navigation.closeLabel : content.navigation.openLabel} aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
   </div></header>;
 }
 
@@ -66,7 +73,7 @@ function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [state, setState] = useState('idle');
   const [error, setError] = useState('');
-  const fallbackError = `Unable to send. Please email ${contactDetails.email}.`;
+  const fallbackError = `${content.contact.errorPrefix} ${contactDetails.email}.`;
   const submit = async event => {
     event.preventDefault();
     setState('sending');
@@ -86,15 +93,15 @@ function ContactForm() {
     }
   };
   return <form className="inquiry-form" onSubmit={submit}>
-    <div className="form-heading"><span className="kicker">PROJECT INQUIRY</span><p>Tell us what you are building. Our team will get back to you shortly.</p></div>
+    <div className="form-heading"><span className="kicker">{content.contact.formKicker}</span><p>{content.contact.formIntroduction}</p></div>
     <div className="form-grid">
-      <label>Name *<input required maxLength="120" value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} /></label>
-      <label>Email *<input required type="email" maxLength="254" value={form.email} onChange={event => setForm({ ...form, email: event.target.value })} /></label>
-      <label>Phone<input maxLength="60" value={form.phone} onChange={event => setForm({ ...form, phone: event.target.value })} /></label>
-      <label>Subject *<input required maxLength="200" value={form.subject} onChange={event => setForm({ ...form, subject: event.target.value })} /></label>
+      <label>{content.contact.nameLabel}<input required maxLength="120" value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} /></label>
+      <label>{content.contact.emailLabel}<input required type="email" maxLength="254" value={form.email} onChange={event => setForm({ ...form, email: event.target.value })} /></label>
+      <label>{content.contact.phoneLabel}<input maxLength="60" value={form.phone} onChange={event => setForm({ ...form, phone: event.target.value })} /></label>
+      <label>{content.contact.subjectLabel}<input required maxLength="200" value={form.subject} onChange={event => setForm({ ...form, subject: event.target.value })} /></label>
     </div>
-    <label>Message *<textarea required rows="4" maxLength="5000" value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></label>
-    <div className="form-actions"><button type="submit" disabled={state === 'sending'}>{state === 'sending' ? 'Sending…' : 'Send inquiry'} <ArrowUpRight size={16} /></button>{state === 'sent' && <span className="form-success">Thank you — your inquiry has been received.</span>}{state === 'error' && <span className="form-error">{error || fallbackError}</span>}</div>
+    <label>{content.contact.messageLabel}<textarea required rows="4" maxLength="5000" value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></label>
+    <div className="form-actions"><button type="submit" disabled={state === 'sending'}>{state === 'sending' ? content.contact.sendingLabel : content.contact.sendLabel} <ArrowUpRight size={16} /></button>{state === 'sent' && <span className="form-success">{content.contact.successMessage}</span>}{state === 'error' && <span className="form-error">{error || fallbackError}</span>}</div>
   </form>;
 }
 
@@ -128,6 +135,9 @@ function AdminPage() {
 }
 
 function Home() {
+  const [companyYears, companyYearsUnit, , companyIndustry, companyExpertise] = content.company.title.replace('.', '').split(' ');
+  const [technologyTitleLead, technologyTitleEmphasis] = content.technology.title.split('\n');
+  const [contactTitleLead, contactTitleEmphasis] = content.contact.title.split('\n');
   useEffect(() => {
     const onScroll = () => {
       const progress = Math.min(window.scrollY / 520, 1);
@@ -135,7 +145,11 @@ function Home() {
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting)), { threshold: .2 });
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }), { threshold: .12 });
     document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -143,22 +157,23 @@ function Home() {
     };
   }, []);
   return <main className="home-page">
-    <section className="landing" id="top"><Header /><div className="landing-copy"><div className="landing-brand-lockup"><div className="landing-brand-logos"><img src="/so-fine-logo.svg" alt="SO-FINE" /><span>&amp;</span><img src="/media/home/autoface-logo.png" alt="AUTOFACE" /></div><h1 className="landing-title">SUPER CHROME FILM</h1><a className="landing-product-button" href="#category=car-wrapping">Explore to product <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label="SO-FINE manufacturing facility"><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video><span>01 / 05</span></div></section>
+    <section className="landing" id="top"><Header /><div className="landing-copy"><div className="landing-brand-lockup"><div className="landing-brand-logos"><img src="/so-fine-logo.svg" alt="SO-FINE" /><span>&amp;</span><img src="/media/home/autoface-logo.png" alt="AUTOFACE" /></div><h1 className="landing-title">{content.home.heroTitle}</h1><a className="landing-product-button" href="#category=car-wrapping">{content.home.heroAction} <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label={content.home.heroVideoLabel}><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video><span>01 / 05</span></div></section>
     <PPFScrollSequence />
-    <section className="statement" id="company"><figure className="company-evidence reveal"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label="SO-FINE factory aerial view"><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>SO-FINE factory / aerial view</figcaption></figure><div className="statement-inner"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal"><span className="company-title-years">20</span> years of<br />industrial<br /><em>expertise.</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div></section>
+    <section className="statement" id="company"><figure className="company-evidence reveal"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label={content.home.companyVideoLabel}><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>{content.home.companyVideoCaption}</figcaption></figure><div className="statement-inner"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal"><span className="company-title-years">{companyYears}</span> {companyYearsUnit} of<br />{companyIndustry}<br /><em>{companyExpertise}.</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div></section>
     <ProductShowcase />
-    <section className="technology" id="technology"><div className="wide-heading"><p className="kicker">THE SO-FINE DIFFERENCE</p><h2 className="reveal">Precision is<br /><em>the foundation.</em></h2></div><div className="tech-grid scroll-art-trigger reveal"><div className="tech-intro"><span className="tech-intro-copy">Every layer is considered — from selected raw materials to final inspection.</span><img className="tech-intro-material" src="/media/home/clear-polymer-pellets.png" alt="" aria-hidden="true" /></div>{capabilities.map(([number, title, description]) => <div className={'tech-card' + (number === '01' ? ' tech-card-years' : '') + (number === '02' ? ' tech-card-lab' : '') + (number === '04' ? ' tech-card-application' : '')} key={number}>{number === '01' && <img className="tech-card-years-art" src="/media/home/years-20.png" alt="" aria-hidden="true" />}{number === '02' && <img className="tech-card-lab-art" src="/media/home/dionhva-lab-2303931.svg" alt="" aria-hidden="true" />}{number === '04' && <img className="tech-card-application-art" src="/media/home/application-device.png" alt="" aria-hidden="true" />}<span>{number}</span><h3 className="reveal">{title}</h3><p>{description}</p></div>)}</div></section>
-    <section className="contact" id="contact"><div className="contact-inner"><p className="kicker">LET'S MAKE SOMETHING LAST</p><h2 className="reveal">Start with a<br /><em>surface.</em></h2><a className="mail-link reveal" href={'mailto:' + contactDetails.email}>{contactDetails.email} <ArrowUpRight /></a><ContactForm /><footer className="contact-companies"><div className="contact-company"><b>{contactDetails.factoryName}</b><span>{contactDetails.factoryAddress}</span></div><div className="contact-company"><b>{contactDetails.salesName}</b><span>{contactDetails.salesAddress}</span></div><div className="contact-company contact-methods"><a href={'tel:' + contactDetails.phones[0]}>Tel: {contactDetails.phones[0]}</a><a href={'tel:' + contactDetails.phones[1]}>Tel: {contactDetails.phones[1]}</a><span>Fax: {contactDetails.fax}</span><a href={'mailto:' + contactDetails.email}>{contactDetails.email}</a></div></footer></div></section>
+    <section className="technology" id="technology"><div className="wide-heading"><p className="kicker">{content.technology.kicker}</p><h2 className="reveal">{technologyTitleLead}<br /><em>{technologyTitleEmphasis}</em></h2></div><div className="tech-grid scroll-art-trigger reveal"><div className="tech-intro"><span className="tech-intro-copy">{content.technology.introduction}</span><img className="tech-intro-material" src="/media/home/clear-polymer-pellets.png" alt="" aria-hidden="true" /></div>{capabilities.map(([number, title, description]) => <div className={'tech-card' + (number === '01' ? ' tech-card-years' : '') + (number === '02' ? ' tech-card-lab' : '') + (number === '04' ? ' tech-card-application' : '')} key={number}>{number === '01' && <img className="tech-card-years-art" src="/media/home/years-20.png" alt="" aria-hidden="true" />}{number === '02' && <img className="tech-card-lab-art" src="/media/home/dionhva-lab-2303931.svg" alt="" aria-hidden="true" />}{number === '04' && <img className="tech-card-application-art" src="/media/home/application-device.png" alt="" aria-hidden="true" />}<span>{number}</span><h3 className="reveal">{title}</h3><p>{description}</p></div>)}</div></section>
+    <section className="contact" id="contact"><div className="contact-inner"><p className="kicker">{content.contact.kicker}</p><h2 className="reveal">{contactTitleLead}<br /><em>{contactTitleEmphasis}</em></h2><a className="mail-link reveal" href={'mailto:' + contactDetails.email}>{contactDetails.email} <ArrowUpRight /></a><ContactForm /><footer className="contact-companies"><div className="contact-company"><b>{contactDetails.factoryName}</b><span>{contactDetails.factoryAddress}</span></div><div className="contact-company"><b>{contactDetails.salesName}</b><span>{contactDetails.salesAddress}</span></div><div className="contact-company contact-methods"><a href={'tel:' + contactDetails.phones[0]}>Tel: {contactDetails.phones[0]}</a><a href={'tel:' + contactDetails.phones[1]}>Tel: {contactDetails.phones[1]}</a><span>Fax: {contactDetails.fax}</span><a href={'mailto:' + contactDetails.email}>{contactDetails.email}</a></div></footer></div></section>
   </main>;
 }
 
 function MaterialStory() {
+  const [materialTitleLead, materialTitleEmphasis] = content.home.materialTitle.split('\n');
   return <section className="material-story" aria-labelledby="material-story-title">
-    <div className="material-story-head"><p className="kicker">MATERIAL IN CONTEXT</p><h2 id="material-story-title" className="reveal">Surfaces for<br /><em>every scale.</em></h2></div>
+    <div className="material-story-head"><p className="kicker">{content.home.materialKicker}</p><h2 id="material-story-title" className="reveal">{materialTitleLead}<br /><em>{materialTitleEmphasis}</em></h2></div>
     <div className="material-story-grid">
-      <article className="material-tile material-tile-detail reveal"><img src={homeMedia.materialDetail} alt="Red self-adhesive material roll detail" width="1440" height="960" loading="lazy" decoding="async" /><span>01 / MATERIAL DETAIL</span></article>
-      <article className="material-tile material-tile-signage reveal"><img src={homeMedia.signage} alt="Illuminated storefront light box and backlit window graphics at night" width="1440" height="960" loading="lazy" decoding="async" /><span>02 / ILLUMINATED SIGNAGE</span></article>
-      <article className="material-tile material-tile-automotive reveal"><img src={homeMedia.automotive} alt="Matte red wrapped sports car photographed outdoors" width="1440" height="960" loading="lazy" decoding="async" /><span>03 / AUTOMOTIVE FINISH</span></article>
+      <article className="material-tile material-tile-detail reveal"><img src={homeMedia.materialDetail} alt={content.home.materialItems[0].description} width="1440" height="960" loading="lazy" decoding="async" /><span>{content.home.materialItems[0].name}</span></article>
+      <article className="material-tile material-tile-signage reveal"><img src={homeMedia.signage} alt={content.home.materialItems[1].description} width="1440" height="960" loading="lazy" decoding="async" /><span>{content.home.materialItems[1].name}</span></article>
+      <article className="material-tile material-tile-automotive reveal"><img src={homeMedia.automotive} alt={content.home.materialItems[2].description} width="1440" height="960" loading="lazy" decoding="async" /><span>{content.home.materialItems[2].name}</span></article>
     </div>
   </section>;
 }
@@ -181,12 +196,16 @@ function ProductShowcase() {
   const nextCategory = categories[nextIndex];
   const touchStartX = useRef(0);
   const touchMoved = useRef(false);
+  const shuffleTimer = useRef(null);
+  useEffect(() => () => window.clearTimeout(shuffleTimer.current), []);
   const selectOffset = offset => {
+    window.clearTimeout(shuffleTimer.current);
     setIsShuffling(true);
     setSelectedIndex(index => (index + offset + categories.length) % categories.length);
-    window.setTimeout(() => setIsShuffling(false), 650);
+    shuffleTimer.current = window.setTimeout(() => setIsShuffling(false), 650);
   };
   const handleKeyDown = event => {
+    if (event.target.closest('input, select, textarea, .cybertruck-viewer')) return;
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       selectOffset(-1);
@@ -212,16 +231,16 @@ function ProductShowcase() {
     }
   };
 
-  const activeCard = <div className="stack-card stack-card-active"><div className="stack-card-content" key={selectedCategory.slug}>
+  const activeCard = <div className={'stack-card-content' + (isClassicColours ? ' stack-card-content-interactive' : '')} key={selectedCategory.slug}>
     {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="lazy" decoding="async" />}
-    <div className="stack-card-copy"><span className="stack-index">{String(selectedIndex + 1).padStart(2, '0')}</span><strong>{selectedCategory.name}</strong><small>{selectedCategory.description}</small><ul className="stack-model-list">{selectedModels.map(model => <li key={model}>{model}</li>)}</ul>{isClassicColours && <div className="cybertruck-swatches" aria-label="Classic colour choices">{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}<span className="stack-cta">Explore products <ArrowUpRight size={20} /></span></div>
-  </div></div>;
-  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} FAMILIES</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`Select ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? activeCard : <a href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`Select ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className="stack-controls"><button type="button" aria-label="Previous product family" onClick={() => selectOffset(-1)}><span aria-hidden="true">←</span></button><button type="button" aria-label="Next product family" onClick={() => selectOffset(1)}><span aria-hidden="true">→</span></button></div></div></section>;
+    <div className="stack-card-copy"><span className="stack-index">{String(selectedIndex + 1).padStart(2, '0')}</span><strong>{selectedCategory.name}</strong><small>{selectedCategory.description}</small><ul className="stack-model-list">{selectedModels.map(model => <li key={model}>{model}</li>)}</ul>{isClassicColours && <div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-pressed={selectedColour === colour.hex} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}{isClassicColours ? <a className="stack-cta" href={'#category=' + selectedCategory.slug}>{content.products.exploreProducts} <ArrowUpRight size={20} /></a> : <span className="stack-cta">{content.products.exploreProducts} <ArrowUpRight size={20} /></span>}</div>
+  </div>;
+  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className="stack-controls"><button type="button" aria-label={content.products.previousFamily} onClick={() => selectOffset(-1)}><span aria-hidden="true">←</span></button><button type="button" aria-label={content.products.nextFamily} onClick={() => selectOffset(1)}><span aria-hidden="true">→</span></button></div></div></section>;
 }
 
 function ProductTable({ items }) {
   const columns = [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))];
-  return <div className="product-spec-table" style={{ '--table-columns': columns.length }}><div className="product-spec-table-head"><span>Product code</span>{columns.map(column => <span key={column}>{column}</span>)}</div>{items.map(item => <div className="product-spec-table-row" key={item.slug}><strong>{item.model}</strong>{columns.map(column => <span key={column}>{item.specs.find(([label]) => label === column)?.[1] || '-'}</span>)}</div>)}</div>;
+  return <div className="product-spec-table" style={{ '--table-columns': columns.length }}><div className="product-spec-table-head"><span>{content.products.productCode}</span>{columns.map(column => <span key={column}>{column}</span>)}</div>{items.map(item => <div className="product-spec-table-row" key={item.slug}><strong><a href={'#product=' + item.slug}>{item.model}</a></strong>{columns.map(column => <span key={column}>{item.specs.find(([label]) => label === column)?.[1] || '-'}</span>)}</div>)}</div>;
 }
 
 function CategoryPage({ category, series }) {
@@ -232,8 +251,9 @@ function CategoryPage({ category, series }) {
   const items = products.filter(product => product.category === category.slug && (!activeSeries || product.group === activeSeries));
   const media = familyMedia[category.slug];
   const isClassicColours = activeSeries === 'Super Chrome Film Classic Colours';
-  const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || 'Custom colour';
-  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? 'Selected' : 'View models'} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">SUPER CHROME FILM / CLASSIC COLOURS</p><h2>Cybertruck<br /><em>colour study.</em></h2><p>Preview the finish across a Cybertruck surface. Drag to rotate and select a classic colour.</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">Surface colour <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label="Classic colour choices">{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{activeSeries && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
+  const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || content.cybertruck.customColour;
+  const [cybertruckTitleLead, cybertruckTitleEmphasis] = content.cybertruck.title.split('\n');
+  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{activeSeries && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
 }
 
 function Detail({ product }) {

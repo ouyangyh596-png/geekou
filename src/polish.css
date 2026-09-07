@@ -1,0 +1,120 @@
+/* A restrained, shared type scale; section order and brand colours stay intact. */
+:root {
+  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}
+body, .home-page { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; }
+.statement h2, .showcase h2, .technology h2, .contact h2,
+.detail-hero h1, .category-page h1 {
+  font-size: clamp(48px, 7.2vw, 108px);
+  line-height: 1.04;
+  letter-spacing: -.055em;
+  font-weight: 500;
+}
+.landing h1 em, .statement h2 em, .showcase h2 em, .technology h2 em,
+.contact h2 em, .detail h1 em, .spec-area h2 em, .material-story h2 em,
+.ppf-sequence-copy h2 em, .cybertruck-config h2 em {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -.045em;
+}
+.landing h1.landing-title { font-weight: 600; line-height: 1.08; letter-spacing: -.045em; word-spacing: .04em; }
+.ppf-sequence-copy h2 { line-height: 1.02; letter-spacing: -.05em; }
+.statement h2 .company-title-years { letter-spacing: -.09em; line-height: .95; padding-right: .035em; }
+.company-layout { min-height: 420px; }
+.company-layout .statement-copy { padding-top: 48px; max-width: 560px; }
+.company-layout .statement-copy p { max-width: 54ch; line-height: 1.7; margin: 0 0 1.3em; font-size: clamp(16px, 1.25vw, 19px); }
+.company-layout .statement-copy p:first-child { font-size: clamp(18px, 1.5vw, 22px); line-height: 1.6; color: #eee0be; }
+.showcase-head > p, .category-page-copy > p:not(.kicker) { line-height: 1.75; }
+.tech-card h3, .series-card h2 { font-size: clamp(20px, 1.65vw, 25px); line-height: 1.25; letter-spacing: -.025em; }
+.tech-card p, .series-card p { font-size: 14px; line-height: 1.7; }
+.tech-intro { line-height: 1.45; letter-spacing: -.025em; }
+.kicker { line-height: 1.6; letter-spacing: .14em; }
+.header nav { font-size: 13px; font-weight: 500; }
+.text-link, .stack-cta { font-weight: 600; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid #4c9dd3;
+  outline-offset: 5px;
+}
+.reveal { transition: opacity .7s ease, transform .85s var(--motion-ease); }
+.series-card { transition: background .25s ease, box-shadow .25s ease; }
+.series-card:hover { background: #eaf3f9; box-shadow: inset 0 -3px #458cbf; }
+.stack-card-active::after { display: none; }
+.stack-card-content { height: 100%; min-height: 100%; }
+.stack-card-copy { display: flex; flex-direction: column; align-items: flex-start; }
+.stack-card-content strong { display: block; font-size: clamp(32px, 4vw, 60px); line-height: 1.08; letter-spacing: -.045em; }
+.stack-card-content small { display: block; line-height: 1.65; }
+.stack-cta { width: max-content; min-height: 44px; margin-top: 15px; border-bottom: 1px solid rgba(255,255,255,.35); }
+.stack-cta svg { transition: transform .25s var(--motion-ease); }
+.stack-cta:hover svg { transform: translate(3px,-3px); }
+.stack-card-interactive { background: #182b39; cursor: default; }
+.stack-card-content-interactive { display: grid; grid-template-rows: minmax(160px, 1fr) auto; padding: 0; }
+.stack-card-content-interactive::after { display: none; }
+.stack-card-content-interactive .cybertruck-viewer { height: 100%; min-height: 160px; border-radius: 0; }
+.stack-card-content-interactive .stack-card-copy { padding: 18px 30px 24px; background: #182b39; }
+.stack-card-content-interactive strong { margin-top: 6px; font-size: clamp(28px, 3vw, 40px); }
+.stack-card-content-interactive small { margin-top: 8px; max-width: 65ch; font-size: 13px; }
+.stack-card-content-interactive .stack-model-list { display: none; }
+.stack-card-content-interactive .cybertruck-swatches { margin: 8px 0 0; max-width: none; gap: 2px; }
+.stack-card-content-interactive .stack-cta { margin-top: 4px; }
+.stack-card-content-interactive .viewer-hint { display: none; }
+.stack-controls button:active { transform: scale(.94); }
+
+/* Colour controls sit beside the stage, never over the model. */
+.cybertruck-config {
+  display: grid;
+  grid-template-columns: minmax(260px, .8fr) minmax(0, 1.5fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+  min-height: 0;
+  padding: clamp(24px, 3vw, 44px);
+}
+.cybertruck-config > div:first-child { position: static; max-width: none; min-width: 0; }
+.cybertruck-config h2 { font-size: clamp(38px, 4vw, 62px); line-height: 1.07; letter-spacing: -.05em; margin: 20px 0; }
+.cybertruck-config p:not(.kicker) { line-height: 1.75; max-width: 38ch; }
+.cybertruck-viewer { height: clamp(340px, 36vw, 500px); background: radial-gradient(ellipse at 50% 38%,#50606a 0%,#263742 48%,#131e27 100%); }
+.viewer-hint { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: #c4d1db; font-size: 11px; letter-spacing: .03em; pointer-events: none; }
+.viewer-placeholder, .viewer-error { display: grid; place-content: center; padding: 28px; color: #e2edf4; text-align: center; }
+.viewer-loading { display: block; white-space: nowrap; color: #edf4f9; font-size: 13px; padding: 10px 16px; border-radius: 30px; background: #21323e; }
+.viewer-error { height: 100%; }
+.viewer-error p { color: #dce8f0 !important; }
+.viewer-error button { color: white; border: 1px solid #8caec5; border-radius: 24px; padding: 12px 18px; }
+.cybertruck-picker-label { max-width: 280px; font-size: 13px; gap: 12px; align-items: baseline; }
+.cybertruck-color-picker { width: min(100%, 280px); height: 44px; background: #fff; padding: 3px; border-radius: 8px; }
+.cybertruck-swatches { gap: 4px; max-width: 300px; }
+.cybertruck-swatches button { width: 36px; height: 36px; border: 6px solid transparent; background-clip: padding-box; }
+.cybertruck-swatches button:hover, .cybertruck-swatches button.is-selected { transform: none; box-shadow: inset 0 0 0 1px #fff, 0 0 0 1px #7098b4; }
+@media (max-width: 800px) {
+  .statement h2, .showcase h2, .technology h2, .contact h2, .category-page h1 { font-size: clamp(42px, 11.5vw, 72px); }
+  .statement, .showcase, .technology { padding-top: 84px; padding-bottom: 84px; }
+  .company-layout { min-height: 0; }
+  .company-layout .statement-copy { padding-top: 36px; padding-bottom: 10px; }
+  .statement-heading h2 { line-height: 1.06; }
+  .stack-card-active { aspect-ratio: auto; min-height: 430px; }
+  .stack-card-content { min-height: 430px; }
+  .stack-card-content strong { font-size: clamp(30px, 8vw, 42px); }
+  .stack-card-content-interactive { grid-template-rows: 240px auto; }
+  .stack-card-content-interactive .stack-card-copy { padding: 20px 22px 24px; }
+  .stack-selector.is-shuffling .stack-card-active { animation: stack-shuffle-mobile 650ms var(--motion-ease); }
+  .cybertruck-config { grid-template-columns: minmax(0,1fr); gap: 28px; padding: 24px; }
+  .cybertruck-config > .cybertruck-viewer { grid-row: 1; height: 300px; }
+  .cybertruck-config h2 { font-size: clamp(38px, 9vw, 56px); }
+  .cybertruck-config .cybertruck-swatches { max-width: 100%; }
+  .viewer-hint { font-size: 10px; bottom: 14px; }
+  .mail-link { font-size: clamp(16px, 5vw, 22px); max-width: 100%; overflow-wrap: anywhere; }
+}
+@keyframes stack-shuffle-mobile {
+  0%,100% { transform: none; }
+  35% { transform: translateX(-8px) rotate(-1deg) scale(.985); }
+  65% { transform: translateX(6px) rotate(.7deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html, html:has(.home-page) { scroll-behavior: auto; }
+  .reveal, .statement-copy p { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .stack-selector *, .series-card, .scroll-art-trigger *, .scroll-art-trigger *::after { animation: none !important; transition: none !important; }
+  .scroll-art-trigger .tech-intro-material, .scroll-art-trigger .tech-card-years-art,
+  .scroll-art-trigger .tech-card-lab-art, .scroll-art-trigger .tech-card-application-art { opacity: var(--art-opacity,.22); transform: none; }
+}

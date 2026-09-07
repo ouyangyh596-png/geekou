@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Verify website
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  verify:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,13 +28,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate website
+        run: pnpm test-release
+
       - name: Build site
         run: pnpm build
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: so-fine-site
-          directory: dist
+      # Cloudflare Pages is connected directly to this repository and deploys
+      # main itself. Do not run a second token-dependent Pages deployment here.

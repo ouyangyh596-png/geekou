@@ -59,6 +59,16 @@ for (const modulePath of ['../src/language.js', '../src/content/company.js', '..
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
   assert.match(source, /import\s*{\s*englishSiteContent\s*}/, `${modulePath} must import centralized English copy`)
 }
+for (const [modulePath, inlineCopy] of [
+  ['../src/main.jsx', ['SUPER CHROME FILM', 'Every layer is considered', 'Preview the finish across a Cybertruck surface']],
+  ['../src/components/PPFScrollSequence.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
+]) {
+  const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
+  assert.match(source, /import\s*{\s*englishSiteContent\s*}/, `${modulePath} must import centralized English copy`)
+  for (const copyValue of inlineCopy) {
+    assert.ok(!source.includes(copyValue), `${modulePath} must not contain inline English copy: ${copyValue}`)
+  }
+}
 assert.deepEqual(englishSiteContent.home.ppfSequence, {
   presentationLabel: 'PPF product motion presentation',
   kicker: 'SO-FINE / PPF SYSTEM',
