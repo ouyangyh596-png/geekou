@@ -51,8 +51,8 @@ export const englishSiteContent = {
     title: '20 years of industrial expertise.',
     paragraphs: [
       'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
-      'Our modern production facilities, well-equipped R&D laboratory and quality-control system combine carefully selected domestic and imported raw materials with deep adhesive and coating expertise.',
-      'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing applications.'
+      'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',
+      'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
     ]
   },
   contact: {

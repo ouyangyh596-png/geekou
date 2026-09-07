@@ -52,6 +52,11 @@ assert.ok(englishSiteContent.products.productLibrary)
 assert.ok(englishSiteContent.cybertruck.title)
 assert.equal(copy.en.products, englishSiteContent.navigation.products)
 assert.equal(companyProfile.title, englishSiteContent.company.title)
+assert.deepEqual(englishSiteContent.company.paragraphs, [
+  'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
+  'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',
+  'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
+])
 assert.equal(capabilities[2][1], englishSiteContent.technology.capabilities[2].name)
 assert.equal(brochureSeries['car-wrapping'].displayName, englishSiteContent.categories['car-wrapping'].displayName)
 
