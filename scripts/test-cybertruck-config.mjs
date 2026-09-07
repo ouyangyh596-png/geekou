@@ -4,7 +4,19 @@ import { classicColours, CYBERTRUCK_MODEL_PATH, DEFAULT_CLASSIC_COLOUR, isLikely
 assert.equal(CYBERTRUCK_MODEL_PATH, '/models/Tesla_Cybertruck3.glb')
 assert.ok(classicColours.length >= 6)
 assert.equal(classicColours[0].id, 'china-red')
-assert.equal(DEFAULT_CLASSIC_COLOUR, '#1E6B3A')
+const expectedClassicColours = new Map([
+  ['burgundy-red', '#640000'],
+  ['dark-green', '#003816'],
+  ['silver', '#B4B4B4'],
+  ['china-red', '#A0000F'],
+  ['tungsten-steel', '#646464'],
+  ['twilight-purple', '#5E1287'],
+  ['purple-gold', '#AD5400']
+])
+for (const [id, expectedHex] of expectedClassicColours) {
+  assert.equal(classicColours.find(colour => colour.id === id)?.hex, expectedHex, `${id} uses the approved RGB value`)
+}
+assert.equal(DEFAULT_CLASSIC_COLOUR, '#003816')
 assert.equal(isLikelyCybertruckBodyMaterial('Body_Paint'), true)
 assert.equal(isLikelyCybertruckBodyMaterial('Front_Glass'), false)
 const singleMaterial = { name: 'paint' }
