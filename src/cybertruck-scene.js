@@ -9,8 +9,8 @@ export function createCybertruckInstance(source, roughnessMap = null) {
   scene.traverse(object => {
     if (!object.isMesh) return
     object.material = mapMaterialShape(object.material, original => {
-      if (!/^(body|car_paint)(?:$|[_.])/i.test(object.name) &&
-          !/^(body|car_paint)_mat/i.test(original.name)) return original
+      if (!/^car_paint(?:$|[_.])/i.test(object.name) &&
+          !/^car_paint_mat/i.test(original.name)) return original
       const material = new THREE.MeshPhysicalMaterial({
         name: original.name,
         color: original.color,

@@ -12,7 +12,9 @@ paint.name = 'car_paint_mat'
 const body = new THREE.Mesh(geometry, paint)
 body.name = 'car_paint'
 source.add(body)
-const skirts = new THREE.Mesh(geometry, [paint])
+const trim = new THREE.MeshPhysicalMaterial({ color: '#08090a', opacity: 1, transparent: false })
+trim.name = 'body_mat'
+const skirts = new THREE.Mesh(geometry, [trim])
 skirts.name = 'body'
 source.add(skirts)
 const glass = new THREE.Mesh(geometry, new THREE.MeshPhysicalMaterial({ opacity: .3, transparent: true }))
@@ -22,9 +24,11 @@ const a = createCybertruckInstance(source)
 const b = createCybertruckInstance(source)
 assert.notEqual(a.scene, source)
 assert.notEqual(a.scene, b.scene)
-assert.equal(a.paintMaterials.length, 2)
+assert.equal(a.paintMaterials.length, 1, 'only the dedicated car-paint surface changes colour')
 assert.equal(Array.isArray(a.scene.children[0].material), false, 'single-material meshes must still render without groups')
 assert.equal(Array.isArray(a.scene.children[1].material), true)
+assert.equal(a.scene.children[1].material[0], trim, 'wheel arches, skirts and chassis keep the exported dark body material')
+assert.equal(a.scene.children[1].material[0].color.getHexString(), '08090a')
 assert.equal(a.scene.children[0].geometry, geometry, 'geometry is shared read-only')
 for (const material of a.paintMaterials) {
   assert.equal(material.opacity, paint.opacity)
@@ -40,9 +44,10 @@ assert.equal(a.scene.children[2].material.opacity, .3, 'glass alpha stays untouc
 let disposed = 0
 a.paintMaterials.forEach(material => material.addEventListener('dispose', () => disposed++))
 a.dispose()
-assert.equal(disposed, 2, 'owned paint shaders are released')
+assert.equal(disposed, 1, 'owned paint shader is released')
 b.dispose()
 geometry.dispose()
 paint.dispose()
+trim.dispose()
 glass.material.dispose()
 console.log('Cybertruck isolation, material shape, alpha and disposal checks passed')
