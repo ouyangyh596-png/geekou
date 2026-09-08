@@ -13,6 +13,7 @@
     "test-content": "node scripts/test-site-content.mjs",
     "test-language": "node scripts/test-language.mjs",
     "test-scroll": "node scripts/test-scroll-navigation.mjs",
+    "test-header-directory": "node scripts/test-header-product-directory.mjs",
     "test-request-validation": "node scripts/test-request-validation.mjs",
     "test-api": "node scripts/test-api.mjs",
     "test-media": "node scripts/test-media-manifest.mjs",

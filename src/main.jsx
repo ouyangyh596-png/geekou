@@ -37,6 +37,18 @@ function Logo() {
   return <a className="logo" href="#top"><img src="/so-fine-logo.svg" alt="SO-FINE" /></a>;
 }
 
+function ProductDirectory({ categories, label, onNavigate }) {
+  return <div className="product-nav-item">
+    <a className="nav-link" href="#products" onClick={event => onNavigate('#products', event)}>{label}</a>
+    <div className="product-directory" aria-label="Product families">
+      <span className="product-directory-label">Product families</span>
+      <ul>
+        {categories.map(category => <li key={category.slug}><a href={`#category=${category.slug}`} onClick={event => onNavigate(`#category=${category.slug}`, event)}>{category.name}</a></li>)}
+      </ul>
+    </div>
+  </div>;
+}
+
 function Header() {
   const [open, setOpen] = useState(false);
   const { lang, change, t } = useLanguage();
@@ -50,10 +62,10 @@ function Header() {
   return <header className="header"><div className="header-inner">
     <Logo />
     <nav id="primary-navigation" className={open ? 'nav-open' : ''}>
-      <a href="#products" onClick={event => go('#products', event)}>{t('products')}</a>
-      <a href="#technology" onClick={event => go('#technology', event)}>{t('technology')}</a>
-      <a href="#company" onClick={event => go('#company', event)}>{t('company')}</a>
-      <a href="#contact" onClick={event => go('#contact', event)}>{t('contact')}</a>
+      <ProductDirectory categories={categories} label={t('products')} onNavigate={go} />
+      <a className="nav-link" href="#technology" onClick={event => go('#technology', event)}>{t('technology')}</a>
+      <a className="nav-link" href="#company" onClick={event => go('#company', event)}>{t('company')}</a>
+      <a className="nav-link" href="#contact" onClick={event => go('#contact', event)}>{t('contact')}</a>
     </nav>
     <div className="header-actions">
       <select className="language-select" aria-label={content.navigation.languageLabel} value={lang} onChange={event => change(event.target.value)}>
