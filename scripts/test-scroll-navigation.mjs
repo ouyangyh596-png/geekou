@@ -1,10 +1,19 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { decideHashNavigation } from '../src/scroll-navigation.js'
+
+const mainSource = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8')
 
 assert.deepEqual(
   decideHashNavigation({ previousHash: '#category=one-way-vision', nextHash: '#products', savedHomeScroll: 684 }),
   { type: 'restore', top: 684 },
   'returning from a category to #products restores the exact saved home position'
+)
+
+assert.match(
+  mainSource,
+  /if \(action\.type === 'preserve'\) return;/,
+  'the preserve action must be an explicit scroll no-op'
 )
 
 assert.deepEqual(

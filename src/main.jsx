@@ -264,6 +264,7 @@ function App() {
     const savedScroll = () => Number(sessionStorage.getItem('sofine-home-scroll') || 0);
     const saveHomeScroll = () => sessionStorage.setItem('sofine-home-scroll', String(window.scrollY));
     const applyNavigation = action => window.setTimeout(() => {
+      if (action.type === 'preserve') return;
       if (action.type === 'restore' || action.type === 'top') {
         window.scrollTo({ top: action.type === 'restore' ? action.top : 0, behavior: 'auto' });
       } else {
