@@ -37,4 +37,44 @@ assert.deepEqual(
   'detail and category routes start at the top'
 )
 
+assert.deepEqual(
+  decideHashNavigation({
+    previousHash: '#category=one-way-vision',
+    nextHash: '#category=one-way-vision&series=Cast%20PVC',
+    savedHomeScroll: 684
+  }),
+  { type: 'preserve' },
+  'selecting a series within the current category preserves the scroll position'
+)
+
+assert.deepEqual(
+  decideHashNavigation({
+    previousHash: '#category=one-way-vision&series=Cast%20PVC',
+    nextHash: '#category=one-way-vision&series=Polymeric%20PVC',
+    savedHomeScroll: 684
+  }),
+  { type: 'preserve' },
+  'switching series within the current category preserves the scroll position'
+)
+
+assert.deepEqual(
+  decideHashNavigation({
+    previousHash: '#category=one-way-vision',
+    nextHash: '#category=self-adhesive-vinyl&series=Polymeric%20PVC',
+    savedHomeScroll: 684
+  }),
+  { type: 'top' },
+  'switching categories starts at the top'
+)
+
+assert.deepEqual(
+  decideHashNavigation({
+    previousHash: '',
+    nextHash: '#category=one-way-vision&series=Cast%20PVC',
+    savedHomeScroll: 684
+  }),
+  { type: 'top' },
+  'opening a series URL directly starts at the top'
+)
+
 console.log('Validated hash navigation decisions.')
