@@ -52,6 +52,17 @@ assert.ok(englishSiteContent.products.productLibrary)
 assert.ok(englishSiteContent.cybertruck.title)
 assert.equal(copy.en.products, englishSiteContent.navigation.products)
 assert.equal(companyProfile.title, englishSiteContent.company.title)
+assert.deepEqual(englishSiteContent.technology, {
+  kicker: 'THE SO-FINE DIFFERENCE',
+  title: 'Precision is\nthe foundation.',
+  introduction: 'Every layer is considered — from selected raw materials to final inspection.',
+  capabilities: [
+    { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials' },
+    { name: 'R&D and Quality Control', description: 'Dedicated laboratory testing and well controlled production flow' },
+    { name: 'Integrated Operation', description: 'Raw material handling, coating know-how, manufacturing, service' },
+    { name: 'Application Expertise', description: 'Solutions for digital printing, signage and automotive detailing' }
+  ]
+})
 assert.deepEqual(englishSiteContent.company.paragraphs, [
   'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
   'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',

@@ -40,10 +40,10 @@ export const englishSiteContent = {
     title: 'Precision is\nthe foundation.',
     introduction: 'Every layer is considered — from selected raw materials to final inspection.',
     capabilities: [
-      { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials.' },
-      { name: 'R&D and quality control', description: 'Dedicated laboratory testing and controlled production standards.' },
-      { name: 'Integrated manufacturing', description: 'Material handling, coating expertise, manufacturing, sales and service.' },
-      { name: 'Application expertise', description: 'Solutions for digital printing, signage and automotive detailing.' }
+      { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials' },
+      { name: 'R&D and Quality Control', description: 'Dedicated laboratory testing and well controlled production flow' },
+      { name: 'Integrated Operation', description: 'Raw material handling, coating know-how, manufacturing, service' },
+      { name: 'Application Expertise', description: 'Solutions for digital printing, signage and automotive detailing' }
     ]
   },
   company: {
