@@ -147,6 +147,14 @@ export const englishSiteContent = {
         { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
         { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
       ]
+    },
+    'decorative-film': {
+      displayName: 'Decorative Film',
+      eyebrow: 'SO-FINE / DECORATIVE FILM',
+      intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
+      series: [
+        { name: 'Decorative Film', description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.' }
+      ]
     }
   },
   products: {

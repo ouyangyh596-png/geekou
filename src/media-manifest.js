@@ -46,5 +46,10 @@ export const familyMedia = {
     hero: '/media/families/interior-wall-decals.webp',
     preview: '/media/families/interior-wall-decals.webp',
     alt: 'Interior bedroom with an installed botanical wall decal mural'
+  },
+  'decorative-film': {
+    hero: '/media/families/interior-wall-decals.webp',
+    preview: '/media/families/interior-wall-decals.webp',
+    alt: 'Interior bedroom with an installed botanical wall decal mural'
   }
 };

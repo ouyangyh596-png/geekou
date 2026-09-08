@@ -44,7 +44,7 @@ for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
   assert.equal(typeof englishSiteContent.navigation[key], 'string')
   assert.ok(englishSiteContent.navigation[key].trim())
 }
-for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals']) {
+for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals', 'decorative-film']) {
   assert.ok(englishSiteContent.categories[slug], `Missing category copy: ${slug}`)
 }
 assert.ok(englishSiteContent.home.heroTitle)
@@ -132,6 +132,28 @@ assert.deepEqual(
     { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
     { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
   ]
+)
+assert.equal(
+  englishSiteContent.categories['decorative-film'].intro,
+  'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+)
+assert.deepEqual(englishSiteContent.categories['decorative-film'].series, [
+  {
+    name: 'Decorative Film',
+    description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+  }
+])
+assert.deepEqual(
+  brochureSeries['decorative-film'],
+  {
+    displayName: 'Decorative Film',
+    eyebrow: 'SO-FINE / DECORATIVE FILM',
+    intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
+    series: [[
+      'Decorative Film',
+      'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+    ]]
+  }
 )
 
 for (const modulePath of ['../src/language.js', '../src/content/company.js', '../src/brochure-data.js']) {

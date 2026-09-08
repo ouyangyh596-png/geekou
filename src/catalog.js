@@ -6,7 +6,8 @@ const images = {
   'car-wrapping': '/products/polymeric car wrapping film-1.jpg',
   overlaminate: '/products/overlaminate-family.svg',
   'cold-lamination': '/products/sf3180-1.jpg',
-  'wall-decals': '/products/sf4001-1.jpg'
+  'wall-decals': '/products/sf4001-1.jpg',
+  'decorative-film': '/media/families/interior-wall-decals.webp'
 }
 
 const modelImages = {
@@ -32,7 +33,8 @@ const familyTitles = {
   'car-wrapping': 'Car Wrap Film',
   overlaminate: 'Overlaminate Film',
   'cold-lamination': 'Cold Lamination Film',
-  'wall-decals': 'Wall Decals Self-Adhesive Material'
+  'wall-decals': 'Wall Decals Self-Adhesive Material',
+  'decorative-film': 'Decorative Film'
 }
 
 const familyDescriptions = {
@@ -43,7 +45,8 @@ const familyDescriptions = {
   'car-wrapping': 'High-conformability vehicle wrap film.',
   overlaminate: 'Protective PVC overlaminate film for printed graphics.',
   'cold-lamination': 'Cold lamination film for graphic protection.',
-  'wall-decals': 'Decorative self-adhesive material for interior surfaces.'
+  'wall-decals': 'Decorative self-adhesive material for interior surfaces.',
+  'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
 }
 
 const compatible = 'SOL / ESOL / UV / Latex'
