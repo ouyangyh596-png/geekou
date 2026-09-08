@@ -230,10 +230,10 @@ html:has(.home-page){scroll-snap-type:none}
 
 /* Header product-family directory */
 @media(min-width:801px){
-  .header-inner{height:96px}
-  .header .logo{width:122px;height:122px}
+  .header-inner{height:112px}
+  .header .logo{width:148px;height:148px}
   .header nav{align-items:center}
-  .product-nav-item{position:relative;display:flex;align-items:center;height:96px}
+  .product-nav-item{position:relative;display:flex;align-items:center;height:112px}
   .header .nav-link{position:relative;display:inline-flex;align-items:center;min-height:44px}
   .header .nav-link::after{content:'';position:absolute;right:0;bottom:1px;left:0;height:1px;background:var(--blue);transform:scaleX(0);transform-origin:right;transition:transform .28s cubic-bezier(.22,1,.36,1)}
   .header .nav-link:hover::after,.header .nav-link:focus-visible::after,.product-nav-item:hover>.nav-link::after,.product-nav-item:focus-within>.nav-link::after{transform:scaleX(1);transform-origin:left}

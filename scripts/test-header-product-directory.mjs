@@ -17,5 +17,6 @@ assert.match(styles, /\.product-nav-item:hover \.product-directory/, 'the dropdo
 assert.match(styles, /\.product-nav-item:focus-within \.product-directory/, 'the dropdown opens for keyboard focus');
 assert.match(styles, /@media\(max-width:800px\)\{\s*\.product-nav-item\{display:block\}\s*\.product-directory\{display:none/, 'the desktop dropdown is suppressed on mobile');
 assert.match(styles, /\.nav-link::after/, 'the primary navigation underline is styled');
+assert.match(styles, /\.header \.logo\{width:148px;height:148px\}/, 'the desktop brand mark has the enlarged display size');
 
 console.log('PASS: header product directory contract is present');
