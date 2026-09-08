@@ -74,7 +74,7 @@ export const englishSiteContent = {
     'one-way-vision': {
       displayName: 'One Way Vision Film',
       eyebrow: 'SO-FINE / ONE WAY VISION FILM',
-      intro: 'Perforated printable films made with selected raw materials and an adhesive formulation for vehicle, retail and building-glass graphics. They apply easily and remove without residue.',
+      intro: 'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.',
       series: [
         { name: 'Monomeric PVC', description: 'Perforated film with a choice of ratios for glass graphics and easy viewing through the reverse side.' },
         { name: 'Polymeric PVC', description: 'Perforated film for durable, high-conformability printed graphics.' },

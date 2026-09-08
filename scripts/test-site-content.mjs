@@ -70,6 +70,10 @@ assert.deepEqual(englishSiteContent.company.paragraphs, [
 ])
 assert.equal(capabilities[2][1], englishSiteContent.technology.capabilities[2].name)
 assert.equal(brochureSeries['car-wrapping'].displayName, englishSiteContent.categories['car-wrapping'].displayName)
+assert.equal(
+  englishSiteContent.categories['one-way-vision'].intro,
+  'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.'
+)
 
 for (const modulePath of ['../src/language.js', '../src/content/company.js', '../src/brochure-data.js']) {
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
