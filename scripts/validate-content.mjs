@@ -34,7 +34,8 @@ const expectedCatalogue = {
     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
     ['SF3400', 'Floor Lamination PVC'], ['SF3401', 'Floor Lamination PVC']
   ],
-  'wall-decals': [['SF4001', 'PVC-Coated Polyester Fabric'], ['SF4002', '100% Polyester']]
+  'wall-decals': [['SF4001', 'PVC-Coated Polyester Fabric'], ['SF4002', '100% Polyester']],
+  'decorative-film': []
 }
 
 const expectedCategories = Object.keys(expectedCatalogue)
@@ -56,12 +57,13 @@ assert.deepEqual(
   [
     'One Way Vision Film',
     'Self-Adhesive Vinyl',
-    'Translucent Film - SF6000 Series',
+    'Translucent Film',
     'Paint Protection Film',
     'Car Wrap Film',
     'Overlaminate Film',
     'Cold Lamination Film',
-    'Wall Decals Self-Adhesive Material'
+    'Wall Decals Self-Adhesive Material',
+    'Decorative Film'
   ],
   'Every brochure family must have its exact visible display name'
 )
@@ -106,8 +108,11 @@ assert.ok(sf1503.specs.some(([label, value]) => label === 'Print compatibility' 
 
 const perforatedPet = brochureSeries['one-way-vision'].series.find(([name]) => name === 'Perforated PET')
 assert.ok(perforatedPet, 'Perforated PET series is missing')
-assert.match(perforatedPet[1], /30%/, 'Perforated PET must state its 30% ratio')
-assert.doesNotMatch(perforatedPet[1], /20%/, 'Perforated PET must not claim a 20% ratio')
+assert.equal(
+  perforatedPet[1],
+  'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.',
+  'Perforated PET must preserve the approved English copy'
+)
 
 const sf6000 = catalogProducts.find(product => product.model === 'SF6000')
 assert.ok(sf6000, 'SF6000 is missing')
