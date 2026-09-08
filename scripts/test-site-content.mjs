@@ -75,12 +75,12 @@ assert.equal(
   'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.'
 )
 assert.deepEqual(
-  englishSiteContent.categories['one-way-vision'].series.map(({ description }) => description),
+  englishSiteContent.categories['one-way-vision'].series,
   [
-    'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.',
-    'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.',
-    'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.',
-    'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.'
+    { name: 'Monomeric PVC', description: 'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.' },
+    { name: 'Polymeric PVC', description: 'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.' },
+    { name: 'Cast PVC', description: 'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.' },
+    { name: 'Perforated PET', description: 'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.' }
   ]
 )
 assert.equal(
@@ -88,12 +88,12 @@ assert.equal(
   'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive and liner configurations for large-format solvent, eco-solvent, UV and latex printing.'
 )
 assert.deepEqual(
-  englishSiteContent.categories['self-adhesive-vinyl'].series.map(({ description }) => description),
+  englishSiteContent.categories['self-adhesive-vinyl'].series,
   [
-    'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!',
-    'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.',
-    'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.',
-    'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.'
+    { name: 'Monomeric PVC', description: 'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!' },
+    { name: 'Polymeric PVC', description: 'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.' },
+    { name: 'Super Transparent PVC Vinyl', description: 'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.' },
+    { name: 'Super Glossy PVC Vinyl', description: 'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.' }
   ]
 )
 assert.equal(
@@ -127,10 +127,10 @@ assert.equal(
   'Decorative self-adhesive wall-covering materials that conform around 90\u00b0 corners without lifting, provide a customized and unique touch to any space.'
 )
 assert.deepEqual(
-  englishSiteContent.categories['wall-decals'].series.map(({ description }) => description),
+  englishSiteContent.categories['wall-decals'].series,
   [
-    'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.',
-    '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.'
+    { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
+    { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
   ]
 )
 
