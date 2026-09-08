@@ -173,8 +173,8 @@ export const catalogProducts = [
   wrap('cast-wrap-vinyl', 'SF5503', 'Ultra Clear Printable Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Matte PET liner'),
   wrap('cast-wrap-vinyl', 'SF5513', 'Ultra Clear Printable Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Micro-embossed PET liner'),
   wrap('cast-wrap-vinyl', 'SF9908', 'Reflective Printable Film', '170 µm', 'Reflective film glossy', 'Transparent removable', 'Double PE-coated paper liner'),
-  wrap('polymeric-wrap-vinyl', 'SF5505', 'Polymeric PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
-  wrap('polymeric-wrap-vinyl', 'SF5525', 'Polymeric PVC Wrap Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
+  wrap('polymeric-wrap-vinyl', 'SF5505', 'White Printable Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
+  wrap('polymeric-wrap-vinyl', 'SF5525', 'White Printable Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
   wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
   wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent removable', 'Matte PET liner', null),
   ...[
@@ -194,8 +194,8 @@ export const catalogProducts = [
   overlaminate('cast-wrap-vinyl', 'SF5603', 'Overlaminate Film', '30 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
   overlaminate('cast-wrap-vinyl', 'SF5606', 'Overlaminate Film', '50 µm', 'Glossy self-healing', 'Transparent permanent', 'Matte PET liner'),
   overlaminate('cast-wrap-vinyl', 'SF5609', 'Overlaminate Film', '50 µm', 'Matte grainy textured', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('polymeric-wrap-vinyl', 'SF5604', 'Polymeric PVC Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('polymeric-wrap-vinyl', 'SF5607', 'Polymeric PVC Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5604', 'Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5607', 'Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner'),
 
   coldLaminate('SF3180', 'Monomeric PVC', '70 µm', 'Glossy', 'Transparent permanent', 'PE-coated paper liner'),
   coldLaminate('SF3181', 'Monomeric PVC', '70 µm', 'Semi-matte', 'Transparent permanent', 'PE-coated paper liner'),

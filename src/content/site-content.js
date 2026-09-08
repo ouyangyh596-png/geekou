@@ -124,8 +124,8 @@ export const englishSiteContent = {
       eyebrow: 'AUTOFACE / POLYMERIC WRAP VINYL',
       intro: 'Polymeric PVC wrap and overlaminate films with dimensional stability for vehicle graphics and printed-surface protection.',
       series: [
-        { name: 'Polymeric PVC Wrap Film', description: 'Flexible polymeric wrap films for vehicle graphics.' },
-        { name: 'Polymeric PVC Overlaminate Film', description: 'Polymeric PVC overlaminate options in matte and super-glossy finishes.' }
+        { name: 'White Printable Film', description: 'Modified high-performance PVC vinyl with high-flexibility polymeric formula, lower shrinkage than standard calendared vinyl, perfectly for bus & commercial vehicle advertising, mid-term outdoor vehicle graphics.' },
+        { name: 'Overlaminate Film', description: 'Good flexibility & moderate conformability, fits gentle compound curves and rivets. Built-in UV stabilizer to resist ink fading and yellowing. Available in glossy / matte finish.' }
       ]
     },
     'super-chrome-film': {

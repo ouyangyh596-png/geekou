@@ -26,8 +26,8 @@ const expectedCatalogue = {
     ['SF5601', 'Overlaminate Film'], ['SF5602', 'Overlaminate Film'], ['SF5603', 'Overlaminate Film'], ['SF5606', 'Overlaminate Film'], ['SF5609', 'Overlaminate Film']
   ],
   'polymeric-wrap-vinyl': [
-    ['SF5505', 'Polymeric PVC Wrap Film'], ['SF5525', 'Polymeric PVC Wrap Film'],
-    ['SF5604', 'Polymeric PVC Overlaminate Film'], ['SF5607', 'Polymeric PVC Overlaminate Film']
+    ['SF5505', 'White Printable Film'], ['SF5525', 'White Printable Film'],
+    ['SF5604', 'Overlaminate Film'], ['SF5607', 'Overlaminate Film']
   ],
   'super-chrome-film': [
     ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours'],

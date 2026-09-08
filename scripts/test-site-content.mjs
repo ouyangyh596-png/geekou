@@ -135,6 +135,16 @@ assert.deepEqual(englishSiteContent.categories['cast-wrap-vinyl'].series, [
   }
 ])
 assert.equal(englishSiteContent.categories['polymeric-wrap-vinyl'].displayName, 'Polymeric Wrap Vinyl')
+assert.deepEqual(englishSiteContent.categories['polymeric-wrap-vinyl'].series, [
+  {
+    name: 'White Printable Film',
+    description: 'Modified high-performance PVC vinyl with high-flexibility polymeric formula, lower shrinkage than standard calendared vinyl, perfectly for bus & commercial vehicle advertising, mid-term outdoor vehicle graphics.'
+  },
+  {
+    name: 'Overlaminate Film',
+    description: 'Good flexibility & moderate conformability, fits gentle compound curves and rivets. Built-in UV stabilizer to resist ink fading and yellowing. Available in glossy / matte finish.'
+  }
+])
 assert.equal(englishSiteContent.categories['super-chrome-film'].displayName, 'Super Chrome Film')
 assert.equal(englishSiteContent.categories['pvc-free-film'].displayName, 'PVC-Free Film')
 assert.equal(
