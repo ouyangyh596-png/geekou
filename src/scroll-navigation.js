@@ -1,6 +1,6 @@
 const HOME_ANCHORS = new Set(['#products', '#technology', '#company', '#contact'])
 
-const isDetailRoute = hash => hash.startsWith('#product=') || hash.startsWith('#category=')
+const isDetailRoute = hash => hash.startsWith('#category=')
 
 const getCategory = hash => {
   if (!hash.startsWith('#category=')) return ''

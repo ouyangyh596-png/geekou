@@ -48,16 +48,14 @@ assert.match(
   /\{items\.length > 0 && <ProductTable items=\{items\} \/>\}/,
   'CategoryPage omits the product specification table when the selected series has no items'
 );
-assert.match(
-  main,
-  /alt=\{productImageAlt\(product, image, index\)\}/,
-  'detail-gallery images use fallback-aware alt text'
-);
-assert.match(
+assert.doesNotMatch(
   main,
   /href=\{'#product=' \+ item\.slug\}/,
-  'product codes link to their full detail pages'
+  'product codes must not link to model detail pages'
 );
+assert.match(main, /<strong>\{item\.model\}<\/strong>/, 'product codes render as plain table text');
+assert.doesNotMatch(main, /function Detail\(/, 'model detail content must be removed');
+assert.doesNotMatch(main, /hash\.startsWith\('#product='\)/, 'model detail hash routes must be removed');
 assert.match(main, /href="#products"/, 'the all-families hash link remains available');
 
 assert.match(

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { decideHashNavigation } from '../src/scroll-navigation.js'
+import { decideHashNavigation, isHomeRoute } from '../src/scroll-navigation.js'
 
 const mainSource = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8')
 
@@ -16,11 +16,7 @@ assert.match(
   'the preserve action must be an explicit scroll no-op'
 )
 
-assert.deepEqual(
-  decideHashNavigation({ previousHash: '#product=sf1413', nextHash: '#products', savedHomeScroll: 421 }),
-  { type: 'restore', top: 421 },
-  'returning from a product to #products restores the exact saved home position'
-)
+assert.equal(isHomeRoute('#product=sf1413'), true, 'retired product-detail hashes resolve as the home page')
 
 assert.deepEqual(
   decideHashNavigation({ previousHash: '#products', nextHash: '#top', savedHomeScroll: 684 }),
@@ -38,12 +34,6 @@ assert.deepEqual(
   decideHashNavigation({ previousHash: '', nextHash: '#products', savedHomeScroll: 684 }),
   { type: 'anchor', id: 'products' },
   'a direct home #products link scrolls to the product section'
-)
-
-assert.deepEqual(
-  decideHashNavigation({ previousHash: '#products', nextHash: '#product=sf1413', savedHomeScroll: 684 }),
-  { type: 'top' },
-  'detail and category routes start at the top'
 )
 
 assert.deepEqual(

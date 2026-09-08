@@ -11,7 +11,6 @@ import { readInquiryError } from './inquiry-errors.js';
 import { decideHashNavigation, isHomeRoute } from './scroll-navigation.js';
 import { languageOptions, useLanguage } from './language.js';
 import { familyMedia, homeMedia } from './media-manifest.js';
-import { productImageAlt } from './product-media.js';
 import PPFScrollSequence from './components/PPFScrollSequence.jsx';
 import PreviewBoundary from './components/PreviewBoundary.jsx';
 import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
@@ -248,7 +247,7 @@ function ProductShowcase() {
 
 function ProductTable({ items }) {
   const columns = [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))];
-  return <div className="product-spec-table" style={{ '--table-columns': columns.length }}><div className="product-spec-table-head"><span>{content.products.productCode}</span>{columns.map(column => <span key={column}>{column}</span>)}</div>{items.map(item => <div className="product-spec-table-row" key={item.slug}><strong><a href={'#product=' + item.slug}>{item.model}</a></strong>{columns.map(column => <span key={column}>{item.specs.find(([label]) => label === column)?.[1] || '-'}</span>)}</div>)}</div>;
+  return <div className="product-spec-table" style={{ '--table-columns': columns.length }}><div className="product-spec-table-head"><span>{content.products.productCode}</span>{columns.map(column => <span key={column}>{column}</span>)}</div>{items.map(item => <div className="product-spec-table-row" key={item.slug}><strong>{item.model}</strong>{columns.map(column => <span key={column}>{item.specs.find(([label]) => label === column)?.[1] || '-'}</span>)}</div>)}</div>;
 }
 
 function CategoryPage({ category, series }) {
@@ -262,11 +261,6 @@ function CategoryPage({ category, series }) {
   const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || content.cybertruck.customColour;
   const [cybertruckTitleLead, cybertruckTitleEmphasis] = content.cybertruck.title.split('\n');
   return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{items.length > 0 && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
-}
-
-function Detail({ product }) {
-  const { t } = useLanguage();
-  return <main className="detail"><Header /><div className="detail-hero"><div><p className="kicker">{product.family} / {t('productDetail')}</p><div className="detail-model">{product.model}</div><h1><Lines text={product.title} /></h1><p>{product.description}</p></div><div className="detail-gallery">{(product.gallery || [product.image]).map((image, index) => <div className="detail-hero-image" key={image}><img src={image} alt={productImageAlt(product, image, index)} /><span>{product.model}</span></div>)}</div></div><div className="spec-area"><div><p className="kicker">{t('specs')}</p><h2>{t('made')}<br /><em>{t('perform')}</em></h2></div><div className="spec-table">{product.specs.map(([label, value], index) => <div key={label + '-' + index}><span>{label}</span><b>{value}</b></div>)}</div></div><div className="detail-next"><a href="#products">← {t('back')}</a><a href="#contact">{t('request')} <ArrowUpRight size={16} /></a></div></main>;
 }
 
 function App() {
@@ -302,14 +296,12 @@ function App() {
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
-  const slug = hash.startsWith('#product=') ? hash.replace('#product=', '') : '';
   const categoryParams = hash.startsWith('#category=') ? new URLSearchParams(hash.slice(1)) : null;
   const categorySlug = categoryParams?.get('category') || '';
   const series = categoryParams?.get('series') || '';
-  const product = products.find(item => item.slug === slug);
   const category = categories.find(item => item.slug === categorySlug);
   if (hash === '#admin') return <AdminPage />;
-  return product ? <Detail product={product} /> : category ? <CategoryPage category={category} series={series} /> : <Home />;
+  return category ? <CategoryPage category={category} series={series} /> : <Home />;
 }
 
 createRoot(document.getElementById('root')).render(<App />);
