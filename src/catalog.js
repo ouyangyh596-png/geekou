@@ -178,16 +178,16 @@ export const catalogProducts = [
   wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
   wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent removable', 'Matte PET liner', null),
   ...[
-    ['AF-50202M', 'China Red'], ['AF-50403M', 'Maillard Copper'], ['AF-50880M', 'Purple Gold'],
-    ['AF-50720M', 'Bluish Green'], ['AF-50800M', 'Bright Yellow'], ['AF-50810M', 'Glaze Yellow'],
-    ['AF-50280M', 'Burgundy Red'], ['AF-50700M', 'Green'], ['AF-50521M', 'Twilight Purple'],
-    ['AF-50100M', 'Silver'], ['AF-50601M', 'Dark Blue'], ['AF-50701M', 'Dark Green'],
-    ['AF-50405M', 'Tungsten Steel'], ['AF-50850M', 'Rose Gold']
+    ['AF-20202M', 'China Red'], ['AF-20403M', 'Maillard Copper'], ['AF-20880M', 'Purple Gold'],
+    ['AF-20720M', 'Bluish Green'], ['AF-20800M', 'Bright Yellow'], ['AF-20810M', 'Glaze Yellow'],
+    ['AF-20280M', 'Burgundy Red'], ['AF-20700M', 'Green'], ['AF-20521M', 'Twilight Purple'],
+    ['AF-20100M', 'Silver'], ['AF-20601M', 'Dark Blue'], ['AF-20701M', 'Dark Green'],
+    ['AF-20405M', 'Tungsten Steel'], ['AF-20850M', 'Rose Gold']
   ].map(([model, color]) => product('super-chrome-film', 'Super Chrome Film Classic Colours', model, [['Color', color]], {
     title: color, description: `Classic ${color.toLowerCase()} car wrap film.`
   })),
 
-  wrap('super-chrome-film', 'AF50100G', 'Super Chrome Film Classic Colours', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
+  wrap('super-chrome-film', 'AF-20100G', 'Super Chrome Film Classic Colours', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
 
   overlaminate('cast-wrap-vinyl', 'SF5601', 'Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
   overlaminate('cast-wrap-vinyl', 'SF5602', 'Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),

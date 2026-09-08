@@ -30,8 +30,8 @@ const expectedCatalogue = {
     ['SF5604', 'Overlaminate Film'], ['SF5607', 'Overlaminate Film']
   ],
   'super-chrome-film': [
-    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours'],
-    ['AF50100G', 'Super Chrome Film Classic Colours']
+    ['AF-20202M', 'Super Chrome Film Classic Colours'], ['AF-20403M', 'Super Chrome Film Classic Colours'], ['AF-20880M', 'Super Chrome Film Classic Colours'], ['AF-20720M', 'Super Chrome Film Classic Colours'], ['AF-20800M', 'Super Chrome Film Classic Colours'], ['AF-20810M', 'Super Chrome Film Classic Colours'], ['AF-20280M', 'Super Chrome Film Classic Colours'], ['AF-20700M', 'Super Chrome Film Classic Colours'], ['AF-20521M', 'Super Chrome Film Classic Colours'], ['AF-20100M', 'Super Chrome Film Classic Colours'], ['AF-20601M', 'Super Chrome Film Classic Colours'], ['AF-20701M', 'Super Chrome Film Classic Colours'], ['AF-20405M', 'Super Chrome Film Classic Colours'], ['AF-20850M', 'Super Chrome Film Classic Colours'],
+    ['AF-20100G', 'Super Chrome Film Classic Colours']
   ],
   'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film']],
   'cold-lamination': [
