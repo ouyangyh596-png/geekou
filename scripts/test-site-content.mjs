@@ -116,6 +116,24 @@ assert.equal(
   'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.'
 )
 assert.equal(englishSiteContent.categories['cast-wrap-vinyl'].displayName, 'Cast Wrap Vinyl')
+assert.deepEqual(englishSiteContent.categories['cast-wrap-vinyl'].series, [
+  {
+    name: 'White Printable Film',
+    description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and revets.'
+  },
+  {
+    name: 'Ultra Clear Printable Film',
+    description: 'High performance ultra clear film enables stunning graphic design, decal effects. Unprinted areas preserve optical clarity and no need to cut around images.'
+  },
+  {
+    name: 'Reflective Printable Film',
+    description: 'High retro-reflective stretchable film with optimized initial tack, super conformability fits compound curves, corners and rivets, enables partially or full vehicle wrap.'
+  },
+  {
+    name: 'Overlaminate Film',
+    description: 'Optical clarity with low haze, true-to-original color reproduction, available in glossy, luster, matte finish. Excellent anti-yellowing performance protects printed graphic from fading under outdoor exposure.'
+  }
+])
 assert.equal(englishSiteContent.categories['polymeric-wrap-vinyl'].displayName, 'Polymeric Wrap Vinyl')
 assert.equal(englishSiteContent.categories['super-chrome-film'].displayName, 'Super Chrome Film')
 assert.equal(englishSiteContent.categories['pvc-free-film'].displayName, 'PVC-Free Film')

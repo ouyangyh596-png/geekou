@@ -113,8 +113,10 @@ export const englishSiteContent = {
       eyebrow: 'AUTOFACE / CAST WRAP VINYL',
       intro: 'Cast PVC wrap and overlaminate films engineered for demanding curves, high-gloss graphics and durable protective finishes.',
       series: [
-        { name: 'Cast PVC Wrap Film', description: '50 µm wrap films for complex curves, reflective graphics and high-gloss finishes.' },
-        { name: 'Cast PVC Overlaminate Film', description: 'Cast PVC overlaminate options in glossy, matte, self-healing and grainy-textured finishes.' }
+        { name: 'White Printable Film', description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and revets.' },
+        { name: 'Ultra Clear Printable Film', description: 'High performance ultra clear film enables stunning graphic design, decal effects. Unprinted areas preserve optical clarity and no need to cut around images.' },
+        { name: 'Reflective Printable Film', description: 'High retro-reflective stretchable film with optimized initial tack, super conformability fits compound curves, corners and rivets, enables partially or full vehicle wrap.' },
+        { name: 'Overlaminate Film', description: 'Optical clarity with low haze, true-to-original color reproduction, available in glossy, luster, matte finish. Excellent anti-yellowing performance protects printed graphic from fading under outdoor exposure.' }
       ]
     },
     'polymeric-wrap-vinyl': {

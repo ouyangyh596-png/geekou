@@ -20,15 +20,18 @@ const expectedCatalogue = {
   'translucent-film': [['SF6000', 'SF6000 Series']],
   ppf: [['AF1810', 'High-Clarity TPU Protection'], ['AF1850', 'High-Clarity TPU Protection']],
   'cast-wrap-vinyl': [
-    ['SF5501', 'Cast PVC Wrap Film'], ['SF5511', 'Cast PVC Wrap Film'], ['SF5503', 'Cast PVC Wrap Film'], ['SF5513', 'Cast PVC Wrap Film'], ['SF9908', 'Cast PVC Wrap Film'], ['AF50100G', 'Cast PVC Wrap Film'],
-    ['SF5601', 'Cast PVC Overlaminate Film'], ['SF5602', 'Cast PVC Overlaminate Film'], ['SF5603', 'Cast PVC Overlaminate Film'], ['SF5606', 'Cast PVC Overlaminate Film'], ['SF5609', 'Cast PVC Overlaminate Film']
+    ['SF5501', 'White Printable Film'], ['SF5511', 'White Printable Film'],
+    ['SF5503', 'Ultra Clear Printable Film'], ['SF5513', 'Ultra Clear Printable Film'],
+    ['SF9908', 'Reflective Printable Film'],
+    ['SF5601', 'Overlaminate Film'], ['SF5602', 'Overlaminate Film'], ['SF5603', 'Overlaminate Film'], ['SF5606', 'Overlaminate Film'], ['SF5609', 'Overlaminate Film']
   ],
   'polymeric-wrap-vinyl': [
     ['SF5505', 'Polymeric PVC Wrap Film'], ['SF5525', 'Polymeric PVC Wrap Film'],
     ['SF5604', 'Polymeric PVC Overlaminate Film'], ['SF5607', 'Polymeric PVC Overlaminate Film']
   ],
   'super-chrome-film': [
-    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours']
+    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours'],
+    ['AF50100G', 'Super Chrome Film Classic Colours']
   ],
   'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film']],
   'cold-lamination': [
