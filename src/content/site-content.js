@@ -94,7 +94,7 @@ export const englishSiteContent = {
       ]
     },
     'translucent-film': {
-      displayName: 'Translucent Film - SF6000 Series',
+      displayName: 'Translucent Film',
       eyebrow: 'SO-FINE / TRANSLUCENT FILM',
       intro: 'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.',
       series: [

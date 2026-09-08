@@ -110,6 +110,7 @@ assert.deepEqual(englishSiteContent.categories['translucent-film'].series, [
     description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.'
   }
 ])
+assert.equal(englishSiteContent.categories['translucent-film'].displayName, 'Translucent Film')
 assert.equal(
   englishSiteContent.categories.ppf.intro,
   'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.'
