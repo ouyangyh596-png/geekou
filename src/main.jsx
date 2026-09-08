@@ -169,7 +169,7 @@ function Home() {
     };
   }, []);
   return <main className="home-page">
-    <section className="landing" id="top"><Header /><div className="landing-copy"><div className="landing-brand-lockup"><div className="landing-brand-logos"><img src="/so-fine-logo.svg" alt="SO-FINE" /><span>&amp;</span><img src="/media/home/autoface-logo.png" alt="AUTOFACE" /></div><h1 className="landing-title">{content.home.heroTitle}</h1><a className="landing-product-button" href="#category=car-wrapping">{content.home.heroAction} <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label={content.home.heroVideoLabel}><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video><span>01 / 05</span></div></section>
+    <section className="landing" id="top"><Header /><div className="landing-copy"><div className="landing-brand-lockup"><div className="landing-brand-logos"><img src="/so-fine-logo.svg" alt="SO-FINE" /><span>&amp;</span><img src="/media/home/autoface-logo.png" alt="AUTOFACE" /></div><h1 className="landing-title">{content.home.heroTitle}</h1><a className="landing-product-button" href="#category=super-chrome-film">{content.home.heroAction} <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label={content.home.heroVideoLabel}><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video><span>01 / 05</span></div></section>
     <PPFScrollSequence />
     <section className="statement" id="company"><figure className="company-evidence reveal"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label={content.home.companyVideoLabel}><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>{content.home.companyVideoCaption}</figcaption></figure><div className="statement-inner"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal"><span className="company-title-years">{companyYears}</span> {companyYearsUnit} of<br />{companyIndustry}<br /><em>{companyExpertise}.</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div></section>
     <ProductShowcase />
@@ -196,7 +196,7 @@ function ProductShowcase() {
   const [selectedColour, setSelectedColour] = useState(DEFAULT_CLASSIC_COLOUR);
   const [isShuffling, setIsShuffling] = useState(false);
   const selectedCategory = categories[selectedIndex];
-  const isClassicColours = selectedCategory.slug === 'car-wrapping' && selectedCategory.info.series.some(([name]) => name === 'Super Chrome Film Classic Colours');
+  const isClassicColours = selectedCategory.slug === 'super-chrome-film' && selectedCategory.info.series.some(([name]) => name === 'Super Chrome Film Classic Colours');
   const selectedMedia = familyMedia[selectedCategory.slug];
   const previousIndex = (selectedIndex - 1 + categories.length) % categories.length;
   const nextIndex = (selectedIndex + 1) % categories.length;

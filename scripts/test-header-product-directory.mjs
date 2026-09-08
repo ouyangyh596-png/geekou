@@ -8,7 +8,7 @@ const [main, styles] = await Promise.all([
 ]);
 
 assert.match(main, /function ProductDirectory\(/, 'the header exposes a dedicated product directory component');
-assert.equal(Object.keys(brochureSeries).length, 9, 'the directory source contains exactly nine product families');
+assert.equal(Object.keys(brochureSeries).length, 11, 'the directory source contains exactly eleven product families');
 assert.match(main, /categories\.map\(category =>/, 'the directory is derived from the existing product-family data');
 assert.match(main, /href=\{`#category=\$\{category\.slug\}`\}/, 'each directory entry routes directly to its category page');
 assert.match(main, /className="product-nav-item"/, 'Products has a stable dropdown wrapper');

@@ -27,15 +27,25 @@ export const familyMedia = {
     preview: '/media/families/paint-protection-film-layers.webp',
     alt: 'Illustration of transparent paint-protection film layers over a blue car'
   },
-  'car-wrapping': {
+  'cast-wrap-vinyl': {
     hero: '/media/families/car-wrapping-color-rolls.webp',
     preview: '/media/families/car-wrapping-color-rolls.webp',
-    alt: 'Metallic blue, green, purple, copper and silver vehicle-wrap film rolls'
+    alt: 'Vehicle-wrap film rolls representing cast vinyl for complex curves and protected graphics'
   },
-  overlaminate: {
+  'polymeric-wrap-vinyl': {
     hero: '/media/families/overlaminate-protective-roll.webp',
     preview: '/media/families/overlaminate-protective-roll.webp',
-    alt: 'Clear protective film roll, representative overlaminate material detail'
+    alt: 'Protective film roll representing dimensionally stable polymeric wrap vinyl'
+  },
+  'super-chrome-film': {
+    hero: '/media/families/car-wrapping-color-rolls.webp',
+    preview: '/media/families/car-wrapping-color-rolls.webp',
+    alt: 'Metallic blue, green, purple, copper and silver super chrome vehicle-wrap film rolls'
+  },
+  'pvc-free-film': {
+    hero: '/media/families/overlaminate-protective-roll.webp',
+    preview: '/media/families/overlaminate-protective-roll.webp',
+    alt: 'Protective film roll representing PVC-free vehicle wrap material'
   },
   'cold-lamination': {
     hero: '/media/families/cold-lamination-film-roll.webp',

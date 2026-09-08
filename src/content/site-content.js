@@ -108,25 +108,35 @@ export const englishSiteContent = {
       intro: 'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.',
       series: [{ name: 'High-Clarity TPU Protection', description: 'TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }]
     },
-    'car-wrapping': {
-      displayName: 'Car Wrap Film',
-      eyebrow: 'AUTOFACE / CAR WRAP FILM',
-      intro: 'Vehicle wrap films with high conformability for surfaces with deep corrugations, offered in cast, polymeric, PVC-free and classic-colour options.',
+    'cast-wrap-vinyl': {
+      displayName: 'Cast Wrap Vinyl',
+      eyebrow: 'AUTOFACE / CAST WRAP VINYL',
+      intro: 'Cast PVC wrap and overlaminate films engineered for demanding curves, high-gloss graphics and durable protective finishes.',
       series: [
         { name: 'Cast PVC Wrap Film', description: '50 µm wrap films for complex curves, reflective graphics and high-gloss finishes.' },
-        { name: 'Polymeric PVC Wrap Film', description: 'Flexible polymeric wrap films for vehicle graphics.' },
-        { name: 'PVC-Free Film', description: 'PVC-free wrap-film alternatives.' },
-        { name: 'Super Chrome Film Classic Colours', description: 'Individual classic colour wrap films.' }
+        { name: 'Cast PVC Overlaminate Film', description: 'Cast PVC overlaminate options in glossy, matte, self-healing and grainy-textured finishes.' }
       ]
     },
-    overlaminate: {
-      displayName: 'Overlaminate Film',
-      eyebrow: 'SO-FINE / OVERLAMINATE FILM',
-      intro: 'Cast and polymeric PVC overlaminate films with clear permanent adhesive and PET liner for printed-graphic protection.',
+    'polymeric-wrap-vinyl': {
+      displayName: 'Polymeric Wrap Vinyl',
+      eyebrow: 'AUTOFACE / POLYMERIC WRAP VINYL',
+      intro: 'Polymeric PVC wrap and overlaminate films with dimensional stability for vehicle graphics and printed-surface protection.',
       series: [
-        { name: 'Cast PVC Overlaminate Film', description: 'Cast PVC overlaminate options in glossy, matte, self-healing and grainy-textured finishes.' },
+        { name: 'Polymeric PVC Wrap Film', description: 'Flexible polymeric wrap films for vehicle graphics.' },
         { name: 'Polymeric PVC Overlaminate Film', description: 'Polymeric PVC overlaminate options in matte and super-glossy finishes.' }
       ]
+    },
+    'super-chrome-film': {
+      displayName: 'Super Chrome Film',
+      eyebrow: 'AUTOFACE / SUPER CHROME FILM',
+      intro: 'Individual classic colour wrap films with a metallic visual finish for automotive detailing.',
+      series: [{ name: 'Super Chrome Film Classic Colours', description: 'Individual classic colour wrap films.' }]
+    },
+    'pvc-free-film': {
+      displayName: 'PVC-Free Film',
+      eyebrow: 'AUTOFACE / PVC-FREE FILM',
+      intro: 'PVC-free wrap-film alternatives for vehicle graphics and surface applications.',
+      series: [{ name: 'PVC-Free Film', description: 'PVC-free wrap-film alternatives.' }]
     },
     'cold-lamination': {
       displayName: 'Cold Lamination Film',

@@ -15,10 +15,13 @@ const reviewedFamilyAssets = {
   'self-adhesive-vinyl': '/media/families/self-adhesive-bus-graphics.webp',
   'translucent-film': '/media/families/translucent-lightbox-application.webp',
   ppf: '/media/families/paint-protection-film-layers.webp',
-  'car-wrapping': '/media/families/car-wrapping-color-rolls.webp',
-  overlaminate: '/media/families/overlaminate-protective-roll.webp',
+  'cast-wrap-vinyl': '/media/families/car-wrapping-color-rolls.webp',
+  'polymeric-wrap-vinyl': '/media/families/overlaminate-protective-roll.webp',
+  'super-chrome-film': '/media/families/car-wrapping-color-rolls.webp',
+  'pvc-free-film': '/media/families/overlaminate-protective-roll.webp',
   'cold-lamination': '/media/families/cold-lamination-film-roll.webp',
-  'wall-decals': '/media/families/interior-wall-decals.webp'
+  'wall-decals': '/media/families/interior-wall-decals.webp',
+  'decorative-film': '/media/families/interior-wall-decals.webp'
 };
 
 function assertMediaFile(url, label) {
@@ -84,7 +87,7 @@ assertDistinctMedia(
 );
 assertDistinctMedia(
   { label: 'Homepage automotive', url: homeMedia.automotive },
-  { label: 'Car Wrapping Film', url: familyMedia['car-wrapping'].hero }
+  { label: 'Super Chrome Film', url: familyMedia['super-chrome-film'].hero }
 );
 assertDistinctMedia(
   { label: 'Homepage hero', url: homeMedia.hero },

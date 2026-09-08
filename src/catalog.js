@@ -3,8 +3,10 @@ const images = {
   'self-adhesive-vinyl': '/products/sf2410-1.jpg',
   'translucent-film': '/products/translucent-film-family.svg',
   ppf: '/products/ppf-family.svg',
-  'car-wrapping': '/products/polymeric car wrapping film-1.jpg',
-  overlaminate: '/products/overlaminate-family.svg',
+  'cast-wrap-vinyl': '/products/polymeric car wrapping film-1.jpg',
+  'polymeric-wrap-vinyl': '/products/polymeric car wrapping film-1.jpg',
+  'super-chrome-film': '/products/polymeric car wrapping film-1.jpg',
+  'pvc-free-film': '/products/polymeric car wrapping film-1.jpg',
   'cold-lamination': '/products/sf3180-1.jpg',
   'wall-decals': '/products/sf4001-1.jpg',
   'decorative-film': '/media/families/interior-wall-decals.webp'
@@ -30,8 +32,10 @@ const familyTitles = {
   'self-adhesive-vinyl': 'Self-Adhesive Vinyl',
   'translucent-film': 'Translucent Film',
   ppf: 'Paint Protection Film',
-  'car-wrapping': 'Car Wrap Film',
-  overlaminate: 'Overlaminate Film',
+  'cast-wrap-vinyl': 'Cast Wrap Vinyl',
+  'polymeric-wrap-vinyl': 'Polymeric Wrap Vinyl',
+  'super-chrome-film': 'Super Chrome Film',
+  'pvc-free-film': 'PVC-Free Film',
   'cold-lamination': 'Cold Lamination Film',
   'wall-decals': 'Wall Decals Self-Adhesive Material',
   'decorative-film': 'Decorative Film'
@@ -42,8 +46,10 @@ const familyDescriptions = {
   'self-adhesive-vinyl': 'Self-adhesive vinyl for large-format digital printing applications.',
   'translucent-film': 'Translucent polymeric PVC film for illuminated graphics.',
   ppf: 'Automotive protection and finish film.',
-  'car-wrapping': 'High-conformability vehicle wrap film.',
-  overlaminate: 'Protective PVC overlaminate film for printed graphics.',
+  'cast-wrap-vinyl': 'Cast PVC wrap and overlaminate film for demanding curves and protected graphics.',
+  'polymeric-wrap-vinyl': 'Dimensionally stable polymeric wrap and overlaminate film.',
+  'super-chrome-film': 'Classic-colour metallic vehicle wrap film.',
+  'pvc-free-film': 'PVC-free wrap-film alternative.',
   'cold-lamination': 'Cold lamination film for graphic protection.',
   'wall-decals': 'Decorative self-adhesive material for interior surfaces.',
   'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
@@ -76,17 +82,17 @@ function vinyl(model, group, thickness, finish, adhesive, liner, printCompatibil
   ])
 }
 
-function wrap(model, group, thickness, finish, adhesive, liner, printCompatibility = compatible) {
+function wrap(category, model, group, thickness, finish, adhesive, liner, printCompatibility = compatible) {
   const specs = [
     ['Material', group], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive],
     ['Liner', liner]
   ]
   if (printCompatibility) specs.push(['Print compatibility', printCompatibility])
-  return product('car-wrapping', group, model, specs)
+  return product(category, group, model, specs)
 }
 
-function overlaminate(model, group, thickness, finish, adhesive, liner) {
-  return product('overlaminate', group, model, [
+function overlaminate(category, model, group, thickness, finish, adhesive, liner) {
+  return product(category, group, model, [
     ['Material', group], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive], ['Liner', liner]
   ])
 }
@@ -162,33 +168,33 @@ export const catalogProducts = [
     ['Application', 'Paint protection with scratch resistance, self-healing, corrosion resistance, easy cleaning and gloss enhancement']
   ], { description: 'High-clarity TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }),
 
-  wrap('SF5501', 'Cast PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
-  wrap('SF5511', 'Cast PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed PET liner'),
-  wrap('SF5503', 'Cast PVC Wrap Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Matte PET liner'),
-  wrap('SF5513', 'Cast PVC Wrap Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Micro-embossed PET liner'),
-  wrap('SF9908', 'Cast PVC Wrap Film', '170 µm', 'Reflective film glossy', 'Transparent removable', 'Double PE-coated paper liner'),
-  wrap('AF50100G', 'Cast PVC Wrap Film', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
-  wrap('SF5505', 'Polymeric PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
-  wrap('SF5525', 'Polymeric PVC Wrap Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
-  wrap('AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
-  wrap('AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent removable', 'Matte PET liner', null),
+  wrap('cast-wrap-vinyl', 'SF5501', 'Cast PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
+  wrap('cast-wrap-vinyl', 'SF5511', 'Cast PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed PET liner'),
+  wrap('cast-wrap-vinyl', 'SF5503', 'Cast PVC Wrap Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Matte PET liner'),
+  wrap('cast-wrap-vinyl', 'SF5513', 'Cast PVC Wrap Film', '50 µm', 'Ultra-clear glossy', 'Transparent removable', 'Micro-embossed PET liner'),
+  wrap('cast-wrap-vinyl', 'SF9908', 'Cast PVC Wrap Film', '170 µm', 'Reflective film glossy', 'Transparent removable', 'Double PE-coated paper liner'),
+  wrap('cast-wrap-vinyl', 'AF50100G', 'Cast PVC Wrap Film', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
+  wrap('polymeric-wrap-vinyl', 'SF5505', 'Polymeric PVC Wrap Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
+  wrap('polymeric-wrap-vinyl', 'SF5525', 'Polymeric PVC Wrap Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
+  wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
+  wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent removable', 'Matte PET liner', null),
   ...[
     ['AF-50202M', 'China Red'], ['AF-50403M', 'Maillard Copper'], ['AF-50880M', 'Purple Gold'],
     ['AF-50720M', 'Bluish Green'], ['AF-50800M', 'Bright Yellow'], ['AF-50810M', 'Glaze Yellow'],
     ['AF-50280M', 'Burgundy Red'], ['AF-50700M', 'Green'], ['AF-50521M', 'Twilight Purple'],
     ['AF-50100M', 'Silver'], ['AF-50601M', 'Dark Blue'], ['AF-50701M', 'Dark Green'],
     ['AF-50405M', 'Tungsten Steel'], ['AF-50850M', 'Rose Gold']
-  ].map(([model, color]) => product('car-wrapping', 'Super Chrome Film Classic Colours', model, [['Color', color]], {
+  ].map(([model, color]) => product('super-chrome-film', 'Super Chrome Film Classic Colours', model, [['Color', color]], {
     title: color, description: `Classic ${color.toLowerCase()} car wrap film.`
   })),
 
-  overlaminate('SF5601', 'Cast PVC Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5602', 'Cast PVC Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5603', 'Cast PVC Overlaminate Film', '30 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5606', 'Cast PVC Overlaminate Film', '50 µm', 'Glossy self-healing', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5609', 'Cast PVC Overlaminate Film', '50 µm', 'Matte grainy textured', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5604', 'Polymeric PVC Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('SF5607', 'Polymeric PVC Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5601', 'Cast PVC Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5602', 'Cast PVC Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5603', 'Cast PVC Overlaminate Film', '30 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5606', 'Cast PVC Overlaminate Film', '50 µm', 'Glossy self-healing', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5609', 'Cast PVC Overlaminate Film', '50 µm', 'Matte grainy textured', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5604', 'Polymeric PVC Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5607', 'Polymeric PVC Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner'),
 
   coldLaminate('SF3180', 'Monomeric PVC', '70 µm', 'Glossy', 'Transparent permanent', 'PE-coated paper liner'),
   coldLaminate('SF3181', 'Monomeric PVC', '70 µm', 'Semi-matte', 'Transparent permanent', 'PE-coated paper liner'),

@@ -44,7 +44,7 @@ for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
   assert.equal(typeof englishSiteContent.navigation[key], 'string')
   assert.ok(englishSiteContent.navigation[key].trim())
 }
-for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals', 'decorative-film']) {
+for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'cast-wrap-vinyl', 'polymeric-wrap-vinyl', 'super-chrome-film', 'pvc-free-film', 'cold-lamination', 'wall-decals', 'decorative-film']) {
   assert.ok(englishSiteContent.categories[slug], `Missing category copy: ${slug}`)
 }
 assert.ok(englishSiteContent.home.heroTitle)
@@ -69,7 +69,7 @@ assert.deepEqual(englishSiteContent.company.paragraphs, [
   'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
 ])
 assert.equal(capabilities[2][1], englishSiteContent.technology.capabilities[2].name)
-assert.equal(brochureSeries['car-wrapping'].displayName, englishSiteContent.categories['car-wrapping'].displayName)
+assert.equal(brochureSeries['super-chrome-film'].displayName, englishSiteContent.categories['super-chrome-film'].displayName)
 assert.equal(
   englishSiteContent.categories['one-way-vision'].intro,
   'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.'
@@ -115,10 +115,10 @@ assert.equal(
   englishSiteContent.categories.ppf.intro,
   'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.'
 )
-assert.equal(
-  englishSiteContent.categories.overlaminate.intro,
-  'Cast and polymeric PVC overlaminate films with clear permanent adhesive and PET liner for printed-graphic protection.'
-)
+assert.equal(englishSiteContent.categories['cast-wrap-vinyl'].displayName, 'Cast Wrap Vinyl')
+assert.equal(englishSiteContent.categories['polymeric-wrap-vinyl'].displayName, 'Polymeric Wrap Vinyl')
+assert.equal(englishSiteContent.categories['super-chrome-film'].displayName, 'Super Chrome Film')
+assert.equal(englishSiteContent.categories['pvc-free-film'].displayName, 'PVC-Free Film')
 assert.equal(
   englishSiteContent.categories['cold-lamination'].intro,
   'Cold lamination films in monomeric PVC, polymeric PVC, PET and floor-lamination PVC constructions.'

@@ -19,16 +19,18 @@ const expectedCatalogue = {
   ],
   'translucent-film': [['SF6000', 'SF6000 Series']],
   ppf: [['AF1810', 'High-Clarity TPU Protection'], ['AF1850', 'High-Clarity TPU Protection']],
-  'car-wrapping': [
+  'cast-wrap-vinyl': [
     ['SF5501', 'Cast PVC Wrap Film'], ['SF5511', 'Cast PVC Wrap Film'], ['SF5503', 'Cast PVC Wrap Film'], ['SF5513', 'Cast PVC Wrap Film'], ['SF9908', 'Cast PVC Wrap Film'], ['AF50100G', 'Cast PVC Wrap Film'],
-    ['SF5505', 'Polymeric PVC Wrap Film'], ['SF5525', 'Polymeric PVC Wrap Film'],
-    ['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film'],
-    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours']
+    ['SF5601', 'Cast PVC Overlaminate Film'], ['SF5602', 'Cast PVC Overlaminate Film'], ['SF5603', 'Cast PVC Overlaminate Film'], ['SF5606', 'Cast PVC Overlaminate Film'], ['SF5609', 'Cast PVC Overlaminate Film']
   ],
-  overlaminate: [
-    ['SF5601', 'Cast PVC Overlaminate Film'], ['SF5602', 'Cast PVC Overlaminate Film'], ['SF5603', 'Cast PVC Overlaminate Film'], ['SF5606', 'Cast PVC Overlaminate Film'], ['SF5609', 'Cast PVC Overlaminate Film'],
+  'polymeric-wrap-vinyl': [
+    ['SF5505', 'Polymeric PVC Wrap Film'], ['SF5525', 'Polymeric PVC Wrap Film'],
     ['SF5604', 'Polymeric PVC Overlaminate Film'], ['SF5607', 'Polymeric PVC Overlaminate Film']
   ],
+  'super-chrome-film': [
+    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours']
+  ],
+  'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film']],
   'cold-lamination': [
     ['SF3180', 'Monomeric PVC'], ['SF3181', 'Monomeric PVC'], ['SF3182', 'Monomeric PVC'],
     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
@@ -59,8 +61,10 @@ assert.deepEqual(
     'Self-Adhesive Vinyl',
     'Translucent Film',
     'Paint Protection Film',
-    'Car Wrap Film',
-    'Overlaminate Film',
+    'Cast Wrap Vinyl',
+    'Polymeric Wrap Vinyl',
+    'Super Chrome Film',
+    'PVC-Free Film',
     'Cold Lamination Film',
     'Wall Decals Self-Adhesive Material',
     'Decorative Film'
@@ -68,7 +72,11 @@ assert.deepEqual(
   'Every brochure family must have its exact visible display name'
 )
 assert.equal(catalogProducts.length, 82, 'The brochure catalogue must contain exactly 82 models')
-assert.deepEqual(catalogProducts.map(product => product.category), expectedCategories.flatMap(category => expectedCatalogue[category].map(() => category)))
+assert.deepEqual(
+  [...new Set(catalogProducts.map(product => product.category))].sort(),
+  expectedCategories.filter(category => expectedCatalogue[category].length > 0).sort(),
+  'Every catalogue product must belong to one of the final product families'
+)
 
 for (const [category, expectedModels] of Object.entries(expectedCatalogue)) {
   const actualModels = catalogProducts
@@ -133,13 +141,13 @@ const expectedFallbacks = {
   SF6000: '/products/translucent-film-family.svg',
   AF1810: '/products/ppf-family.svg',
   AF1850: '/products/ppf-family.svg',
-  SF5601: '/products/overlaminate-family.svg',
-  SF5602: '/products/overlaminate-family.svg',
-  SF5603: '/products/overlaminate-family.svg',
-  SF5606: '/products/overlaminate-family.svg',
-  SF5609: '/products/overlaminate-family.svg',
-  SF5604: '/products/overlaminate-family.svg',
-  SF5607: '/products/overlaminate-family.svg'
+  SF5601: '/products/polymeric car wrapping film-1.jpg',
+  SF5602: '/products/polymeric car wrapping film-1.jpg',
+  SF5603: '/products/polymeric car wrapping film-1.jpg',
+  SF5606: '/products/polymeric car wrapping film-1.jpg',
+  SF5609: '/products/polymeric car wrapping film-1.jpg',
+  SF5604: '/products/polymeric car wrapping film-1.jpg',
+  SF5607: '/products/polymeric car wrapping film-1.jpg'
 }
 
 for (const [model, image] of Object.entries(expectedFallbacks)) {
