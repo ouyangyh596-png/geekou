@@ -74,6 +74,65 @@ assert.equal(
   englishSiteContent.categories['one-way-vision'].intro,
   'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.'
 )
+assert.deepEqual(
+  englishSiteContent.categories['one-way-vision'].series.map(({ description }) => description),
+  [
+    'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.',
+    'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.',
+    'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.',
+    'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.'
+  ]
+)
+assert.equal(
+  englishSiteContent.categories['self-adhesive-vinyl'].intro,
+  'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive and liner configurations for large-format solvent, eco-solvent, UV and latex printing.'
+)
+assert.deepEqual(
+  englishSiteContent.categories['self-adhesive-vinyl'].series.map(({ description }) => description),
+  [
+    'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!',
+    'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.',
+    'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.',
+    'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.'
+  ]
+)
+assert.equal(
+  englishSiteContent.categories['translucent-film'].intro,
+  'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.'
+)
+assert.deepEqual(englishSiteContent.categories['translucent-film'].series, [
+  {
+    name: 'SF6000 Series',
+    description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.'
+  },
+  {
+    name: 'SF9000 Series',
+    description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.'
+  }
+])
+assert.equal(
+  englishSiteContent.categories.ppf.intro,
+  'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.'
+)
+assert.equal(
+  englishSiteContent.categories.overlaminate.intro,
+  'Cast and polymeric PVC overlaminate films with clear permanent adhesive and PET liner for printed-graphic protection.'
+)
+assert.equal(
+  englishSiteContent.categories['cold-lamination'].intro,
+  'Cold lamination films in monomeric PVC, polymeric PVC, PET and floor-lamination PVC constructions.'
+)
+assert.equal(
+  englishSiteContent.categories['wall-decals'].intro,
+  'Decorative self-adhesive wall-covering materials that conform around 90\u00b0 corners without lifting, provide a customized and unique touch to any space.'
+)
+assert.deepEqual(
+  englishSiteContent.categories['wall-decals'].series.map(({ description }) => description),
+  [
+    'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.',
+    '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.'
+  ]
+)
 
 for (const modulePath of ['../src/language.js', '../src/content/company.js', '../src/brochure-data.js']) {
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')

@@ -76,28 +76,31 @@ export const englishSiteContent = {
       eyebrow: 'SO-FINE / ONE WAY VISION FILM',
       intro: 'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.',
       series: [
-        { name: 'Monomeric PVC', description: 'Perforated film with a choice of ratios for glass graphics and easy viewing through the reverse side.' },
-        { name: 'Polymeric PVC', description: 'Perforated film for durable, high-conformability printed graphics.' },
-        { name: 'Cast PVC', description: 'High-conformability perforated film for demanding applications.' },
-        { name: 'Perforated PET', description: 'PET-based perforated options with 30% perforation ratios.' }
+        { name: 'Monomeric PVC', description: 'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.' },
+        { name: 'Polymeric PVC', description: 'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.' },
+        { name: 'Cast PVC', description: 'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.' },
+        { name: 'Perforated PET', description: 'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.' }
       ]
     },
     'self-adhesive-vinyl': {
       displayName: 'Self-Adhesive Vinyl',
       eyebrow: 'SO-FINE / SELF-ADHESIVE VINYL',
-      intro: 'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive systems and liner configurations for large-format solvent, eco-solvent, UV and latex printing.',
+      intro: 'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive and liner configurations for large-format solvent, eco-solvent, UV and latex printing.',
       series: [
-        { name: 'Monomeric PVC', description: 'Vinyl for short-to-medium-term and point-of-purchase promotional applications.' },
-        { name: 'Polymeric PVC', description: 'Vinyl with dimensional stability, conformability and weather resistance for signage, vehicles and architectural graphics.' },
-        { name: 'Super Transparent PVC Vinyl', description: 'Ultra-clear vinyl for glass graphics with high gloss and a partially see-through appearance.' },
-        { name: 'Super Glossy PVC Vinyl', description: 'High-gloss vinyl designed to make printed graphics vivid.' }
+        { name: 'Monomeric PVC', description: 'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!' },
+        { name: 'Polymeric PVC', description: 'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.' },
+        { name: 'Super Transparent PVC Vinyl', description: 'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.' },
+        { name: 'Super Glossy PVC Vinyl', description: 'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.' }
       ]
     },
     'translucent-film': {
       displayName: 'Translucent Film - SF6000 Series',
       eyebrow: 'SO-FINE / TRANSLUCENT FILM',
-      intro: 'SF6000 is a translucent polymeric PVC film with saturated colour, weathering resistance and a solvent-based pressure-sensitive adhesive for illuminated graphics.',
-      series: [{ name: 'SF6000 Series', description: 'Translucent film for dry or wet application, with 75 µm matte PET liner and high release power.' }]
+      intro: 'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.',
+      series: [
+        { name: 'SF6000 Series', description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.' },
+        { name: 'SF9000 Series', description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.' }
+      ]
     },
     ppf: {
       displayName: 'Paint Protection Film',
@@ -139,10 +142,10 @@ export const englishSiteContent = {
     'wall-decals': {
       displayName: 'Wall Decals Self-Adhesive Material',
       eyebrow: 'SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL',
-      intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting; SF4001 also suits walls, floors and carpets because of its textured finish.',
+      intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting, provide a customized and unique touch to any space.',
       series: [
-        { name: 'PVC-Coated Polyester Fabric', description: '250 gsm PVC-coated polyester fabric with high-tack removable adhesive.' },
-        { name: '100% Polyester', description: '115 gsm polyester with high-tack removable adhesive.' }
+        { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
+        { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
       ]
     }
   },
