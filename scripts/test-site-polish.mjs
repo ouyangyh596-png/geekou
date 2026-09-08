@@ -17,4 +17,6 @@ assert.match(viewer, /viewer-gesture-hint/, 'viewer must render an animated drag
 assert.match(polish, /\.cybertruck-viewer\s*{[^}]*background:\s*transparent/s,
   'detail viewer must not render the old dark background')
 assert.match(polish, /@keyframes\s+viewer-gesture-drag/, 'drag affordance must animate')
+assert.match(polish, /\.stack-card-content:not\(\.stack-card-content-interactive\) \.stack-card-copy/,
+  'standard homepage cards must rebalance their copy after model pills are removed')
 console.log('Site polish regression checks passed')

@@ -33,11 +33,7 @@ assert.match(
 assert.match(main, /const \[selectedIndex, setSelectedIndex\] = useState\(0\);/, 'ProductShowcase owns the selected family index');
 assert.match(main, /const selectedCategory = categories\[selectedIndex\];/, 'the selected category derives from the selected index');
 assert.match(main, /const selectedMedia = familyMedia\[selectedCategory\.slug\];/, 'the selected family media derives from the selected category');
-assert.match(
-  main,
-  /const selectedModels = products\s*\.filter\(product => product\.category === selectedCategory\.slug\)\s*\.slice\(0, 5\)\s*\.map\(product => product\.model\);/,
-  'the centre stage lists the first five models for the selected family'
-);
+assert.doesNotMatch(main, /const selectedModels\s*=/, 'homepage cards must not calculate product model codes');
 assert.match(main, /setSelectedIndex\(index => \(index \+ offset \+ categories\.length\) % categories\.length\)/, 'previous and next selection wraps around the category list');
 assert.match(main, /className=\{'stack-selector' \+ \(isShuffling \? ' is-shuffling' : ''\)\}/, 'the stack selector exposes a shuffle state');
 assert.match(main, /const handleTouchEnd = event =>/, 'mobile cards support horizontal swipe selection');
@@ -52,7 +48,7 @@ assert.match(main, /key=\{selectedCategory\.slug\}/, 'active card content is key
 assert.match(main, /<img src=\{selectedMedia\.preview\} alt=\{selectedMedia\.alt\} width="1200" height="800" loading="lazy" decoding="async" \/>/, 'the centre stage retains mapped selected media and alt text');
 assert.match(main, /<span className="stack-index">\{String\(selectedIndex \+ 1\)\.padStart\(2, '0'\)\}<\/span>/, 'the active card shows the selected family index');
 assert.match(main, /<strong>\{selectedCategory\.name\}<\/strong><small>\{selectedCategory\.description\}<\/small>/, 'the active card shows the selected name and description');
-assert.match(main, /<ul className="stack-model-list">\{selectedModels\.map\(model => <li key=\{model\}>\{model\}<\/li>\)\}<\/ul>/, 'the active card renders selected model codes');
+assert.doesNotMatch(main, /stack-model-list/, 'homepage cards must not render product model-code pills');
 assert.match(main, /<span className="stack-cta">\{content.products.exploreProducts\} <ArrowUpRight size=\{20\} \/><\/span>/, 'the active card contains the explore CTA');
 assert.match(main, /if \(event\.key === 'ArrowLeft'\) \{\s*event\.preventDefault\(\);\s*selectOffset\(-1\);\s*\} else if \(event\.key === 'ArrowRight'\) \{\s*event\.preventDefault\(\);\s*selectOffset\(1\);\s*\}/, 'only horizontal arrow keys are intercepted, leaving Enter centre-link navigation intact');
 assert.doesNotMatch(main, /product-carousel/, 'the carousel implementation is completely removed');

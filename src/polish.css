@@ -45,6 +45,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .stack-card-active::after { display: none; }
 .stack-card-content { height: 100%; min-height: 100%; }
 .stack-card-copy { display: flex; flex-direction: column; align-items: flex-start; }
+.stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { width: min(100%, 590px); padding-bottom: clamp(4px, 1vw, 14px); }
+.stack-card-content:not(.stack-card-content-interactive) .stack-card-copy small { margin-top: clamp(16px, 1.8vw, 24px); max-width: 48ch; }
+.stack-card-content:not(.stack-card-content-interactive) .stack-card-copy .stack-cta { margin-top: clamp(24px, 2.8vw, 38px); }
 .stack-card-content strong { display: block; font-size: clamp(32px, 4vw, 60px); line-height: 1.08; letter-spacing: -.045em; }
 .stack-card-content small { display: block; line-height: 1.65; }
 .stack-cta { width: max-content; min-height: 44px; margin-top: 15px; border-bottom: 1px solid rgba(255,255,255,.35); }
@@ -57,7 +60,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .stack-card-content-interactive .stack-card-copy { padding: 18px 30px 24px; background: #182b39; }
 .stack-card-content-interactive strong { margin-top: 6px; font-size: clamp(28px, 3vw, 40px); }
 .stack-card-content-interactive small { margin-top: 8px; max-width: 65ch; font-size: 13px; }
-.stack-card-content-interactive .stack-model-list { display: none; }
 .stack-card-content-interactive .cybertruck-swatches { margin: 8px 0 0; max-width: none; gap: 2px; }
 .stack-card-content-interactive .stack-cta { margin-top: 4px; }
 .stack-card-content-interactive .viewer-hint { display: none; }
@@ -104,6 +106,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .statement-heading h2 { line-height: 1.06; }
   .stack-card-active { aspect-ratio: auto; min-height: 430px; }
   .stack-card-content { min-height: 430px; }
+  .stack-card-content:not(.stack-card-content-interactive) { min-height: 400px; }
+  .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { padding-bottom: 0; }
   .stack-card-content strong { font-size: clamp(30px, 8vw, 42px); }
   .stack-card-content-interactive { grid-template-rows: 240px auto; }
   .stack-card-content-interactive .stack-card-copy { padding: 20px 22px 24px; }
