@@ -6,6 +6,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { CYBERTRUCK_MODEL_PATH } from '../cybertruck-colours.js'
 import { createCybertruckInstance } from '../cybertruck-scene.js'
 
+const DRAG_HINT_STORAGE_KEY = 'cybertruck-drag-hint-dismissed'
+
 function createMicroRoughness() {
   const size = 64
   const data = new Uint8Array(size * size * 4)
@@ -105,7 +107,12 @@ class ViewerBoundary extends Component {
 
 export default function CybertruckViewer({ colour }) {
   const host = useRef()
+  const pointerStart = useRef(null)
   const [entered, setEntered] = useState(false)
+  const [hintState, setHintState] = useState(() => {
+    try { return window.localStorage.getItem(DRAG_HINT_STORAGE_KEY) === '1' ? 'hidden' : 'visible' }
+    catch { return 'visible' }
+  })
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries.some(entry => entry.isIntersecting)) { setEntered(true); observer.disconnect() }
@@ -113,7 +120,26 @@ export default function CybertruckViewer({ colour }) {
     observer.observe(host.current)
     return () => observer.disconnect()
   }, [])
+
+  const dismissDragHint = () => {
+    if (hintState !== 'visible') return
+    try { window.localStorage.setItem(DRAG_HINT_STORAGE_KEY, '1') } catch { /* Hint still hides when storage is unavailable. */ }
+    setHintState(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'hidden' : 'dismissing')
+  }
+  const handlePointerDown = event => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return
+    pointerStart.current = { id: event.pointerId, x: event.clientX, y: event.clientY }
+  }
+  const handlePointerMove = event => {
+    const start = pointerStart.current
+    if (!start || start.id !== event.pointerId) return
+    if (Math.hypot(event.clientX - start.x, event.clientY - start.y) >= 8) dismissDragHint()
+  }
+  const clearPointer = event => {
+    if (pointerStart.current?.id === event.pointerId) pointerStart.current = null
+  }
   return <div ref={host} className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview"
+    onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={clearPointer} onPointerCancel={clearPointer}
     onTouchStart={event => event.stopPropagation()} onTouchEnd={event => event.stopPropagation()}>
     <ViewerBoundary>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, 4], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
       <Suspense fallback={<Html center><span className="viewer-loading" role="status">Loading 3D preview…</span></Html>}>
@@ -125,6 +151,12 @@ export default function CybertruckViewer({ colour }) {
         <CameraRig />
       </Suspense>
     </Canvas>}</ViewerBoundary>
-    <span className="viewer-hint">Drag to rotate · Select a colour to preview</span>
+    {hintState !== 'hidden' && <div className={'viewer-gesture-hint' + (hintState === 'dismissing' ? ' is-dismissing' : '')}
+      role="status" onAnimationEnd={() => hintState === 'dismissing' && setHintState('hidden')}>
+      <span className="viewer-gesture-track" aria-hidden="true"><span className="viewer-gesture-pointer">
+        <svg viewBox="0 0 24 24"><path d="M7.4 3.2c.9 0 1.6.7 1.6 1.6v5.1l.7-.8c.6-.7 1.7-.7 2.3-.1l.5.6.5-.3c.7-.4 1.6-.2 2.1.4l.4.6.5-.2c.9-.3 1.8.2 2.1 1.1l.4 1.4c.5 1.8.1 3.8-1.2 5.2l-1.5 1.7c-.7.8-1.8 1.3-2.9 1.3h-2.6c-1.2 0-2.3-.5-3.1-1.4l-3.6-4.2a1.7 1.7 0 0 1 .2-2.4c.7-.6 1.7-.5 2.3.1l.7.8V4.8c0-.9.7-1.6 1.6-1.6Z" /></svg>
+      </span></span>
+      <span>Drag to rotate</span>
+    </div>}
   </div>
 }
