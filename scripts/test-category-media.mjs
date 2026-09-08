@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { brochureSeries } from '../src/brochure-data.js';
 import { catalogProducts } from '../src/catalog.js';
 import { familyMedia } from '../src/media-manifest.js';
 
@@ -18,6 +19,20 @@ assert.deepEqual(familyMedia['decorative-film'], {
 });
 assert.equal(catalogProducts.some(product => product.category === 'decorative-film'), false, 'Decorative Film has no fabricated product record');
 
+const decorativeFilmHash = '#category=decorative-film';
+const decorativeFilmParams = new URLSearchParams(decorativeFilmHash.slice(1));
+const decorativeFilmSlug = decorativeFilmParams.get('category');
+const decorativeFilmInfo = brochureSeries[decorativeFilmSlug];
+const decorativeFilmSeries = decorativeFilmParams.get('series') || (decorativeFilmInfo.series.length === 1 ? decorativeFilmInfo.series[0][0] : '');
+const decorativeFilmItems = catalogProducts.filter(product => product.category === decorativeFilmSlug && (!decorativeFilmSeries || product.group === decorativeFilmSeries));
+
+assert.equal(decorativeFilmSlug, 'decorative-film', 'Decorative Film hash resolves to its category slug');
+assert.equal(decorativeFilmInfo.displayName, 'Decorative Film', 'Decorative Film route resolves its heading');
+assert.equal(decorativeFilmInfo.intro, 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.', 'Decorative Film route resolves its approved copy');
+assert.equal(familyMedia[decorativeFilmSlug].hero, '/media/families/interior-wall-decals.webp', 'Decorative Film route resolves its shared family image');
+assert.equal(decorativeFilmSeries, 'Decorative Film', 'Decorative Film route selects its sole series');
+assert.deepEqual(decorativeFilmItems, [], 'Decorative Film route has no product-table items');
+
 assert.match(
   main,
   /const media = familyMedia\[category\.slug\];/,
@@ -30,8 +45,8 @@ assert.match(
 );
 assert.match(
   main,
-  /<ProductTable items=\{items\} \/>/,
-  'the selected series displays its product specification table'
+  /\{items\.length > 0 && <ProductTable items=\{items\} \/>\}/,
+  'CategoryPage omits the product specification table when the selected series has no items'
 );
 assert.match(
   main,
