@@ -124,4 +124,3 @@ If browser verification requires a correction, add only the affected files and c
 Run: `git push origin main`
 
 Expected: remote `main` advances to the verified local commit.
-
