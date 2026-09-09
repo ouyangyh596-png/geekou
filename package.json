@@ -23,7 +23,7 @@
     "test-category-media": "node scripts/test-category-media.mjs",
     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
     "test-printable-wrap": "node scripts/test-printable-wrap-state.mjs",
-    "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs",
+    "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs && node scripts/test-printable-wrap-webgl.mjs",
     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
     "test-polish": "node scripts/test-site-polish.mjs",

@@ -9,7 +9,9 @@ assert.ok(existsSync(modulePath), 'printable wrap needs an isolated scene factor
 const { createPrintableWrapInstance } = await import(modulePath)
 
 const alphaMap = new THREE.Texture()
-const map = new THREE.Texture()
+const mapPixel = new Uint8Array([32, 224, 64, 128])
+const map = new THREE.DataTexture(mapPixel, 1, 1, THREE.RGBAFormat)
+map.needsUpdate = true
 const grain = new THREE.Texture()
 const artwork = new THREE.Texture()
 const paint = new THREE.MeshStandardMaterial({
@@ -111,6 +113,9 @@ assert.match(shader.fragmentShader, /sin\( uRotation \)/)
 assert.match(shader.fragmentShader, /greaterThanEqual\( printUv, vec2\( 0\.0 \) \)/)
 assert.match(shader.fragmentShader, /lessThanEqual\( printUv, vec2\( 1\.0 \) \)/)
 assert.match(shader.fragmentShader, /diffuseColor\.rgb = mix\( diffuseColor\.rgb, printTexel\.rgb, printTexel\.a \)/)
+assert.doesNotMatch(shader.fragmentShader, /#include <map_fragment>/, 'source map RGB must not modulate fixed Silver or artwork')
+assert.match(shader.fragmentShader, /diffuseColor\.a \*= sampledDiffuseColor\.a/, 'source map alpha remains part of exported alpha')
+assert.doesNotMatch(shader.fragmentShader, /diffuseColor\s*\*=\s*sampledDiffuseColor/)
 const injection = shader.fragmentShader.slice(shader.fragmentShader.indexOf('// PRINT_BASE_COLOR_BEGIN'), shader.fragmentShader.indexOf('// PRINT_BASE_COLOR_END'))
 assert.ok(injection.length > 0)
 assert.doesNotMatch(injection, /discard|diffuseColor\.a\s*=|opacity\s*=|gl_FragColor|gl_FragDepth/)
@@ -152,6 +157,29 @@ c.scene.scale.setScalar(.01)
 c.scene.updateMatrixWorld(true)
 assert.ok(cu.uMeshToModel.value.equals(expectedMatrix), 'viewer transform cannot move the print')
 
+// A multi-material mesh contributes only triangles assigned to paint groups.
+const groupedGeometry = new THREE.BufferGeometry()
+groupedGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
+  1, 0, 2,
+  1, 1, 0,
+  1, 0, 0,
+  1, 100, 102,
+  1, 101, 100,
+  1, 100, 100,
+  1, 1000, 1000,
+], 3))
+groupedGeometry.setIndex([0, 1, 2, 3, 4, 5])
+groupedGeometry.addGroup(0, 3, 1)
+groupedGeometry.addGroup(3, 3, 0)
+const groupedPanel = new THREE.Mesh(groupedGeometry, [trim, paint])
+groupedPanel.name = 'door_groups'
+const groupedSource = new THREE.Group()
+groupedSource.add(groupedPanel)
+const grouped = createPrintableWrapInstance(groupedSource)
+const groupedUniforms = grouped.printMaterials[0].userData.printUniforms
+assert.deepEqual(groupedUniforms.uProjectionMin.value.toArray(), [-2, 0])
+assert.deepEqual(groupedUniforms.uProjectionSize.value.toArray(), [2, 1])
+
 // Explicit resource ownership: neither cached GLB resources nor caller textures are owned.
 const resources = [geometry, paint, trim, glass, map, alphaMap, grain, artwork, ...b.printMaterials]
 let sharedDisposals = 0
@@ -164,6 +192,7 @@ assert.equal(ownedDisposals, 1, 'owned materials released once, even under repea
 assert.equal(sharedDisposals, 0, 'cached geometry/materials and caller textures remain live')
 b.dispose()
 c.dispose()
+grouped.dispose()
 const empty = createPrintableWrapInstance(new THREE.Group())
 assert.deepEqual(empty.printMaterials, [])
 empty.setArtwork(null)
@@ -194,8 +223,51 @@ real.scene.traverse(object => {
 })
 assert.equal(sharedMeshes, 10)
 const realUniforms = real.printMaterials[0].userData.printUniforms
-assert.ok(Math.abs(realUniforms.uProjectionSize.value.x - 5.982898437) < 1e-6)
-assert.ok(Math.abs(realUniforms.uProjectionSize.value.y - 1.448123281) < 1e-6)
+const projectionTolerance = 1e-6
+const assertClose = (actual, expected, label) => {
+  assert.ok(Math.abs(actual - expected) < projectionTolerance, `${label}: ${actual} != ${expected} ± ${projectionTolerance}`)
+}
+for (const [index, expected] of [-2.9907585182162757, 0.45549860930202113].entries()) {
+  assertClose(realUniforms.uProjectionMin.value.getComponent(index), expected, `GLB projection min[${index}]`)
+}
+for (const [index, expected] of [5.982898437155785, 1.448123281161195].entries()) {
+  assertClose(realUniforms.uProjectionSize.value.getComponent(index), expected, `GLB projection size[${index}]`)
+}
+
+const localBounds = object => {
+  const meshToModel = new THREE.Matrix4()
+  for (let node = object; node && node !== gltf.scene; node = node.parent) meshToModel.premultiply(node.matrix)
+  const bounds = new THREE.Box3()
+  const point = new THREE.Vector3()
+  const position = object.geometry.getAttribute('position')
+  for (let index = 0; index < position.count; index++) {
+    point.fromBufferAttribute(position, index).applyMatrix4(meshToModel)
+    bounds.expandByPoint(point)
+  }
+  return { bounds, meshToModel }
+}
+for (const suffix of ['B', 'F']) {
+  const leftCenter = localBounds(gltf.scene.getObjectByName(`wheel_${suffix}L`)).bounds.getCenter(new THREE.Vector3())
+  const rightCenter = localBounds(gltf.scene.getObjectByName(`wheel_${suffix}R`)).bounds.getCenter(new THREE.Vector3())
+  assert.ok(leftCenter.x > 0 && rightCenter.x < 0 && leftCenter.x > rightCenter.x, `GLB wheel_${suffix}L establishes +X as left`)
+}
+const realPaint = gltf.scene.getObjectByName('car_paint')
+const { meshToModel: realPaintToModel } = localBounds(realPaint)
+const realNormalMatrix = new THREE.Matrix3().getNormalMatrix(realPaintToModel)
+const realPositions = realPaint.geometry.getAttribute('position')
+const realNormals = realPaint.geometry.getAttribute('normal')
+const realPoint = new THREE.Vector3()
+const realNormal = new THREE.Vector3()
+let leftOutwardNormals = 0
+let rightOutwardNormals = 0
+for (let index = 0; index < realPositions.count; index++) {
+  realPoint.fromBufferAttribute(realPositions, index).applyMatrix4(realPaintToModel)
+  realNormal.fromBufferAttribute(realNormals, index).applyMatrix3(realNormalMatrix).normalize()
+  if (realPoint.x > 1 && realNormal.x > .5) leftOutwardNormals++
+  if (realPoint.x < -1 && realNormal.x < -.5) rightOutwardNormals++
+}
+assert.ok(leftOutwardNormals > 0, 'real +X paint side has exported outward normals accepted by the left-side mask')
+assert.ok(rightOutwardNormals > 0, 'real -X paint side has opposite exported outward normals rejected by the left-side mask')
 real.printMaterials[0].addEventListener('dispose', () => realOwnedDisposals++)
 real.dispose()
 assert.equal(realOwnedDisposals, 1)

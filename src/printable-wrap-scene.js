@@ -6,7 +6,7 @@ const isPaint = (object, material) => /^car_paint(?:$|[_.])/i.test(object.name) 
 
 function attachPrintShader(material, uniforms) {
   material.userData.printUniforms = uniforms
-  material.customProgramCacheKey = () => 'printable-wrap-left-v1'
+  material.customProgramCacheKey = () => 'printable-wrap-left-v2'
   material.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, uniforms)
     shader.vertexShader = shader.vertexShader.replace('#include <common>', `
@@ -31,6 +31,15 @@ function attachPrintShader(material, uniforms) {
       uniform vec2 uProjectionSize;
       varying vec3 vPrintPosition;
       varying vec3 vPrintNormal;
+    `).replace('#include <map_fragment>', `
+      #ifdef USE_MAP
+        vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+        #ifdef DECODE_VIDEO_TEXTURE
+          sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
+        #endif
+        // Preserve the exported map alpha without tinting fixed Silver or artwork.
+        diffuseColor.a *= sampledDiffuseColor.a;
+      #endif
     `).replace('#include <color_fragment>', `
       #include <color_fragment>
       // PRINT_BASE_COLOR_BEGIN
@@ -78,10 +87,11 @@ export function createPrintableWrapInstance(source, grain = null) {
     for (let node = object; node && node !== scene; node = node.parent) {
       meshToModel.premultiply(node.matrix)
     }
-    let printable = false
-    object.material = mapMaterialShape(object.material, original => {
+    const hasMaterialGroups = Array.isArray(object.material)
+    const paintMaterialIndices = new Set()
+    object.material = mapMaterialShape(object.material, (original, materialIndex = 0) => {
       if (!isPaint(object, original)) return original
-      printable = true
+      paintMaterialIndices.add(materialIndex)
       const material = new THREE.MeshPhysicalMaterial()
       // Base Material.copy preserves ALL exported alpha/depth/blending fields,
       // including custom blend factors/equations, coverage/hash and polygon offset.
@@ -98,13 +108,29 @@ export function createPrintableWrapInstance(source, grain = null) {
       printMaterials.push(material)
       return material
     })
-    if (!printable) return
+    if (paintMaterialIndices.size === 0) return
     // Read positions directly: computeBoundingBox() would mutate cached geometry.
     const positions = object.geometry.getAttribute('position')
     if (!positions) return
-    for (let index = 0; index < positions.count; index++) {
-      point.fromBufferAttribute(positions, index).applyMatrix4(meshToModel)
+    const expandByVertex = vertexIndex => {
+      point.fromBufferAttribute(positions, vertexIndex).applyMatrix4(meshToModel)
       bounds.expandByPoint(point)
+    }
+    if (!hasMaterialGroups) {
+      for (let vertexIndex = 0; vertexIndex < positions.count; vertexIndex++) expandByVertex(vertexIndex)
+      return
+    }
+    const indices = object.geometry.getIndex()
+    const elementCount = indices?.count ?? positions.count
+    const drawStart = object.geometry.drawRange.start
+    const drawEnd = Math.min(drawStart + object.geometry.drawRange.count, elementCount)
+    for (const group of object.geometry.groups) {
+      if (!paintMaterialIndices.has(group.materialIndex ?? 0)) continue
+      const groupStart = Math.max(group.start, drawStart)
+      const groupEnd = Math.min(group.start + group.count, drawEnd)
+      for (let elementIndex = groupStart; elementIndex < groupEnd; elementIndex++) {
+        expandByVertex(indices ? indices.getX(elementIndex) : elementIndex)
+      }
     }
   })
   if (!bounds.isEmpty()) {
