@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { englishSiteContent } from '../content/site-content.js'
 import {
   DEFAULT_PRINT_PLACEMENT,
+  inspectArtworkFile,
   updatePrintPlacement,
   validateArtworkFile,
 } from '../printable-wrap-state.js'
@@ -15,47 +16,95 @@ export default function PrintableWrapConfigurator() {
   const [finish, setFinish] = useState('glossy')
   const [editMode, setEditMode] = useState('positionArtwork')
   const [error, setError] = useState('')
+  const [artworkStatus, setArtworkStatus] = useState('idle')
   const artworkUrlRef = useRef('')
+  const uploadRequestRef = useRef(0)
+  const uploadPendingRef = useRef(false)
   const fileInputRef = useRef(null)
 
-  const revokeArtwork = () => {
-    if (!artworkUrlRef.current) return
-    URL.revokeObjectURL(artworkUrlRef.current)
-    artworkUrlRef.current = ''
-  }
+  const revokeArtwork = useCallback((url = artworkUrlRef.current) => {
+    if (!url) return
+    URL.revokeObjectURL(url)
+    if (artworkUrlRef.current === url) artworkUrlRef.current = ''
+  }, [])
 
   useEffect(() => () => {
-    if (artworkUrlRef.current) URL.revokeObjectURL(artworkUrlRef.current)
-  }, [])
+    uploadRequestRef.current += 1
+    uploadPendingRef.current = false
+    revokeArtwork()
+  }, [revokeArtwork])
 
   const changePlacement = patch => {
     setPlacement(current => updatePrintPlacement(current, patch))
   }
 
-  const handleArtworkChange = event => {
-    const file = event.target.files?.[0]
+  const handleArtworkChange = async event => {
+    const input = event.target
+    const file = input.files?.[0]
     if (!file) return
 
+    const requestId = uploadRequestRef.current + 1
+    uploadRequestRef.current = requestId
+    uploadPendingRef.current = true
     const validation = validateArtworkFile(file)
     if (!validation.valid) {
+      setArtworkStatus('error')
       setError(validation.message)
-      event.target.value = ''
+      input.value = ''
+      return
+    }
+
+    setArtworkStatus('loading')
+    setError('')
+    const inspection = await inspectArtworkFile(file)
+    if (requestId !== uploadRequestRef.current) return
+    if (!inspection.valid) {
+      setArtworkStatus('error')
+      setError(inspection.message)
+      input.value = ''
       return
     }
 
     const nextArtworkUrl = URL.createObjectURL(file)
-    revokeArtwork()
+    const previousArtworkUrl = artworkUrlRef.current
     artworkUrlRef.current = nextArtworkUrl
+    uploadPendingRef.current = false
+    revokeArtwork(previousArtworkUrl)
     setArtworkUrl(nextArtworkUrl)
     setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
     setEditMode('positionArtwork')
-    setError('')
   }
 
+  const handleArtworkStatusChange = useCallback(({ status, url, message }) => {
+    if (uploadPendingRef.current || url !== artworkUrlRef.current) return
+    if (status === 'loading') {
+      setArtworkStatus('loading')
+      setError('')
+      return
+    }
+    if (status === 'ready') {
+      setArtworkStatus('ready')
+      setError('')
+      return
+    }
+    if (status === 'error') {
+      const failedUrl = artworkUrlRef.current
+      artworkUrlRef.current = ''
+      URL.revokeObjectURL(failedUrl)
+      setArtworkUrl('')
+      setArtworkStatus('error')
+      setError(message || copy.artworkLoadError)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }, [])
+
   const handleRemove = () => {
+    uploadRequestRef.current += 1
+    uploadPendingRef.current = false
     revokeArtwork()
     setArtworkUrl('')
     setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
+    setArtworkStatus('idle')
     setError('')
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
@@ -64,8 +113,13 @@ export default function PrintableWrapConfigurator() {
     setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
     setFinish('glossy')
     setEditMode('positionArtwork')
+    setArtworkStatus(artworkUrlRef.current ? artworkStatus : 'idle')
     setError('')
   }
+
+  const statusMessage = error || (artworkStatus === 'loading'
+    ? copy.artworkLoading
+    : artworkStatus === 'ready' ? copy.artworkReady : copy.noArtwork)
 
   return <section className="printable-wrap-config" aria-labelledby="printable-wrap-title">
     <div className="printable-wrap-heading">
@@ -83,6 +137,7 @@ export default function PrintableWrapConfigurator() {
         finish={finish}
         editMode={editMode}
         onPlacementChange={changePlacement}
+        onArtworkStatusChange={handleArtworkStatusChange}
       />
 
       <div className="printable-wrap-controls">
@@ -99,7 +154,7 @@ export default function PrintableWrapConfigurator() {
           </label>
           <p className="printable-upload-note">{copy.uploadNote}</p>
           <p className={error ? 'printable-upload-status is-error' : 'printable-upload-status'} role={error ? 'alert' : 'status'} aria-live="polite">
-            {error || (artworkUrl ? copy.artworkReady : copy.noArtwork)}
+            {statusMessage}
           </p>
         </div>
 

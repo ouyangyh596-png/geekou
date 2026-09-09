@@ -15,6 +15,12 @@ assert.match(source, /const model = useMemo\([\s\S]*?\}, \[scene, grain\]\)/,
 
 assert.match(source, /new THREE\.TextureLoader\(\)/,
   'artwork must be decoded by Three TextureLoader')
+assert.match(source, /onArtworkStatusChange\?\.\(\{ status: 'loading', url: artworkUrl \}\)/,
+  'the viewer must report loading before TextureLoader begins decoding')
+assert.match(source, /onArtworkStatusChange\?\.\(\{ status: 'ready', url: artworkUrl \}\)/,
+  'the viewer must report ready only from TextureLoader success')
+assert.match(source, /onArtworkStatusChange\?\.\(\{[\s\S]*?status: 'error',[\s\S]*?url: artworkUrl,[\s\S]*?message:/,
+  'TextureLoader failure must be reported to the configurator')
 assert.match(source, /texture\.colorSpace = THREE\.SRGBColorSpace/,
   'uploaded colour artwork must be sampled as sRGB')
 assert.match(source, /model\.setArtwork\(texture\)/,

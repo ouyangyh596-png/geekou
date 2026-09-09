@@ -26,6 +26,10 @@ assert.match(component, /accept="image\/png,image\/jpeg,image\/webp"/,
   'the local chooser must advertise only the supported artwork formats')
 assert.match(component, /validateArtworkFile\(file\)/,
   'selected artwork must pass through the Task 1 validator')
+assert.match(component, /await inspectArtworkFile\(file\)/,
+  'accepted file metadata must be decoded before an object URL is created')
+assert.ok(component.indexOf('await inspectArtworkFile(file)') < component.indexOf('URL.createObjectURL(file)'),
+  'dimension preflight must complete before TextureLoader can receive an object URL')
 assert.match(component, /URL\.createObjectURL\(file\)/,
   'accepted artwork must use a local object URL')
 assert.ok((component.match(/URL\.revokeObjectURL\(/g) ?? []).length >= 2,
@@ -47,6 +51,16 @@ assert.match(component, /handleReset/)
 assert.match(component, /handleRemove/)
 assert.match(component, /role=\{error \? 'alert' : 'status'\}/,
   'upload validation feedback must be announced inline')
+assert.match(component, /const \[artworkStatus, setArtworkStatus\] = useState\('idle'\)/,
+  'the configurator must own explicit idle/loading/ready/error artwork state')
+assert.match(component, /artworkStatus === 'loading'/,
+  'loading copy must be selected independently from URL presence')
+assert.match(component, /artworkStatus === 'ready'/,
+  'ready copy must only be selected after the viewer reports texture readiness')
+assert.match(component, /onArtworkStatusChange=\{handleArtworkStatusChange\}/,
+  'the configurator must receive texture lifecycle callbacks from the viewer')
+assert.match(component, /URL\.revokeObjectURL\(failedUrl\)/,
+  'a TextureLoader failure must promptly revoke its failed object URL')
 assert.match(component, /<PrintableWrapViewer[\s\S]*?artworkUrl=\{artworkUrl\}[\s\S]*?placement=\{placement\}[\s\S]*?finish=\{finish\}[\s\S]*?editMode=\{editMode\}/,
   'the configurator must pass pure state values to the viewer')
 

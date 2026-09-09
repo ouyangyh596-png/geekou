@@ -25,7 +25,7 @@ function createMicroRoughness() {
   return texture
 }
 
-function PrintableWrapModel({ artworkUrl, placement, finish }) {
+function PrintableWrapModel({ artworkUrl, placement, finish, onArtworkStatusChange }) {
   const { scene } = useGLTF(CYBERTRUCK_MODEL_PATH)
   const grain = useMemo(createMicroRoughness, [])
   const model = useMemo(() => {
@@ -63,11 +63,13 @@ function PrintableWrapModel({ artworkUrl, placement, finish }) {
       released = true
       texture.dispose()
     }
+    onArtworkStatusChange?.({ status: 'loading', url: artworkUrl })
     texture = new THREE.TextureLoader().load(
       artworkUrl,
       () => {
         if (!active) return
         model.setArtwork(texture)
+        onArtworkStatusChange?.({ status: 'ready', url: artworkUrl })
         invalidate()
       },
       undefined,
@@ -75,6 +77,11 @@ function PrintableWrapModel({ artworkUrl, placement, finish }) {
         if (!active) return
         model.setArtwork(null)
         releaseTexture()
+        onArtworkStatusChange?.({
+          status: 'error',
+          url: artworkUrl,
+          message: 'We could not load this image preview. Choose the artwork again.',
+        })
         invalidate()
       },
     )
@@ -87,7 +94,7 @@ function PrintableWrapModel({ artworkUrl, placement, finish }) {
       releaseTexture()
       invalidate()
     }
-  }, [model, artworkUrl, invalidate])
+  }, [model, artworkUrl, invalidate, onArtworkStatusChange])
 
   useEffect(() => () => {
     model.dispose()
@@ -137,7 +144,7 @@ class ViewerBoundary extends Component {
   }
 }
 
-export default function PrintableWrapViewer({ artworkUrl, placement, finish, editMode, onPlacementChange }) {
+export default function PrintableWrapViewer({ artworkUrl, placement, finish, editMode, onPlacementChange, onArtworkStatusChange }) {
   const host = useRef()
   const activePointer = useRef(null)
   const [entered, setEntered] = useState(false)
@@ -205,7 +212,7 @@ export default function PrintableWrapViewer({ artworkUrl, placement, finish, edi
         <directionalLight position={[4, 6, 4]} intensity={2.4} color="#fff7eb" />
         <directionalLight position={[-4, 3, -3]} intensity={1.6} color="#c7deff" />
         <StudioEnvironment />
-        <PrintableWrapModel artworkUrl={artworkUrl} placement={placement} finish={finish} />
+        <PrintableWrapModel artworkUrl={artworkUrl} placement={placement} finish={finish} onArtworkStatusChange={onArtworkStatusChange} />
         <CameraRig editMode={editMode} />
       </Suspense>
     </Canvas>}</ViewerBoundary>
