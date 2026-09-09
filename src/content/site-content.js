@@ -201,6 +201,29 @@ export const englishSiteContent = {
     surfaceColour: 'Surface colour',
     customColour: 'Custom colour',
     colourChoicesLabel: 'Classic colour choices',
-    viewerLabel: 'Interactive Cybertruck colour preview'
+    viewerLabel: 'Interactive Cybertruck colour preview',
+    printableWrap: {
+      kicker: 'PRINTABLE CHROME / LIVE PREVIEW',
+      title: 'Place your artwork.',
+      description: 'Preview your design over a Silver mirror-chrome base, then compare glossy and matte overlaminate finishes.',
+      artworkLabel: 'Artwork',
+      uploadArtwork: 'Choose artwork',
+      replaceArtwork: 'Replace artwork',
+      uploadNote: 'PNG, JPEG or WebP, up to 12 MB. Your image stays in this browser and is never uploaded.',
+      noArtwork: 'No artwork selected. The Silver chrome substrate is shown.',
+      artworkReady: 'Artwork ready. Drag on the vehicle to position it.',
+      interactionLabel: 'Preview interaction',
+      positionArtwork: 'Position artwork',
+      rotateVehicle: 'Rotate vehicle',
+      positionHelp: 'Drag on the preview to move your artwork across the printable area.',
+      rotateHelp: 'Drag on the preview to inspect the finish from another angle.',
+      finishLabel: 'Overlaminate finish',
+      glossy: 'Glossy',
+      matte: 'Matte',
+      scaleLabel: 'Artwork scale',
+      rotationLabel: 'Artwork rotation',
+      reset: 'Reset settings',
+      remove: 'Remove artwork'
+    }
   }
 }
