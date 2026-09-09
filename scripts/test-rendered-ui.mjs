@@ -120,7 +120,7 @@ async function assertOrbitInteractions(page) {
 async function assertMobileOrbitStrip(page, width) {
   const selector = page.locator('.stack-selector');
   const stage = page.locator('.stack-card-active');
-  assert.equal(await page.locator('.stack-controls').count(), 1, `${width}px: stack controls must exist`);
+  assert.equal(await page.locator('.stack-controls').count(), 0, `${width}px: obsolete arrow controls must be removed`);
   const layout = await selector.evaluate((element, viewportWidth) => {
     const selectorBounds = element.getBoundingClientRect();
     const stageBounds = element.querySelector('.stack-card-active').getBoundingClientRect();
@@ -134,10 +134,7 @@ async function assertMobileOrbitStrip(page, width) {
   assert.ok(layout.stage.left >= layout.selector.left - 1 && layout.stage.right <= layout.selector.right + 1, `${width}px: centre stage must fit inside the selector`);
   assert.ok(layout.stage.left >= -1 && layout.stage.right <= width + 1, `${width}px: centre stage must remain fully visible in the viewport`);
   assert.ok(layout.stage.width <= layout.selector.width + 1, `${width}px: centre stage width must derive from the selector width`);
-  for (const node of await page.locator('.stack-controls button').all()) {
-    const box = await node.boundingBox();
-    assert.ok(box && box.width >= 44 && box.height >= 44, `${width}px: orbit node target must remain at least 44px`);
-  }
+  assert.equal(await page.locator('.product-swipe-hint').count(), 1, `${width}px: mobile swipe guidance must exist`);
 }
 
 async function assertReducedOrbitLayout(page, width) {

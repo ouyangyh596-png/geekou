@@ -63,7 +63,33 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .stack-card-content-interactive .cybertruck-swatches { margin: 8px 0 0; max-width: none; gap: 2px; }
 .stack-card-content-interactive .stack-cta { margin-top: 4px; }
 .stack-card-content-interactive .viewer-hint { display: none; }
-.stack-controls button:active { transform: scale(.94); }
+.product-gesture-hint {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: clamp(10px, 1.5vw, 20px);
+  transform: translateX(-50%);
+  color: #0b548b;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: .78;
+  transition: opacity .35s ease, transform .35s var(--motion-ease);
+}
+.product-gesture-hint.is-hidden { opacity: 0; transform: translate(-50%, 8px); }
+.product-wheel-hint, .product-swipe-hint { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.product-swipe-hint { display: none; }
+.product-wheel-icon { position: relative; width: 18px; height: 27px; border: 1px solid currentColor; border-radius: 10px; }
+.product-wheel-icon i { position: absolute; top: 5px; left: 50%; width: 2px; height: 6px; border-radius: 2px; background: currentColor; transform: translateX(-50%); animation: product-wheel-scroll 1.5s ease-in-out infinite; }
+.product-swipe-track { position: relative; display: block; width: 66px; height: 18px; border-bottom: 1px solid rgba(11,84,139,.28); }
+.product-swipe-track::before, .product-swipe-track::after { content: ''; position: absolute; bottom: -3px; width: 6px; height: 6px; border: solid currentColor; transform: rotate(45deg); }
+.product-swipe-track::before { left: 1px; border-width: 0 0 1px 1px; }
+.product-swipe-track::after { right: 1px; border-width: 1px 1px 0 0; }
+.product-swipe-track i { position: absolute; left: 50%; bottom: 3px; width: 9px; height: 9px; border-radius: 50%; background: currentColor; animation: product-swipe 1.7s var(--motion-ease) infinite; }
+@keyframes product-wheel-scroll { 0%,100% { transform: translate(-50%,0); opacity: .35; } 50% { transform: translate(-50%,9px); opacity: 1; } }
+@keyframes product-swipe { 0%,100% { transform: translateX(-24px); opacity: .45; } 50% { transform: translateX(15px); opacity: 1; } }
 
 /* Colour controls sit beside the stage, never over the model. */
 .cybertruck-config {
@@ -112,6 +138,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .stack-card-content-interactive { grid-template-rows: 240px auto; }
   .stack-card-content-interactive .stack-card-copy { padding: 20px 22px 24px; }
   .stack-selector.is-shuffling .stack-card-active { animation: stack-shuffle-mobile 650ms var(--motion-ease); }
+  .product-gesture-hint { bottom: 14px; font-size: 9px; }
+  .product-wheel-hint { display: none; }
+  .product-swipe-hint { display: flex; }
   .cybertruck-config { grid-template-columns: minmax(0,1fr); gap: 28px; padding: 24px; }
   .cybertruck-config > .cybertruck-viewer { grid-row: 1; height: 300px; }
   .cybertruck-config h2 { font-size: clamp(38px, 9vw, 56px); }
@@ -129,6 +158,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .reveal, .statement-copy p { opacity: 1 !important; transform: none !important; transition: none !important; }
   .stack-selector *, .series-card, .scroll-art-trigger *, .scroll-art-trigger *::after { animation: none !important; transition: none !important; }
   .viewer-gesture-pointer { animation:none !important; transform:translateX(-11px); }
+  .product-wheel-icon i, .product-swipe-track i { animation: none !important; }
+  .product-gesture-hint { transition: none; }
   .scroll-art-trigger .tech-intro-material, .scroll-art-trigger .tech-card-years-art,
   .scroll-art-trigger .tech-card-lab-art, .scroll-art-trigger .tech-card-application-art { opacity: var(--art-opacity,.22); transform: none; }
 }

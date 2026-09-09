@@ -19,4 +19,14 @@ assert.match(polish, /\.cybertruck-viewer\s*{[^}]*background:\s*transparent/s,
 assert.match(polish, /@keyframes\s+viewer-gesture-drag/, 'drag affordance must animate')
 assert.match(polish, /\.stack-card-content:not\(\.stack-card-content-interactive\) \.stack-card-copy/,
   'standard homepage cards must rebalance their copy after model pills are removed')
+assert.match(polish, /\.product-gesture-hint\s*\{[^}]*position:\s*absolute/s,
+  'product gesture guidance is anchored to the product selector')
+assert.match(polish, /@keyframes\s+product-wheel-scroll/, 'desktop wheel guidance must animate')
+assert.match(polish, /@keyframes\s+product-swipe/, 'mobile swipe guidance must animate')
+assert.match(polish, /\.product-gesture-hint\.is-hidden\s*\{[^}]*opacity:\s*0/s,
+  'gesture guidance hides after the first successful interaction')
+assert.match(polish, /@media\s*\(max-width:\s*800px\)[\s\S]*?\.product-wheel-hint\s*\{[^}]*display:\s*none/s,
+  'mobile layouts hide the desktop wheel cue')
+assert.match(polish, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.product-wheel-icon i[^{]*\{[^}]*animation:\s*none\s*!important/s,
+  'reduced motion disables product gesture animations')
 console.log('Site polish regression checks passed')
