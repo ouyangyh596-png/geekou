@@ -14,7 +14,7 @@ export const classicColours = [
   { id: 'dark-blue', name: 'Dark Blue', hex: '#2A3655' },
   { id: 'dark-green', name: 'Dark Green', hex: '#003816' },
   { id: 'tungsten-steel', name: 'Tungsten Steel', hex: '#646464' },
-  { id: 'rose-gold', name: 'Rose Gold', hex: '#C88678' }
+  { id: 'rose-gold', name: 'Rose Gold', hex: '#80564D' }
 ]
 
 export const DEFAULT_CLASSIC_COLOUR = classicColours.find(colour => colour.id === 'dark-green').hex

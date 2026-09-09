@@ -10,6 +10,7 @@ const expectedClassicColours = new Map([
   ['dark-green', '#003816'],
   ['dark-blue', '#2A3655'],
   ['bright-yellow', '#E9E325'],
+  ['rose-gold', '#80564D'],
   ['silver', '#B4B4B4'],
   ['china-red', '#A0000F'],
   ['tungsten-steel', '#646464'],
