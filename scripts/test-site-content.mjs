@@ -146,6 +146,16 @@ assert.deepEqual(englishSiteContent.categories['polymeric-wrap-vinyl'].series, [
   }
 ])
 assert.equal(englishSiteContent.categories['super-chrome-film'].displayName, 'Super Chrome Film')
+assert.deepEqual(englishSiteContent.categories['super-chrome-film'].series, [
+  {
+    name: 'Super Chrome Film classic colours',
+    description: 'Build-in colored chrome film in satin finish, delivers metallic reflection, iridescent color shifts with light angle. Made from cast PVC with very good dimensional stability, conforms to compound curves with heat.'
+  },
+  {
+    name: 'Printable Super Glossy Chrome Wrap Film',
+    description: 'The stunning printable film is in mirror-chrome base finish, true metallic effect, optimal solution for customized car wrap.'
+  }
+])
 assert.equal(englishSiteContent.categories['pvc-free-film'].displayName, 'PVC-Free Film')
 assert.equal(
   englishSiteContent.categories['cold-lamination'].intro,

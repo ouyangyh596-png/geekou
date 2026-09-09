@@ -183,11 +183,11 @@ export const catalogProducts = [
     ['AF-20280M', 'Burgundy Red'], ['AF-20700M', 'Green'], ['AF-20521M', 'Twilight Purple'],
     ['AF-20100M', 'Silver'], ['AF-20601M', 'Dark Blue'], ['AF-20701M', 'Dark Green'],
     ['AF-20405M', 'Tungsten Steel'], ['AF-20850M', 'Rose Gold']
-  ].map(([model, color]) => product('super-chrome-film', 'Super Chrome Film Classic Colours', model, [['Color', color]], {
+  ].map(([model, color]) => product('super-chrome-film', 'Super Chrome Film classic colours', model, [['Color', color]], {
     title: color, description: `Classic ${color.toLowerCase()} car wrap film.`
   })),
 
-  wrap('super-chrome-film', 'AF-20100G', 'Super Chrome Film Classic Colours', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
+  wrap('super-chrome-film', 'AF-20100G', 'Printable Super Glossy Chrome Wrap Film', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
 
   overlaminate('cast-wrap-vinyl', 'SF5601', 'Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
   overlaminate('cast-wrap-vinyl', 'SF5602', 'Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
