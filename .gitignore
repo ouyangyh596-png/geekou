@@ -2,6 +2,7 @@ node_modules/
 .pnpm-store/
 dist/
 tmp/
+.worktrees/
 .DS_Store
 *.log
 
