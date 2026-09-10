@@ -1,9 +1,40 @@
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: Manrope;
+  src: url("/fonts/manrope-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Mono";
+  src: url("/fonts/dm-mono-regular-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Mono";
+  src: url("/fonts/dm-mono-medium-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
 /* A restrained, shared type scale; section order and brand colours stay intact. */
 :root {
-  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-text: Manrope, "Avenir Next", "Segoe UI", Arial, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
   --motion-ease: cubic-bezier(.22, 1, .36, 1);
 }
-body, .home-page { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+body, .home-page { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
 h1, h2, h3, h4 { text-wrap: balance; }
 p { text-wrap: pretty; }
 .statement h2, .showcase h2, .technology h2, .contact h2,
@@ -16,7 +47,7 @@ p { text-wrap: pretty; }
 .landing h1 em, .statement h2 em, .showcase h2 em, .technology h2 em,
 .contact h2 em, .detail h1 em, .spec-area h2 em, .material-story h2 em,
 .ppf-sequence-copy h2 em, .cybertruck-config h2 em {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -.045em;
