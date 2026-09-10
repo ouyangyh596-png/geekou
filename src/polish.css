@@ -32,11 +32,31 @@
   --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-text: Manrope, "Avenir Next", "Segoe UI", Arial, sans-serif;
   --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-serif: "Bodoni 72", "Iowan Old Style", Georgia, serif;
   --motion-ease: cubic-bezier(.22, 1, .36, 1);
 }
 body, .home-page { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
-h1, h2, h3, h4 { text-wrap: balance; }
+button, input, textarea, select { font-family: var(--font-text); }
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+.home-page h1, .home-page h2, .home-page h3, .home-page h4 {
+  font-family: var(--font-display);
+}
 p { text-wrap: pretty; }
+.stack-card-content strong, .orbit-stage-content strong, .tech-intro {
+  font-family: var(--font-display);
+}
+.kicker, .landing-image span, .scroll-cue, .model, .category-index,
+.category-product section small, .detail-model, .detail-hero-image span,
+.series-card > span, .tech-card > span, .material-tile span,
+.company-evidence figcaption, .category-page-media > span, .stack-index,
+.orbit-index, .stack-model-list li, .orbit-model-list li,
+.ppf-sequence-progress, .detail-label, .product-directory-label,
+.product-spec-table-head, .product-spec-table-row strong {
+  font-family: var(--font-mono);
+}
 .statement h2, .showcase h2, .technology h2, .contact h2,
 .detail-hero h1, .category-page h1 {
   font-size: clamp(48px, 7.2vw, 108px);
@@ -47,14 +67,14 @@ p { text-wrap: pretty; }
 .landing h1 em, .statement h2 em, .showcase h2 em, .technology h2 em,
 .contact h2 em, .detail h1 em, .spec-area h2 em, .material-story h2 em,
 .ppf-sequence-copy h2 em, .cybertruck-config h2 em {
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -.045em;
 }
 .landing h1.landing-title { font-weight: 600; line-height: 1.08; letter-spacing: -.045em; word-spacing: .04em; }
 .ppf-sequence-copy h2 { line-height: 1.02; letter-spacing: -.05em; }
-.statement h2 .company-title-years { letter-spacing: -.09em; line-height: .95; padding-right: .035em; }
+.statement h2 .company-title-years { font-family: var(--font-serif); letter-spacing: -.09em; line-height: .95; padding-right: .035em; }
 .company-layout { min-height: 420px; }
 .company-layout .statement-copy { padding-top: 48px; max-width: 560px; }
 .company-layout .statement-copy p { max-width: 54ch; line-height: 1.7; margin: 0 0 1.3em; font-size: clamp(16px, 1.25vw, 19px); }
