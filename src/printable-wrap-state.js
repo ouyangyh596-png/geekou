@@ -53,7 +53,8 @@ export function updatePrintPlacement(current, patch) {
 }
 
 export function finishMaterialSettings(finish) {
+  // Matte matches the classic Silver surface; glossy is polished mirror chrome.
   return finish === 'matte'
-    ? { roughness: 0.48, clearcoat: 0.12, clearcoatRoughness: 0.5, useGrain: true }
-    : { roughness: 0.12, clearcoat: 0.75, clearcoatRoughness: 0.08, useGrain: false }
+    ? { roughness: 0.205, clearcoat: 0.24, clearcoatRoughness: 0.22, useGrain: true }
+    : { roughness: 0, clearcoat: 0, clearcoatRoughness: 0, useGrain: false }
 }
