@@ -246,8 +246,10 @@ html:has(.home-page){scroll-snap-type:none}
   .product-directory li{min-width:0;background:transparent}
   .product-directory a{position:relative;display:flex;align-items:center;min-height:54px;padding:12px 15px 12px 18px;border-radius:10px;color:var(--blue);font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-.01em;transition:background .2s ease,color .2s ease,transform .24s cubic-bezier(.22,1,.36,1),box-shadow .2s ease}
   .product-directory a::before{content:'';position:absolute;top:12px;bottom:12px;left:7px;width:2px;border-radius:2px;background:var(--blue);transform:scaleY(0);transition:transform .2s cubic-bezier(.22,1,.36,1)}
+  .product-directory-marker{width:0;height:0;flex:0 0 auto;margin-right:10px;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid var(--blue);transition:transform .2s cubic-bezier(.22,1,.36,1)}
   .product-directory a:hover,.product-directory a:focus-visible{background:rgba(0,84,167,.075);color:#003f80;box-shadow:inset 0 0 0 1px rgba(0,84,167,.06);transform:translateX(2px)}
   .product-directory a:hover::before,.product-directory a:focus-visible::before{transform:scaleY(1)}
+  .product-directory a:hover .product-directory-marker,.product-directory a:focus-visible .product-directory-marker{transform:translateX(3px)}
   .product-nav-item:hover .product-directory,.product-nav-item:focus-within .product-directory{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
 }
 @media(max-width:800px){

@@ -47,7 +47,7 @@ function ProductDirectory({ categories, label, onNavigate }) {
     <div className="product-directory" aria-label="Product families">
       <span className="product-directory-label">Product families</span>
       <ul>
-        {categories.map(category => <li key={category.slug}><a href={`#category=${category.slug}`} onClick={event => onNavigate(`#category=${category.slug}`, event)}>{category.name}</a></li>)}
+        {categories.map(category => <li key={category.slug}><a href={`#category=${category.slug}`} onClick={event => onNavigate(`#category=${category.slug}`, event)}><span className="product-directory-marker" aria-hidden="true" />{category.name}</a></li>)}
       </ul>
     </div>
   </div>;

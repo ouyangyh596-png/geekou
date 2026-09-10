@@ -25,5 +25,8 @@ assert.match(styles, /\.product-directory li\{[^}]*background:transparent/, 'dir
 assert.match(styles, /\.product-directory a\{[^}]*color:var\(--blue\)/, 'every product family name uses the brand blue');
 assert.match(styles, /\.product-directory a::before\{/, 'directory links provide a left accent on interaction');
 assert.match(styles, /\.product-directory a:hover::before,\.product-directory a:focus-visible::before\{[^}]*transform:scaleY\(1\)/, 'the left blue accent appears on hover and keyboard focus');
+assert.match(main, /<span className="product-directory-marker" aria-hidden="true"\s*\/>\{category\.name\}/, 'each product family name has a decorative directional marker');
+assert.match(styles, /\.product-directory-marker\{[^}]*border-left:[^;}]*var\(--blue\)/, 'the product marker is a brand-blue right-pointing triangle');
+assert.match(styles, /\.product-directory a:hover \.product-directory-marker,\.product-directory a:focus-visible \.product-directory-marker\{[^}]*transform:translateX\(/, 'the triangle reinforces the link direction on interaction');
 
 console.log('PASS: header product directory contract is present');
