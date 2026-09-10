@@ -18,5 +18,12 @@ assert.match(styles, /\.product-nav-item:focus-within \.product-directory/, 'the
 assert.match(styles, /@media\(max-width:800px\)\{\s*\.product-nav-item\{display:block\}\s*\.product-directory\{display:none/, 'the desktop dropdown is suppressed on mobile');
 assert.match(styles, /\.nav-link::after/, 'the primary navigation underline is styled');
 assert.match(styles, /\.header \.logo\{width:148px;height:148px\}/, 'the desktop brand mark has the enlarged display size');
+assert.match(styles, /\.product-directory\{[^}]*border-radius:[^;}]+;[^}]*background:linear-gradient/, 'the dropdown uses a rounded layered card surface');
+assert.match(styles, /\.product-directory-label\{[^}]*color:var\(--blue\)[^}]*font:[^;}]*12px/, 'the directory title is larger and uses the brand blue');
+assert.match(styles, /\.product-directory ul\{[^}]*column-gap:[^;}]+;[^}]*row-gap:[^;}]+;[^}]*background:transparent/, 'the product grid uses open spacing instead of table separators');
+assert.match(styles, /\.product-directory li\{[^}]*background:transparent/, 'directory cells do not look like table cells');
+assert.match(styles, /\.product-directory a\{[^}]*color:var\(--blue\)/, 'every product family name uses the brand blue');
+assert.match(styles, /\.product-directory a::before\{/, 'directory links provide a left accent on interaction');
+assert.match(styles, /\.product-directory a:hover::before,\.product-directory a:focus-visible::before\{[^}]*transform:scaleY\(1\)/, 'the left blue accent appears on hover and keyboard focus');
 
 console.log('PASS: header product directory contract is present');
