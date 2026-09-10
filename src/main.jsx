@@ -211,20 +211,16 @@ function ProductShowcase() {
   const touchStartY = useRef(0);
   const touchMoved = useRef(false);
   const shuffleTimer = useRef(null);
-  const showcaseRef = useRef(null);
+  const activeCardRef = useRef(null);
   const selectedIndexRef = useRef(0);
   const shuffleBlockedRef = useRef(false);
   const wheelDeltaRef = useRef(0);
   useEffect(() => {
-    const showcase = showcaseRef.current;
+    const wheelTarget = activeCardRef.current;
+    if (!wheelTarget) return undefined;
     const desktopPointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     const handleWheel = event => {
       if (!desktopPointer.matches) return;
-      const bounds = showcase.getBoundingClientRect();
-      const boundsCenter = (bounds.top + bounds.bottom) / 2;
-      const viewportCenter = window.innerHeight / 2;
-      const isInInteractionZone = Math.abs(boundsCenter - viewportCenter) <= Math.min(window.innerHeight * .35, bounds.height * .5);
-      if (!isInInteractionZone) return;
       if (shuffleBlockedRef.current) {
         wheelDeltaRef.current = 0;
         event.preventDefault();
@@ -250,12 +246,12 @@ function ProductShowcase() {
         setIsShuffling(false);
       }, 650);
     };
-    showcase.addEventListener('wheel', handleWheel, { passive: false });
+    wheelTarget.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
-      showcase.removeEventListener('wheel', handleWheel);
+      wheelTarget.removeEventListener('wheel', handleWheel);
       window.clearTimeout(shuffleTimer.current);
     };
-  }, []);
+  }, [isClassicColours]);
   const selectOffset = offset => {
     window.clearTimeout(shuffleTimer.current);
     shuffleBlockedRef.current = true;
@@ -303,7 +299,7 @@ function ProductShowcase() {
     {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="lazy" decoding="async" />}
     <div className="stack-card-copy"><span className="stack-index">{String(selectedIndex + 1).padStart(2, '0')}</span><strong>{selectedCategory.name}</strong><small>{selectedCategory.description}</small>{isClassicColours && <div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-pressed={selectedColour === colour.hex} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}{isClassicColours ? <a className="stack-cta" href={'#category=' + selectedCategory.slug}>{content.products.exploreProducts} <ArrowUpRight size={20} /></a> : <span className="stack-cta">{content.products.exploreProducts} <ArrowUpRight size={20} /></span>}</div>
   </div>;
-  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div ref={showcaseRef} className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>Scroll to browse products</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>Swipe to browse products</span></div></div></section>;
+  return <section className="showcase category-showcase" id="products"><div className="showcase-head"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article ref={activeCardRef} className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a ref={activeCardRef} href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>Scroll to browse products</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>Swipe to browse products</span></div></div></section>;
 }
 
 function ProductTable({ items }) {

@@ -42,7 +42,7 @@ assert.match(main, /addEventListener\('wheel', handleWheel, \{ passive: false \}
 assert.match(main, /wheelDeltaRef\.current \+= event\.deltaY;/, 'small trackpad deltas accumulate into a deliberate gesture');
 assert.match(main, /if \(shuffleBlockedRef\.current\) \{\s*wheelDeltaRef\.current = 0;/, 'wheel inertia is discarded while a transition is locked');
 assert.match(main, /decideProductWheel\(\{ index: selectedIndexRef\.current, count: categories\.length, deltaY: wheelDeltaRef\.current, blocked: false \}\)/, 'wheel input uses the tested product-selection state machine');
-assert.match(main, /Math\.abs\(boundsCenter - viewportCenter\)/, 'wheel activation remains available on tall desktop screens');
+assert.match(main, /const wheelTarget = activeCardRef\.current;/, 'desktop wheel activation is scoped to the active product card');
 assert.match(main, /decideProductSwipe/, 'mobile gestures distinguish horizontal swipes from vertical scrolling');
 assert.match(main, /setGestureHintDismissed\(true\)/, 'the interaction hint is dismissed after successful input');
 assert.match(main, /className=\{'product-gesture-hint' \+ \(gestureHintDismissed \? ' is-hidden' : ''\)\}/, 'responsive gesture guidance exposes a dismissible state');
@@ -52,7 +52,7 @@ assert.doesNotMatch(main, /<div className="stack-controls">/, 'circular arrow co
 assert.match(main, /className="stack-card stack-card-prev"/, 'the previous family card is rendered');
 assert.match(main, /className="stack-card stack-card-active"/, 'the active family card is rendered');
 assert.match(main, /className="stack-card stack-card-next"/, 'the next family card is rendered');
-assert.match(main, /<a href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active" onClick=\{handleActiveClick\}>/, 'the active card remains the category navigation anchor');
+assert.match(main, /<a ref=\{activeCardRef\} href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active" onClick=\{handleActiveClick\}>/, 'the active card remains the category navigation anchor');
 assert.match(main, /key=\{selectedCategory\.slug\}/, 'active card content is keyed by the selected slug for entry animation');
 assert.match(main, /<img src=\{selectedMedia\.preview\} alt=\{selectedMedia\.alt\} width="1200" height="800" loading="lazy" decoding="async" \/>/, 'the centre stage retains mapped selected media and alt text');
 assert.match(main, /<span className="stack-index">\{String\(selectedIndex \+ 1\)\.padStart\(2, '0'\)\}<\/span>/, 'the active card shows the selected family index');

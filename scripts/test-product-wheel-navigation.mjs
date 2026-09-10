@@ -1,5 +1,21 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { decideProductSwipe, decideProductWheel } from '../src/product-wheel-navigation.js'
+
+const mainSource = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
+
+assert.match(mainSource, /const activeCardRef = useRef\(null\)/,
+  'the active product card owns a dedicated wheel target ref')
+assert.match(mainSource, /<article ref=\{activeCardRef\} className="stack-card stack-card-active stack-card-interactive">/,
+  'the interactive active-card branch uses the wheel target ref')
+assert.match(mainSource, /<a ref=\{activeCardRef\} href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active"/,
+  'the linked active-card branch uses the wheel target ref')
+assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: false \}\)/,
+  'wheel navigation listens on the active card')
+assert.match(mainSource, /wheelTarget\.removeEventListener\('wheel', handleWheel\)/,
+  'wheel navigation cleans up the active-card listener')
+assert.doesNotMatch(mainSource, /showcase\.addEventListener\('wheel'/,
+  'the full product selector does not capture wheel navigation')
 
 assert.deepEqual(
   decideProductWheel({ index: 3, count: 11, deltaY: 80, blocked: false }),
