@@ -7,12 +7,12 @@ const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'ut
 const polish = await readFile(new URL('../src/polish.css', import.meta.url), 'utf8');
 const ppfSequence = await readFile(new URL('../src/components/PPFScrollSequence.jsx', import.meta.url), 'utf8');
 
-assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*font-size:\s*var\(--type-hero\)/,
-  'hero title uses the approved display scale');
+assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*font-family:\s*"Space Grotesk"[^}]*font-size:\s*clamp\(38px, 6vw, 92px\)/,
+  'hero title restores its original Space Grotesk scale');
 assert.match(polish, /\.statement h2[^}]*font-size:\s*var\(--type-section\)/,
   'statement heading uses the section scale');
-assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*background:\s*linear-gradient\(/,
-  'chrome-film hero title keeps a controlled reflective gradient');
+assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*background:\s*linear-gradient\(105deg, #fff 0%, #fff 14%, #ffb7d5 28%/,
+  'hero title restores its original animated chrome gradient');
 
 // Check the final homepage layer, so legacy declarations cannot satisfy these
 // contracts while silently restoring old spacing, scale or muted colours.
@@ -29,16 +29,8 @@ const lastDeclarationFor = (selector, property) => declarationsFor(polish, selec
   .split(';').map(value => value.trim()).filter(value => value.startsWith(`${property}:`))
   .at(-1)?.slice(property.length + 1).trim();
 const heroSelector = '.home-page .landing h1.landing-title';
-assert.equal(lastDeclarationFor('.home-page .landing-brand-lockup', 'isolation'), 'isolate',
-  'hero lockup contains the contrast surface behind the gradient text');
-assert.equal(lastDeclarationFor(heroSelector, 'position'), 'relative',
-  'hero contrast surface is anchored to the title, not the whole video');
-assert.match(lastDeclarationFor(`${heroSelector}::before`, 'background') || '', /radial-gradient\(ellipse at center, rgba\(5, 27, 49, \.92\)/,
-  'the final hero title scrim supplies a dark centre fading into the video');
-assert.equal(lastDeclarationFor(`${heroSelector}::before`, 'filter'), 'blur(18px)',
-  'the local contrast surface has soft edges');
-assert.equal(lastDeclarationFor(`${heroSelector}::before`, 'pointer-events'), 'none',
-  'the decorative title surface cannot intercept controls');
+assert.equal(lastDeclarationFor(`${heroSelector}::before`, 'content'), 'none',
+  'the restored hero title removes the later contrast scrim');
 assert.equal(lastDeclarationFor('.home-page .technology .kicker', 'font-family'), 'var(--font-mono)',
   'the final scoped technology kicker declaration retains its technical face');
 for (const selector of [
@@ -53,8 +45,8 @@ for (const selector of [
     `${selector} never forces a heading onto one line`);
 }
 const hero = declarationsFor(desktop, '.home-page .landing h1.landing-title');
-assert.match(hero, /line-height:\s*1;/, 'hero has comfortable leading');
-assert.match(hero, /letter-spacing:\s*-\.015em;/, 'hero uses restrained tracking');
+assert.match(hero, /line-height:\s*\.95;/, 'hero restores its original compact leading');
+assert.match(hero, /letter-spacing:\s*-\.035em;/, 'hero restores its original tracking');
 assert.match(hero, /white-space:\s*normal;/, 'hero can wrap at every viewport');
 assert.doesNotMatch(declarationsFor(homepage, '.home-page .landing h1.landing-title'), /white-space:\s*nowrap/,
   'hero refinement never forces the title onto one line');

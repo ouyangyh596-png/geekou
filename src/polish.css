@@ -1,4 +1,11 @@
 @font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
   font-family: "Barlow Semi Condensed";
   src: url("/fonts/barlow-semi-condensed-500-latin.woff2") format("woff2");
   font-style: normal;
@@ -317,28 +324,23 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .home-page .landing h1.landing-title {
   position: relative;
   max-width: 100%;
-  font-size: var(--type-hero);
-  line-height: 1;
-  letter-spacing: -.015em;
-  word-spacing: .04em;
+  font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(38px, 6vw, 92px);
+  line-height: .95;
+  letter-spacing: -.035em;
+  word-spacing: .14em;
   white-space: normal;
-  margin: 32px 0 40px;
-  background: linear-gradient(110deg, #f8fbfd 8%, #d4e3ee 32%, #ffffff 49%, #b6ccdc 68%, #f8fbfd 92%);
-  background-size: 100% 100%;
+  margin: clamp(22px, 3vw, 42px) 0 40px;
+  background: linear-gradient(105deg, #fff 0%, #fff 14%, #ffb7d5 28%, #ffd66e 42%, #9ff3d0 57%, #9ad8ff 72%, #c7a7ff 87%, #fff 100%);
+  background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 1px 18px rgba(11, 47, 77, .12);
+  animation: chrome-rainbow 8s linear infinite;
+  text-shadow: 0 0 28px rgba(255,255,255,.16);
 }
 .home-page .landing h1.landing-title::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: -.7em -1.5em;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(5, 27, 49, .92) 0%, rgba(5, 27, 49, .84) 50%, rgba(5, 27, 49, .42) 75%, rgba(5, 27, 49, 0) 100%);
-  filter: blur(18px);
-  pointer-events: none;
+  content: none;
 }
 .home-page > .statement,
 .home-page > .showcase,
@@ -465,6 +467,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     padding-block: max(180px, 25svh) 88px;
   }
   .home-page .landing h1.landing-title {
+    font-size: clamp(28px, 8.5vw, 54px);
     margin-block: 28px 32px;
   }
   .home-page .statement h2,
@@ -489,6 +492,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
   .home-page .ppf-sequence-copy--top > p:not(.kicker) {
     font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .landing h1.landing-title {
+    animation: none;
+    background-position: 50% 50%;
   }
 }
 

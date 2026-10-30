@@ -54,7 +54,7 @@ async function assertTypographySystem(page, width) {
       clientWidth: document.documentElement.clientWidth
     };
   });
-  assert.match(metrics.fontFamily, /Barlow Semi Condensed/, `${width}px: display font must be Barlow Semi Condensed`);
+  assert.match(metrics.fontFamily, /Space Grotesk/, `${width}px: hero title must use its restored Space Grotesk face`);
   assert.ok(metrics.letterSpacing > -5, `${width}px: hero tracking must remain readable`);
   assertNoHorizontalOverflow(metrics, `${width}px typography`);
 }
