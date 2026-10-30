@@ -262,9 +262,18 @@ html:has(.home-page){scroll-snap-type:none}
   .header{
     position:absolute;
     color:var(--ink);
-    background:#fff;
+    background:#fbfcfd;
     border-bottom:1px solid rgba(9,43,75,.12);
     box-shadow:0 10px 30px rgba(9,43,75,.045);
+  }
+  .header::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image:linear-gradient(115deg,rgba(9,43,75,.026) 1px,transparent 1px),linear-gradient(25deg,rgba(0,84,167,.018) 1px,transparent 1px);
+    background-size:28px 28px,38px 38px;
+    opacity:.72;
+    pointer-events:none;
   }
   .header::after{
     content:'';
@@ -285,6 +294,8 @@ html:has(.home-page){scroll-snap-type:none}
     grid-template-columns:1fr auto 1fr;
     grid-template-rows:104px 72px;
     align-items:center;
+    position:relative;
+    z-index:1;
   }
   .header .logo{
     grid-area:brand;
@@ -310,10 +321,10 @@ html:has(.home-page){scroll-snap-type:none}
     justify-self:center;
     gap:0;
     color:#111a24;
-    font-family:Manrope,"Avenir Next","Segoe UI",Arial,sans-serif;
-    font-size:13.5px;
-    font-weight:600;
-    letter-spacing:-.01em;
+    font-family:Arial,sans-serif;
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:0;
   }
   .header nav>*{
     flex:1 1 0;
@@ -348,9 +359,9 @@ html:has(.home-page){scroll-snap-type:none}
     color:var(--ink);
     background:#fff;
     padding:10px 34px 10px 16px;
-    font-family:Manrope,"Avenir Next","Segoe UI",Arial,sans-serif;
+    font-family:Arial,sans-serif;
     font-size:12.5px;
-    font-weight:500;
+    font-weight:700;
   }
   .landing .language-select{
     color:var(--ink);
@@ -364,9 +375,9 @@ html:has(.home-page){scroll-snap-type:none}
     border-radius:999px;
     background:var(--blue);
     color:#fff;
-    font-family:Manrope,"Avenir Next","Segoe UI",Arial,sans-serif;
+    font-family:Arial,sans-serif;
     font-size:12.5px;
-    font-weight:600;
+    font-weight:700;
     box-shadow:0 10px 24px rgba(0,84,167,.18);
     transition:transform .25s ease,background .25s ease,box-shadow .25s ease;
   }
@@ -377,7 +388,7 @@ html:has(.home-page){scroll-snap-type:none}
   }
   .landing .header{
     color:var(--ink);
-    background:#fff;
+    background:#fbfcfd;
     border:0;
     border-bottom:1px solid rgba(9,43,75,.12);
   }
@@ -392,17 +403,27 @@ html:has(.home-page){scroll-snap-type:none}
 @media(max-width:800px){
   .header,.landing .header{
     color:var(--ink);
-    background:#fff;
+    background:#fbfcfd;
     border:0;
     border-bottom:1px solid rgba(9,43,75,.12);
     box-shadow:0 8px 24px rgba(9,43,75,.05);
   }
+  .header::before,.landing .header::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image:linear-gradient(115deg,rgba(9,43,75,.026) 1px,transparent 1px),linear-gradient(25deg,rgba(0,84,167,.018) 1px,transparent 1px);
+    background-size:28px 28px,38px 38px;
+    opacity:.72;
+    pointer-events:none;
+  }
+  .header-inner{position:relative;z-index:1;font-family:Arial,sans-serif;font-weight:700}
   .header-inner{height:78px}
   .header .logo{width:82px;height:72px}
   .header .logo img,.landing .logo img{width:96px;height:96px;left:-7px;top:-12px;filter:none}
   .landing .menu{color:var(--ink)}
   .landing .language-select{color:var(--ink);border-color:rgba(9,43,75,.18);background:#fff}
-  .header nav.nav-open,.landing .header nav.nav-open{top:78px;border:1px solid rgba(9,43,75,.1);border-radius:0 0 16px 16px}
+  .header nav.nav-open,.landing .header nav.nav-open{top:78px;border:1px solid rgba(9,43,75,.1);border-radius:0 0 16px 16px;font-family:Arial,sans-serif;font-weight:700}
 }
 /* Cybertruck colour study */
 .cybertruck-config { position:relative; width:min(1440px,calc(100% - 72px)); min-height:650px; margin:70px auto 0; padding:42px; overflow:hidden; background:#e8eef3; }

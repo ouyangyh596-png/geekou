@@ -32,15 +32,17 @@ assert.match(styles, /\.product-directory a:hover \.product-directory-marker,\.p
 
 const efiHeader = styles.split('/* EFI-inspired two-tier header */')[1] || '';
 assert.match(efiHeader, /grid-template-areas:\s*"brand \. actions"\s*"nav nav nav"/, 'desktop header uses a spacious two-tier structure');
-assert.match(efiHeader, /\.header\{[^}]*background:#fff[^}]*border-bottom:/, 'the masthead uses a clean white surface and fine divider');
+assert.match(efiHeader, /\.header\{[^}]*background:#fbfcfd[^}]*border-bottom:/, 'the masthead uses a clean near-white surface and fine divider');
 assert.match(efiHeader, /\.header nav\{[^}]*grid-area:nav[^}]*justify-content:space-between/, 'primary navigation forms the balanced lower row');
 assert.match(efiHeader, /grid-template-columns:1fr auto 1fr/, 'the utility row uses equal outer columns for true symmetry');
-assert.match(efiHeader, /\.header nav\{[^}]*justify-self:center[^}]*font-family:Manrope/, 'navigation is centered and uses the approved interface face');
+assert.match(efiHeader, /\.header nav\{[^}]*justify-self:center[^}]*font-family:Arial[^}]*font-weight:700/, 'navigation is centered and uses bold Arial');
+assert.match(efiHeader, /\.header::before\{[^}]*background-image:[^}]*linear-gradient/, 'the white masthead carries a restrained tonal texture');
 assert.match(efiHeader, /\.header nav>\*\{[^}]*flex:1 1 0[^}]*justify-content:center/, 'all four primary navigation cells have equal width');
 assert.match(efiHeader, /\.nav-chevron\{[^}]*transition:transform/, 'the product chevron has a polished motion treatment');
 assert.match(efiHeader, /\.product-nav-item:hover \.nav-chevron,\.product-nav-item:focus-within \.nav-chevron\{[^}]*transform:rotate\(180deg\)/, 'the chevron rotates when the product menu opens');
 assert.match(efiHeader, /\.header-actions\{[^}]*grid-area:actions/, 'language and contact controls sit in the upper utility row');
 assert.match(efiHeader, /\.header-cta\{[^}]*border-radius:999px[^}]*background:var\(--blue\)/, 'contact action uses a rounded brand-blue capsule');
-assert.match(efiHeader, /@media\(max-width:800px\)[\s\S]*\.header,\.landing \.header\{[^}]*background:#fff/, 'mobile retains the clean white masthead');
+assert.match(efiHeader, /\.language-select\{[^}]*font-family:Arial[^}]*font-weight:700/, 'the language control matches the bold Arial navigation');
+assert.match(efiHeader, /@media\(max-width:800px\)[\s\S]*\.header,\.landing \.header\{[^}]*background:#fbfcfd/, 'mobile retains the textured near-white masthead');
 
 console.log('PASS: header product directory contract is present');
