@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
 import './styles.css';
 import './polish.css';
 import { catalogProducts } from './catalog.js';
@@ -43,7 +43,7 @@ function Logo() {
 
 function ProductDirectory({ categories, label, onNavigate }) {
   return <div className="product-nav-item">
-    <a className="nav-link" href="#products" onClick={event => onNavigate('#products', event)}>{label}</a>
+    <a className="nav-link" href="#products" onClick={event => onNavigate('#products', event)}>{label}<ChevronDown className="nav-chevron" size={14} aria-hidden="true" /></a>
     <div className="product-directory" aria-label="Product families">
       <span className="product-directory-label">Product families</span>
       <ul>
