@@ -34,18 +34,37 @@
   font-display: swap;
 }
 
-/* A restrained, shared type scale; section order and brand colours stay intact. */
+/* Shared typography and colour foundations. */
 :root {
   --font-display: "Barlow Semi Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --font-text: Manrope, "Avenir Next", "Segoe UI", Arial, sans-serif;
   --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
   --font-serif: "Bodoni 72", "Iowan Old Style", Georgia, serif;
   --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --colour-navy: #0b2f4d;
+  --colour-blue: #0068c9;
+  --colour-ink: #102f49;
+  --colour-muted: #526f86;
+  --colour-paper: #f8fbfd;
+  --colour-mist: #eaf2f7;
+  --colour-line: #cbdbe6;
+  --type-hero: clamp(72px, 6.7vw, 96px);
+  --type-section: clamp(64px, 5.8vw, 84px);
+  --type-card: clamp(22px, 2.2vw, 36px);
+  --content-width: 1440px;
+  --page-gutter: clamp(36px, 5vw, 72px);
 }
-body, .home-page { font-family: var(--font-text); -webkit-font-smoothing: antialiased; }
+body, .home-page {
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  color: var(--colour-ink);
+  background: var(--colour-paper);
+}
 button, input, textarea, select { font-family: var(--font-text); }
 h1, h2, h3, h4 {
   font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -.02em;
   text-wrap: balance;
 }
 .home-page h1, .home-page h2, .home-page h3, .home-page h4 {
@@ -64,11 +83,16 @@ p { text-wrap: pretty; }
 .product-spec-table-head, .product-spec-table-row strong {
   font-family: var(--font-mono);
 }
-.statement h2, .showcase h2, .technology h2, .contact h2,
-.detail-hero h1, .category-page h1 {
-  font-size: clamp(48px, 7.2vw, 108px);
+.statement h2, .showcase h2, .technology h2, .contact h2 {
+  font-size: var(--type-section);
   line-height: 1.04;
-  letter-spacing: -.055em;
+  letter-spacing: -.02em;
+  font-weight: 500;
+}
+.detail-hero h1, .category-page h1 {
+  font-size: var(--type-hero);
+  line-height: 1.04;
+  letter-spacing: -.02em;
   font-weight: 500;
 }
 .landing h1 em, .statement h2 em, .showcase h2 em, .technology h2 em,
@@ -77,17 +101,18 @@ p { text-wrap: pretty; }
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
-  letter-spacing: -.045em;
+  letter-spacing: -.035em;
+  line-height: 1;
 }
-.landing h1.landing-title { font-weight: 600; line-height: 1.08; letter-spacing: -.045em; word-spacing: .04em; }
-.ppf-sequence-copy h2 { line-height: 1.02; letter-spacing: -.05em; }
-.statement h2 .company-title-years { font-family: var(--font-serif); letter-spacing: -.09em; line-height: .95; padding-right: .035em; }
+.landing h1.landing-title { font-weight: 600; line-height: 1.04; letter-spacing: -.02em; word-spacing: .04em; }
+.ppf-sequence-copy h2 { line-height: 1.02; letter-spacing: -.02em; }
+.statement h2 .company-title-years { font-family: var(--font-serif); letter-spacing: -.035em; line-height: 1; padding-right: .035em; }
 .company-layout { min-height: 420px; }
 .company-layout .statement-copy { padding-top: 48px; max-width: 560px; }
 .company-layout .statement-copy p { max-width: 54ch; line-height: 1.7; margin: 0 0 1.3em; font-size: clamp(16px, 1.25vw, 19px); }
 .company-layout .statement-copy p:first-child { font-size: clamp(18px, 1.5vw, 22px); line-height: 1.6; color: #eee0be; }
 .showcase-head > p, .category-page-copy > p:not(.kicker) { line-height: 1.75; }
-.tech-card h3, .series-card h2 { font-size: clamp(20px, 1.65vw, 25px); line-height: 1.25; letter-spacing: -.025em; }
+.tech-card h3, .series-card h2 { font-size: var(--type-card); line-height: 1.12; letter-spacing: -.02em; }
 .tech-card p, .series-card p { font-size: 14px; line-height: 1.7; }
 .tech-intro { line-height: 1.45; letter-spacing: -.025em; }
 .kicker { line-height: 1.6; letter-spacing: .14em; }
@@ -106,7 +131,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { width: min(100%, 590px); padding-bottom: clamp(4px, 1vw, 14px); }
 .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy small { margin-top: clamp(16px, 1.8vw, 24px); max-width: 48ch; }
 .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy .stack-cta { margin-top: clamp(24px, 2.8vw, 38px); }
-.stack-card-content strong { display: block; font-size: clamp(32px, 4vw, 60px); line-height: 1.08; letter-spacing: -.045em; }
+.stack-card-content strong { display: block; font-size: clamp(32px, 4vw, 60px); line-height: 1.04; letter-spacing: -.02em; }
 .stack-card-content small { display: block; line-height: 1.65; }
 .stack-cta { width: max-content; min-height: 44px; margin-top: 15px; border-bottom: 1px solid rgba(255,255,255,.35); }
 .stack-cta svg { transition: transform .25s var(--motion-ease); }
@@ -159,7 +184,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding: clamp(24px, 3vw, 44px);
 }
 .cybertruck-config > div:first-child { position: static; max-width: none; min-width: 0; }
-.cybertruck-config h2 { font-size: clamp(38px, 4vw, 62px); line-height: 1.07; letter-spacing: -.05em; margin: 20px 0; }
+.cybertruck-config h2 { font-size: clamp(38px, 4vw, 62px); line-height: 1.04; letter-spacing: -.02em; margin: 20px 0; }
 .cybertruck-config p:not(.kicker) { line-height: 1.75; max-width: 38ch; }
 .cybertruck-viewer { height: clamp(340px, 36vw, 500px); background: transparent; }
 .viewer-gesture-hint { position:absolute; left:50%; bottom:12px; z-index:3; display:grid; justify-items:center; gap:5px; min-width:120px; color:#49657a; font-size:11px; font-weight:600; letter-spacing:.04em; transform:translateX(-50%); pointer-events:none; }
@@ -187,7 +212,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .printable-wrap-config { width:min(1440px,calc(100% - 72px)); margin:70px auto 0; padding:clamp(24px,3vw,44px); background:#e8f2f8; }
 .printable-wrap-placeholder { display:grid; min-height:280px; place-items:center; color:var(--muted); }
 .printable-wrap-heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,.7fr); gap:clamp(24px,5vw,80px); align-items:end; margin-bottom:clamp(28px,4vw,52px); }
-.printable-wrap-heading h2 { margin:16px 0 0; font-size:clamp(38px,4.5vw,68px); line-height:1; letter-spacing:-.055em; }
+.printable-wrap-heading h2 { margin:16px 0 0; font-size:clamp(38px,4.5vw,68px); line-height:1; letter-spacing:-.02em; }
 .printable-wrap-heading > p { max-width:46ch; margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
 .printable-wrap-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(280px,.72fr); gap:clamp(24px,3vw,44px); align-items:stretch; }
 .printable-wrap-layout > .printable-wrap-viewer { min-height:430px; height:100%; background:radial-gradient(circle at 50% 45%,#4d5c67,#17222b 72%); }
@@ -215,7 +240,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .printable-actions button.printable-action-primary { background:var(--ink); color:#fff; }
 .printable-actions button:disabled { cursor:not-allowed; opacity:.45; }
 @media (max-width: 800px) {
-  .statement h2, .showcase h2, .technology h2, .contact h2, .category-page h1 { font-size: clamp(42px, 11.5vw, 72px); }
+  :root {
+    --type-hero: clamp(36px, 12vw, 50px);
+    --type-section: clamp(38px, 12.5vw, 54px);
+    --type-card: clamp(20px, 7vw, 30px);
+    --page-gutter: 20px;
+  }
   .statement, .showcase, .technology { padding-top: 84px; padding-bottom: 84px; }
   .company-layout { min-height: 0; }
   .company-layout .statement-copy { padding-top: 36px; padding-bottom: 10px; }
