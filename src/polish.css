@@ -362,6 +362,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .home-page .statement-heading h2 {
   margin-top: 0;
 }
+.home-page .showcase h2 em,
+.home-page .technology h2 em,
+.home-page .material-story h2 em,
+.home-page .contact h2 em {
+  color: var(--colour-blue);
+}
 .home-page .company-layout {
   min-height: 420px;
 }
@@ -459,5 +465,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
   .home-page .tech-grid {
     margin-top: 40px;
+  }
+  .home-page .ppf-sequence-copy--top > p:not(.kicker) {
+    font-size: 14px;
   }
 }

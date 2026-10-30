@@ -5,6 +5,7 @@ import { englishSiteContent as content } from '../src/content/site-content.js';
 const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 const polish = await readFile(new URL('../src/polish.css', import.meta.url), 'utf8');
+const ppfSequence = await readFile(new URL('../src/components/PPFScrollSequence.jsx', import.meta.url), 'utf8');
 
 assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*font-size:\s*var\(--type-hero\)/,
   'hero title uses the approved display scale');
@@ -30,11 +31,20 @@ for (const selector of [
   assert.match(declarations, /font-size:\s*var\(--type-section\)/, `${selector} uses the section scale`);
   assert.match(declarations, /line-height:\s*1\.02;/, `${selector} has readable heading leading`);
   assert.match(declarations, /white-space:\s*normal;/, `${selector} allows wrapping`);
+  assert.doesNotMatch(declarationsFor(homepage, selector), /white-space:\s*nowrap/,
+    `${selector} never forces a heading onto one line`);
 }
 const hero = declarationsFor(desktop, '.home-page .landing h1.landing-title');
 assert.match(hero, /line-height:\s*1;/, 'hero has comfortable leading');
 assert.match(hero, /letter-spacing:\s*-\.015em;/, 'hero uses restrained tracking');
 assert.match(hero, /white-space:\s*normal;/, 'hero can wrap at every viewport');
+assert.doesNotMatch(declarationsFor(homepage, '.home-page .landing h1.landing-title'), /white-space:\s*nowrap/,
+  'hero refinement never forces the title onto one line');
+for (const selector of [
+  '.home-page .showcase h2 em', '.home-page .technology h2 em',
+  '.home-page .material-story h2 em', '.home-page .contact h2 em',
+]) assert.match(declarationsFor(desktop, selector), /color:\s*var\(--colour-blue\)/,
+  `${selector} uses the dark blue accent on its light surface`);
 for (const selector of ['.home-page .tech-card h3', '.home-page .stack-card-content strong']) {
   assert.match(declarationsFor(desktop, selector), /font-size:\s*var\(--type-card\)/,
     `${selector} uses the card scale`);
@@ -59,7 +69,10 @@ for (const selector of [
   '.home-page > .material-story', '.home-page > .contact',
 ]) assert.match(declarationsFor(mobile, selector), /padding-block:\s*(?:8\d|9\d|10[0-4])px;/,
   `${selector} has 80–104px mobile section rhythm`);
-assert.doesNotMatch(homepage, /white-space:\s*nowrap/, 'homepage refinement never forces headings onto one line');
+assert.match(ppfSequence, /className="ppf-sequence-copy ppf-sequence-copy--top"[\s\S]*?<p>\{content\.description\}<\/p>/,
+  'the PPF sequence renders supporting prose inside its top copy');
+assert.match(declarationsFor(mobile, '.home-page .ppf-sequence-copy--top > p:not(.kicker)'), /font-size:\s*14px;/,
+  'the rendered PPF supporting paragraph is at least 14px on mobile');
 
 assert.match(
   main,
