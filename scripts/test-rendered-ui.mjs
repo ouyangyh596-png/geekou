@@ -4,6 +4,8 @@ import { existsSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { englishSiteContent } from '../src/content/site-content.js';
+import { familyMedia } from '../src/media-manifest.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dependencyRoot = resolve(dirname(process.execPath), '..');
@@ -39,6 +41,22 @@ async function waitForServer() {
 
 function assertNoHorizontalOverflow(metrics, label) {
   assert.ok(metrics.scrollWidth <= metrics.clientWidth + 1, `${label} horizontally overflows: ${metrics.scrollWidth}px > ${metrics.clientWidth}px`);
+}
+
+async function assertTypographySystem(page, width) {
+  await page.evaluate(() => document.fonts.ready);
+  const metrics = await page.locator('.landing-title').evaluate(heading => {
+    const style = getComputedStyle(heading);
+    return {
+      fontFamily: style.fontFamily,
+      letterSpacing: parseFloat(style.letterSpacing),
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth
+    };
+  });
+  assert.match(metrics.fontFamily, /Barlow Semi Condensed/, `${width}px: display font must be Barlow Semi Condensed`);
+  assert.ok(metrics.letterSpacing > -5, `${width}px: hero tracking must remain readable`);
+  assertNoHorizontalOverflow(metrics, `${width}px typography`);
 }
 
 async function assertOrbitGeometry(page, width) {
@@ -96,8 +114,8 @@ async function assertSelectedOrbitNodeDepth(page, width, reducedMotion = false) 
 }
 
 async function assertOrbitInteractions(page) {
-  const next = page.getByRole('button', { name: 'Next product family' });
-  const previous = page.getByRole('button', { name: 'Previous product family' });
+  const next = page.locator('button.stack-card-next');
+  const previous = page.locator('button.stack-card-prev');
   for (const [label, control] of [['next', next], ['previous', previous]]) {
     const box = await control.boundingBox();
     assert.ok(box && box.width >= 44 && box.height >= 44, `1440px: ${label} orbit control needs a 44px hit area`);
@@ -153,7 +171,7 @@ async function assertReducedOrbitLayout(page, width) {
     }
   }
   const before = await page.locator('.stack-card-active').getAttribute('href');
-  await page.getByRole('button', { name: 'Next product family' }).click();
+  await page.locator('button.stack-card-next').click();
   await page.waitForFunction(previous => document.querySelector('.stack-card-active')?.getAttribute('href') !== previous, before);
 }
 
@@ -188,17 +206,19 @@ try {
     });
     await page.goto(origin, { waitUntil: 'networkidle' });
 
-    await assert.doesNotReject(() => page.getByRole('heading', { level: 1, name: 'Innovation / Quality Service / Commitment', exact: true }).waitFor());
+    await assert.doesNotReject(() => page.getByRole('heading', { level: 1, name: englishSiteContent.home.heroTitle, exact: true }).waitFor());
+    if (width === 390) await assertTypographySystem(page, width);
     const headingContent = await page.locator('.landing-title').evaluate(element => getComputedStyle(element, '::after').content);
     assert.ok(['none', 'normal', '""'].includes(headingContent), `${width}px: heading must not be injected through CSS`);
     const heroTitleBounds = await page.locator('.landing-title').evaluate(element => {
       const landing = element.closest('.landing').getBoundingClientRect();
       return {
         landing: { left: landing.left, right: landing.right },
-        spans: [...element.querySelectorAll('span')].map(span => {
-          const bounds = span.getBoundingClientRect();
-          return { text: span.textContent, left: bounds.left, right: bounds.right };
-        })
+        spans: (() => {
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          return [...range.getClientRects()].map(bounds => ({ text: element.textContent, left: bounds.left, right: bounds.right }));
+        })()
       };
     });
     for (const span of heroTitleBounds.spans) {
@@ -219,7 +239,9 @@ try {
     await menu.click();
     const close = page.getByRole('button', { name: 'Close navigation' });
     assert.equal(await close.getAttribute('aria-expanded'), 'true');
-    for (const link of await page.locator('#primary-navigation a').all()) {
+    assert.equal(await page.locator('#primary-navigation .nav-link').count(), 4, `${width}px: all primary navigation links must be present`);
+    assert.equal(await page.locator('.product-directory').isVisible(), false, `${width}px: desktop product directory stays hidden on mobile`);
+    for (const link of await page.locator('#primary-navigation .nav-link').all()) {
       const box = await link.boundingBox();
       assert.ok(box && box.width >= 44 && box.height >= 44, `${width}px: every open navigation link needs a 44px target`);
     }
@@ -230,9 +252,10 @@ try {
     await page.close();
   }
 
-  for (const width of [801, 970, 1440]) {
+  for (const width of [801, 970, 1280, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(origin, { waitUntil: 'networkidle' });
+    if (width === 1280 || width === 1440) await assertTypographySystem(page, width);
     assertNoHorizontalOverflow(await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth })), `${width}px home`);
     if (width === 1440) {
       await assertOrbitGeometry(page, width);
@@ -240,14 +263,15 @@ try {
       await assertOrbitInteractions(page);
     }
     if (width <= 970) {
-      const rows = await page.locator('.category-row').evaluateAll(elements => elements.map(element => {
-        const media = element.querySelector('.category-media');
+      const rows = await page.locator('.stack-card-prev, .stack-card-next').evaluateAll(elements => elements.map(element => {
+        const media = element.querySelector('img');
         const row = element.getBoundingClientRect();
         const preview = media.getBoundingClientRect();
         return { rowHeight: row.height, previewWidth: preview.width, previewHeight: preview.height };
       }));
+      assert.equal(rows.length, 2, `${width}px: both adjacent product previews must be present`);
       for (const geometry of rows) {
-        assert.ok(geometry.rowHeight <= 260, `${width}px: category row is too tall (${geometry.rowHeight}px)`);
+        assert.ok(geometry.rowHeight <= 260, `${width}px: adjacent product card is too tall (${geometry.rowHeight}px)`);
         assert.ok(geometry.previewWidth <= 240, `${width}px: preview is too wide (${geometry.previewWidth}px)`);
         assert.ok(geometry.previewHeight <= 180, `${width}px: preview is too tall (${geometry.previewHeight}px)`);
       }
@@ -257,7 +281,7 @@ try {
 
   const reducedPage = await browser.newPage({ viewport: { width: 970, height: 900 }, reducedMotion: 'reduce' });
   await reducedPage.goto(origin, { waitUntil: 'networkidle' });
-  const homeMotion = await reducedPage.locator('.material-tile').first().evaluate(element => ({
+  const homeMotion = await reducedPage.locator('.stack-card-content').evaluate(element => ({
     animation: getComputedStyle(element).animationName,
     transition: getComputedStyle(element).transitionDuration,
     scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior
@@ -277,15 +301,18 @@ try {
   assert.equal(categoryMotion.animation, 'none');
   assert.equal(categoryMotion.transition, '0s');
   assertNoHorizontalOverflow(await reducedPage.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth })), '970px category');
-  await assert.doesNotReject(() => reducedPage.getByAltText(/Translucent Film family illustration, representative image for SF6000/).first().waitFor());
+  await assert.doesNotReject(() => reducedPage.getByAltText(familyMedia['translucent-film'].alt, { exact: true }).waitFor());
+  assert.equal(await reducedPage.locator('.category-page-media img').getAttribute('src'), familyMedia['translucent-film'].hero);
 
-  await reducedPage.goto(`${origin}/#product=sf6000`, { waitUntil: 'networkidle' });
-  assertNoHorizontalOverflow(await reducedPage.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth })), '970px detail');
-  await assert.doesNotReject(() => reducedPage.getByAltText(/Translucent Film family illustration, representative image for SF6000/).first().waitFor());
+  await reducedPage.goto(`${origin}/#category=translucent-film&series=${encodeURIComponent(englishSiteContent.categories['translucent-film'].series[0].name)}`, { waitUntil: 'networkidle' });
+  assertNoHorizontalOverflow(await reducedPage.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth })), '970px selected series');
+  await assert.doesNotReject(() => reducedPage.getByAltText(familyMedia['translucent-film'].alt, { exact: true }).waitFor());
+  assert.equal(await reducedPage.locator('.series-card-selected h2').textContent(), englishSiteContent.categories['translucent-film'].series[0].name);
+  assert.equal(await reducedPage.locator('.product-spec-table-row > strong').first().textContent(), 'SF6000');
 
   const fonts = await reducedPage.evaluate(() => ({ body: getComputedStyle(document.body).fontFamily, kicker: getComputedStyle(document.querySelector('.kicker')).fontFamily }));
-  assert.match(fonts.body, /-apple-system|BlinkMacSystemFont|Segoe UI/);
-  assert.match(fonts.kicker, /ui-monospace|SFMono-Regular/);
+  assert.match(fonts.body, /Manrope/);
+  assert.match(fonts.kicker, /DM Mono/);
   await reducedPage.close();
 
   for (const width of [320, 1440]) {
