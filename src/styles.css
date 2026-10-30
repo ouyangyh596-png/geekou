@@ -256,6 +256,114 @@ html:has(.home-page){scroll-snap-type:none}
   .product-nav-item{display:block}
   .product-directory{display:none}
 }
+
+/* EFI-inspired two-tier header */
+@media(min-width:801px){
+  .header{
+    color:var(--ink);
+    background:#fff;
+    border-bottom:1px solid rgba(9,43,75,.12);
+    box-shadow:0 10px 30px rgba(9,43,75,.045);
+  }
+  .header-inner{
+    width:min(1200px,calc(100% - 72px));
+    height:176px;
+    display:grid;
+    grid-template-areas:"brand . actions" "nav nav nav";
+    grid-template-columns:180px 1fr auto;
+    grid-template-rows:104px 72px;
+    align-items:center;
+  }
+  .header .logo{
+    grid-area:brand;
+    width:132px;
+    height:104px;
+    align-self:center;
+  }
+  .header .logo img{
+    width:132px;
+    height:132px;
+    left:0;
+    top:-14px;
+    filter:none;
+  }
+  .header nav{
+    grid-area:nav;
+    width:min(760px,100%);
+    margin:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:clamp(36px,5vw,86px);
+    color:#111a24;
+    font-size:14px;
+    font-weight:600;
+  }
+  .header-actions{
+    grid-area:actions;
+    justify-self:end;
+    gap:14px;
+  }
+  .language-select{
+    min-height:46px;
+    border:1px solid rgba(9,43,75,.2);
+    border-radius:999px;
+    color:var(--ink);
+    background:#fff;
+    padding:10px 34px 10px 16px;
+    font-size:12px;
+  }
+  .landing .language-select{
+    color:var(--ink);
+    border-color:rgba(9,43,75,.2);
+    background:#fff;
+  }
+  .header-cta{
+    min-height:50px;
+    padding:0 24px;
+    border:0;
+    border-radius:999px;
+    background:var(--blue);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    box-shadow:0 10px 24px rgba(0,84,167,.18);
+    transition:transform .25s ease,background .25s ease,box-shadow .25s ease;
+  }
+  .header-cta:hover,.header-cta:focus-visible{
+    background:#003f80;
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px rgba(0,84,167,.25);
+  }
+  .landing .header{
+    color:var(--ink);
+    background:#fff;
+    border:0;
+    border-bottom:1px solid rgba(9,43,75,.12);
+  }
+  .landing .header nav,.landing .header-cta{color:inherit}
+  .landing .header .nav-link::after{background:var(--blue)}
+  .landing .header .nav-link:hover,.landing .header .nav-link:focus-visible{color:var(--blue)}
+  .landing .header-cta{color:#fff;border:0}
+  .product-nav-item{height:72px}
+  .product-directory{top:calc(100% + 10px);left:0}
+  .category-page-head{padding-top:230px}
+}
+@media(max-width:800px){
+  .header,.landing .header{
+    color:var(--ink);
+    background:#fff;
+    border:0;
+    border-bottom:1px solid rgba(9,43,75,.12);
+    box-shadow:0 8px 24px rgba(9,43,75,.05);
+  }
+  .header-inner{height:78px}
+  .header .logo{width:82px;height:72px}
+  .header .logo img,.landing .logo img{width:96px;height:96px;left:-7px;top:-12px;filter:none}
+  .landing .menu{color:var(--ink)}
+  .landing .language-select{color:var(--ink);border-color:rgba(9,43,75,.18);background:#fff}
+  .header nav.nav-open,.landing .header nav.nav-open{top:78px;border:1px solid rgba(9,43,75,.1);border-radius:0 0 16px 16px}
+}
 /* Cybertruck colour study */
 .cybertruck-config { position:relative; width:min(1440px,calc(100% - 72px)); min-height:650px; margin:70px auto 0; padding:42px; overflow:hidden; background:#e8eef3; }
 .cybertruck-config > div:first-child { position:absolute; left:42px; bottom:42px; z-index:2; max-width:360px; }

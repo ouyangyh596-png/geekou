@@ -29,4 +29,12 @@ assert.match(main, /<span className="product-directory-marker" aria-hidden="true
 assert.match(styles, /\.product-directory-marker\{[^}]*border-left:[^;}]*var\(--blue\)/, 'the product marker is a brand-blue right-pointing triangle');
 assert.match(styles, /\.product-directory a:hover \.product-directory-marker,\.product-directory a:focus-visible \.product-directory-marker\{[^}]*transform:translateX\(/, 'the triangle reinforces the link direction on interaction');
 
+const efiHeader = styles.split('/* EFI-inspired two-tier header */')[1] || '';
+assert.match(efiHeader, /grid-template-areas:\s*"brand \. actions"\s*"nav nav nav"/, 'desktop header uses a spacious two-tier structure');
+assert.match(efiHeader, /\.header\{[^}]*background:#fff[^}]*border-bottom:/, 'the masthead uses a clean white surface and fine divider');
+assert.match(efiHeader, /\.header nav\{[^}]*grid-area:nav[^}]*justify-content:space-between/, 'primary navigation forms the balanced lower row');
+assert.match(efiHeader, /\.header-actions\{[^}]*grid-area:actions/, 'language and contact controls sit in the upper utility row');
+assert.match(efiHeader, /\.header-cta\{[^}]*border-radius:999px[^}]*background:var\(--blue\)/, 'contact action uses a rounded brand-blue capsule');
+assert.match(efiHeader, /@media\(max-width:800px\)[\s\S]*\.header,\.landing \.header\{[^}]*background:#fff/, 'mobile retains the clean white masthead');
+
 console.log('PASS: header product directory contract is present');
