@@ -89,6 +89,9 @@ for (const selector of [
   `${selector} has 80–104px mobile section rhythm`);
 assert.match(ppfSequence, /className="ppf-sequence-copy ppf-sequence-copy--top"[\s\S]*?<p>\{content\.description\}<\/p>/,
   'the PPF sequence renders supporting prose inside its top copy');
+assert.equal([...declarationsFor(desktop, '.home-page .ppf-sequence-copy--top > p:not(.kicker)')
+  .matchAll(/font-size:\s*([^;]+);/g)].at(-1)?.[1], 'clamp(14px, 1.15vw, 16px)',
+  'the final desktop PPF supporting paragraph rule retains a 14px minimum at every width and height');
 assert.match(declarationsFor(mobile, '.home-page .ppf-sequence-copy--top > p:not(.kicker)'), /font-size:\s*14px;/,
   'the rendered PPF supporting paragraph is at least 14px on mobile');
 

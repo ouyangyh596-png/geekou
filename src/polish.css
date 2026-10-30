@@ -450,6 +450,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-color: var(--colour-line);
   color: var(--colour-muted);
 }
+.home-page .ppf-sequence-copy--top > p:not(.kicker) {
+  font-size: clamp(14px, 1.15vw, 16px);
+}
 @media (max-width: 800px) {
   .home-page > .statement,
   .home-page > .showcase,
