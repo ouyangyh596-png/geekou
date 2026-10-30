@@ -4,6 +4,62 @@ import { englishSiteContent as content } from '../src/content/site-content.js';
 
 const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+const polish = await readFile(new URL('../src/polish.css', import.meta.url), 'utf8');
+
+assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*font-size:\s*var\(--type-hero\)/,
+  'hero title uses the approved display scale');
+assert.match(polish, /\.statement h2[^}]*font-size:\s*var\(--type-section\)/,
+  'statement heading uses the section scale');
+assert.match(polish, /\.landing h1\.landing-title\s*\{[^}]*background:\s*linear-gradient\(/,
+  'chrome-film hero title keeps a controlled reflective gradient');
+
+// Check the final homepage layer, so legacy declarations cannot satisfy these
+// contracts while silently restoring old spacing, scale or muted colours.
+const homepage = polish.split('/* Homepage hierarchy and rhythm. */')[1] || '';
+const mobileStart = homepage.indexOf('@media (max-width: 800px)');
+const desktop = homepage.slice(0, mobileStart);
+const mobile = homepage.slice(mobileStart);
+const declarationsFor = (source, selector) => [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+  .filter(([, selectors]) => selectors.split(',').some(value => value.trim() === selector))
+  .map(([, , declarations]) => declarations).join('\n');
+for (const selector of [
+  '.home-page .statement h2', '.home-page .showcase h2',
+  '.home-page .technology h2', '.home-page .material-story h2', '.home-page .contact h2',
+]) {
+  const declarations = declarationsFor(desktop, selector);
+  assert.match(declarations, /font-size:\s*var\(--type-section\)/, `${selector} uses the section scale`);
+  assert.match(declarations, /line-height:\s*1\.02;/, `${selector} has readable heading leading`);
+  assert.match(declarations, /white-space:\s*normal;/, `${selector} allows wrapping`);
+}
+const hero = declarationsFor(desktop, '.home-page .landing h1.landing-title');
+assert.match(hero, /line-height:\s*1;/, 'hero has comfortable leading');
+assert.match(hero, /letter-spacing:\s*-\.015em;/, 'hero uses restrained tracking');
+assert.match(hero, /white-space:\s*normal;/, 'hero can wrap at every viewport');
+for (const selector of ['.home-page .tech-card h3', '.home-page .stack-card-content strong']) {
+  assert.match(declarationsFor(desktop, selector), /font-size:\s*var\(--type-card\)/,
+    `${selector} uses the card scale`);
+}
+for (const selector of [
+  '.home-page .company-layout .statement-copy p', '.home-page .showcase-head > p',
+  '.home-page .tech-card p', '.home-page .contact .form-heading p',
+]) {
+  const declarations = declarationsFor(desktop, selector);
+  assert.match(declarations, /max-width:\s*min\(62ch, 100%\)/, `${selector} limits reading length`);
+  assert.match(declarations, /color:\s*var\(--colour-muted\)/, `${selector} uses accessible muted text`);
+  assert.match(declarations, /font-size:\s*clamp\(14px,/, `${selector} never falls below 14px`);
+}
+for (const selector of [
+  '.home-page .landing-copy', '.home-page .landing .header-inner', '.home-page .statement-inner',
+  '.home-page .showcase-head', '.home-page .stack-selector', '.home-page .technology',
+  '.home-page .material-story-head', '.home-page .material-story-grid', '.home-page .contact-inner',
+]) assert.match(declarationsFor(desktop, selector), /width:\s*min\(var\(--content-width\), calc\(100% - 2 \* var\(--page-gutter\)\)\)/,
+  `${selector} aligns to the shared content gutters`);
+for (const selector of [
+  '.home-page > .statement', '.home-page > .showcase', '.home-page > .technology',
+  '.home-page > .material-story', '.home-page > .contact',
+]) assert.match(declarationsFor(mobile, selector), /padding-block:\s*(?:8\d|9\d|10[0-4])px;/,
+  `${selector} has 80–104px mobile section rhythm`);
+assert.doesNotMatch(homepage, /white-space:\s*nowrap/, 'homepage refinement never forces headings onto one line');
 
 assert.match(
   main,

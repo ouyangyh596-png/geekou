@@ -288,3 +288,176 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .scroll-art-trigger .tech-intro-material, .scroll-art-trigger .tech-card-years-art,
   .scroll-art-trigger .tech-card-lab-art, .scroll-art-trigger .tech-card-application-art { opacity: var(--art-opacity,.22); transform: none; }
 }
+
+/* Homepage hierarchy and rhythm. */
+/* Keep these overrides together after the legacy layers. The company video
+   remains dark; the product, capability, material and contact surfaces stay light. */
+.home-page .landing-copy,
+.home-page .landing .header-inner,
+.home-page .statement-inner,
+.home-page .showcase-head,
+.home-page .stack-selector,
+.home-page .technology,
+.home-page .material-story-head,
+.home-page .material-story-grid,
+.home-page .contact-inner {
+  width: min(var(--content-width), calc(100% - 2 * var(--page-gutter)));
+  margin-inline: auto;
+}
+.home-page > .landing {
+  background: var(--colour-navy);
+}
+.home-page .landing-copy {
+  padding: clamp(180px, 27vh, 300px) 0 104px;
+}
+.home-page .landing h1.landing-title {
+  max-width: 100%;
+  font-size: var(--type-hero);
+  line-height: 1;
+  letter-spacing: -.015em;
+  word-spacing: .04em;
+  white-space: normal;
+  margin: 32px 0 40px;
+  background: linear-gradient(110deg, #f8fbfd 8%, #d4e3ee 32%, #ffffff 49%, #b6ccdc 68%, #f8fbfd 92%);
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 18px rgba(11, 47, 77, .12);
+}
+.home-page > .statement,
+.home-page > .showcase,
+.home-page > .technology,
+.home-page > .material-story {
+  padding-block: clamp(112px, 10vw, 144px);
+}
+.home-page > .statement {
+  --colour-muted: #e0ebf2;
+  background: var(--colour-navy);
+  color: var(--colour-paper);
+}
+.home-page > .showcase {
+  background: var(--colour-mist);
+}
+.home-page > .technology,
+.home-page > .material-story {
+  background: var(--colour-paper);
+}
+.home-page > .contact {
+  padding-block: 112px 0;
+  background: var(--colour-mist);
+}
+.home-page .statement h2,
+.home-page .showcase h2,
+.home-page .technology h2,
+.home-page .material-story h2,
+.home-page .contact h2 {
+  font-size: var(--type-section);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  font-weight: 500;
+  white-space: normal;
+  margin-block: 32px 48px;
+}
+.home-page .statement-heading h2 {
+  margin-top: 0;
+}
+.home-page .company-layout {
+  min-height: 420px;
+}
+.home-page .company-layout .statement-copy {
+  max-width: min(62ch, 100%);
+  padding-block: 48px 0;
+}
+.home-page .company-layout .statement-copy p,
+.home-page .showcase-head > p,
+.home-page .tech-card p,
+.home-page .contact .form-heading p {
+  max-width: min(62ch, 100%);
+  font-size: clamp(14px, 1.2vw, 18px);
+  line-height: 1.75;
+  color: var(--colour-muted);
+}
+.home-page .company-layout .statement-copy p:first-child {
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.6;
+}
+.home-page .showcase-head {
+  gap: clamp(32px, 5vw, 72px);
+  border-color: var(--colour-line);
+}
+.home-page .showcase-head > p {
+  flex-basis: 34ch;
+  margin-block: 0 48px;
+}
+.home-page .tech-card h3,
+.home-page .stack-card-content strong {
+  font-size: var(--type-card);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  white-space: normal;
+}
+.home-page .stack-card-content small {
+  max-width: min(62ch, 100%);
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.7;
+}
+.home-page .wide-heading,
+.home-page .material-story-head {
+  border-color: var(--colour-line);
+}
+.home-page .tech-grid {
+  margin-top: 64px;
+  background: var(--colour-line);
+}
+.home-page .tech-card,
+.home-page .tech-intro {
+  background: var(--colour-mist);
+}
+.home-page .tech-intro {
+  font-size: var(--type-card);
+  line-height: 1.45;
+  letter-spacing: -.02em;
+}
+.home-page .contact-inner {
+  min-height: calc(100svh - 112px);
+}
+.home-page .contact footer {
+  border-color: var(--colour-line);
+  color: var(--colour-muted);
+}
+@media (max-width: 800px) {
+  .home-page > .statement,
+  .home-page > .showcase,
+  .home-page > .technology,
+  .home-page > .material-story,
+  .home-page > .contact {
+    padding-block: 88px;
+  }
+  .home-page .landing-copy {
+    padding-block: max(180px, 25svh) 88px;
+  }
+  .home-page .landing h1.landing-title {
+    margin-block: 28px 32px;
+  }
+  .home-page .statement h2,
+  .home-page .showcase h2,
+  .home-page .technology h2,
+  .home-page .material-story h2,
+  .home-page .contact h2 {
+    margin-block: 28px 36px;
+  }
+  .home-page .company-layout,
+  .home-page .contact-inner {
+    min-height: 0;
+  }
+  .home-page .company-layout .statement-copy {
+    padding-block: 24px 0;
+  }
+  .home-page .showcase-head > p {
+    margin-bottom: 36px;
+  }
+  .home-page .tech-grid {
+    margin-top: 40px;
+  }
+}
