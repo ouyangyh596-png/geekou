@@ -60,7 +60,6 @@ for (const [token, value] of Object.entries({
 for (const [selector, token] of [
   ['.statement h2', '--type-section'], ['.showcase h2', '--type-section'],
   ['.technology h2', '--type-section'], ['.contact h2', '--type-section'],
-  ['.detail-hero h1', '--type-hero'], ['.category-page h1', '--type-hero'],
   ['.tech-card h3', '--type-card'], ['.series-card h2', '--type-card'],
 ]) {
   const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
@@ -75,5 +74,86 @@ assert.doesNotMatch(css, /letter-spacing:\s*-\.(?:0[4-9]|[1-9])\d*em/,
   'polish rules must not reintroduce extreme negative heading tracking')
 assert.match(css, /\.landing h1 em[^}]*letter-spacing:\s*-\.035em;[^}]*line-height:\s*1;/s)
 assert.match(css, /\.statement h2 \.company-title-years[^}]*letter-spacing:\s*-\.035em;[^}]*line-height:\s*1;/s)
+
+// Read only the final non-home refinement layer. Existing legacy selector names
+// are insufficient: require the semantic values that this task introduces.
+const nonHome = css.split('/* Non-home typography and viewer-adjacent contrast. */')[1] || ''
+const [nonHomeDesktop, nonHomeMobile = ''] = nonHome.split('@media (max-width: 800px)')
+function declarationFor(source, selector, property) {
+  const rules = [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, selectors]) => selectors.split(',').some(value => value.trim() === selector))
+  const declarations = rules.flatMap(([, , body]) => body.split(';'))
+    .map(value => value.trim()).filter(value => value.startsWith(`${property}:`))
+  return declarations.at(-1)?.slice(property.length + 1).trim()
+}
+function expectRole(source, selector, properties) {
+  for (const [property, expected] of Object.entries(properties)) {
+    assert.equal(declarationFor(source, selector, property), expected,
+      `${selector} must use ${property}: ${expected} in the final non-home layer`)
+  }
+}
+for (const selector of ['.category-page h1', '.detail-hero h1', '.detail-copy h1']) {
+  expectRole(nonHomeDesktop, selector, {
+    'font-family': 'var(--font-display)', 'font-size': 'clamp(56px, 6vw, 82px)',
+    'line-height': '1.04', 'letter-spacing': '-.02em',
+  })
+  expectRole(nonHomeMobile, selector, { 'font-size': 'clamp(40px, 12vw, 54px)' })
+}
+for (const selector of ['.series-card h2', '.category-product h2', '.product-card h2']) {
+  expectRole(nonHomeDesktop, selector, {
+    'font-family': 'var(--font-display)', 'font-size': 'var(--type-card)',
+    'line-height': '1.12', 'letter-spacing': '-.02em',
+  })
+}
+for (const selector of [
+  '.category-page-copy > p:not(.kicker)', '.detail-hero > div > p:last-child',
+  '.detail-description', '.series-card p', '.category-product section p',
+  '.cybertruck-config p:not(.kicker)', '.printable-wrap-heading > p',
+]) expectRole(nonHomeDesktop, selector, {
+  'font-family': 'var(--font-text)', 'max-width': 'min(62ch, 100%)',
+  'font-size': 'clamp(14px, 1.2vw, 18px)', 'line-height': '1.75', 'color': 'var(--colour-muted)',
+})
+for (const selector of [
+  '.category-index', '.series-card > span', '.category-page-media > span',
+  '.category-product section small', '.detail-model', '.detail-label',
+  '.product-spec-table-head', '.product-spec-table-row strong',
+  '.cybertruck-picker-label', '.printable-control-group legend', '.printable-control-label',
+  '.printable-sliders label', '.printable-sliders output',
+]) expectRole(nonHomeDesktop, selector, { 'font-family': 'var(--font-mono)' })
+expectRole(nonHomeDesktop, '.product-spec-table', {
+  'font-family': 'var(--font-text)', 'font-size': '13px', 'line-height': '1.6',
+  'border-color': 'color-mix(in srgb, var(--colour-line) 65%, transparent)',
+})
+for (const selector of ['.product-spec-table-head span', '.product-spec-table-row > *']) {
+  expectRole(nonHomeDesktop, selector, {
+    padding: '20px 16px', 'border-color': 'color-mix(in srgb, var(--colour-line) 65%, transparent)',
+  })
+  expectRole(nonHomeMobile, selector, { padding: '16px 12px' })
+}
+for (const selector of ['.cybertruck-config h2', '.printable-wrap-heading h2']) {
+  expectRole(nonHomeDesktop, selector, {
+    'font-family': 'var(--font-display)', 'font-size': 'clamp(38px, 4.5vw, 68px)',
+    'line-height': '1.04', 'letter-spacing': '-.02em',
+  })
+  expectRole(nonHomeMobile, selector, { 'font-size': 'clamp(34px, 9vw, 48px)' })
+}
+for (const selector of [
+  '.cybertruck-config button', '.cybertruck-config input', '.printable-wrap-controls button',
+  '.printable-wrap-controls input', '.printable-upload-control', '.printable-finish-options label',
+]) expectRole(nonHomeDesktop, selector, { 'font-family': 'var(--font-text)' })
+expectRole(nonHomeDesktop, '.cybertruck-config h2 em', { color: 'var(--colour-blue)' })
+expectRole(nonHomeDesktop, '.cybertruck-config .viewer-gesture-hint', {
+  color: 'var(--colour-ink)', background: 'var(--colour-paper)',
+})
+expectRole(nonHomeDesktop, '.cybertruck-config .viewer-placeholder', {
+  color: 'var(--colour-ink)', background: 'var(--colour-paper)',
+})
+expectRole(nonHomeDesktop, '.category-page .viewer-error', {
+  color: 'var(--colour-paper)', background: 'var(--colour-navy)',
+})
+expectRole(nonHomeDesktop, '.category-page .viewer-error p', { color: 'var(--colour-paper) !important' })
+for (const selector of ['.printable-upload-note', '.printable-control-help', '.cybertruck-picker-label span']) {
+  expectRole(nonHomeDesktop, selector, { color: 'var(--colour-muted)' })
+}
 
 console.log('Typography asset, token and semantic mapping checks passed')
