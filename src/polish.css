@@ -310,7 +310,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .home-page .landing-copy {
   padding: clamp(180px, 27vh, 300px) 0 104px;
 }
+.home-page .landing-brand-lockup {
+  /* Keep the negative scrim behind the title's clipped gradient, above video. */
+  isolation: isolate;
+}
 .home-page .landing h1.landing-title {
+  position: relative;
   max-width: 100%;
   font-size: var(--type-hero);
   line-height: 1;
@@ -324,6 +329,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background-clip: text;
   color: transparent;
   text-shadow: 0 1px 18px rgba(11, 47, 77, .12);
+}
+.home-page .landing h1.landing-title::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -.7em -1.5em;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(5, 27, 49, .92) 0%, rgba(5, 27, 49, .84) 50%, rgba(5, 27, 49, .42) 75%, rgba(5, 27, 49, 0) 100%);
+  filter: blur(18px);
+  pointer-events: none;
 }
 .home-page > .statement,
 .home-page > .showcase,
@@ -424,6 +439,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-size: var(--type-card);
   line-height: 1.45;
   letter-spacing: -.02em;
+}
+.home-page .technology .kicker {
+  font-family: var(--font-mono);
 }
 .home-page .contact-inner {
   min-height: calc(100svh - 112px);

@@ -23,6 +23,24 @@ const mobile = homepage.slice(mobileStart);
 const declarationsFor = (source, selector) => [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   .filter(([, selectors]) => selectors.split(',').some(value => value.trim() === selector))
   .map(([, , declarations]) => declarations).join('\n');
+// Inspect the final property value for these deliberately specific homepage
+// selectors, rather than letting an earlier matching declaration satisfy them.
+const lastDeclarationFor = (selector, property) => declarationsFor(polish, selector)
+  .split(';').map(value => value.trim()).filter(value => value.startsWith(`${property}:`))
+  .at(-1)?.slice(property.length + 1).trim();
+const heroSelector = '.home-page .landing h1.landing-title';
+assert.equal(lastDeclarationFor('.home-page .landing-brand-lockup', 'isolation'), 'isolate',
+  'hero lockup contains the contrast surface behind the gradient text');
+assert.equal(lastDeclarationFor(heroSelector, 'position'), 'relative',
+  'hero contrast surface is anchored to the title, not the whole video');
+assert.match(lastDeclarationFor(`${heroSelector}::before`, 'background') || '', /radial-gradient\(ellipse at center, rgba\(5, 27, 49, \.92\)/,
+  'the final hero title scrim supplies a dark centre fading into the video');
+assert.equal(lastDeclarationFor(`${heroSelector}::before`, 'filter'), 'blur(18px)',
+  'the local contrast surface has soft edges');
+assert.equal(lastDeclarationFor(`${heroSelector}::before`, 'pointer-events'), 'none',
+  'the decorative title surface cannot intercept controls');
+assert.equal(lastDeclarationFor('.home-page .technology .kicker', 'font-family'), 'var(--font-mono)',
+  'the final scoped technology kicker declaration retains its technical face');
 for (const selector of [
   '.home-page .statement h2', '.home-page .showcase h2',
   '.home-page .technology h2', '.home-page .material-story h2', '.home-page .contact h2',
