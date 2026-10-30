@@ -31,9 +31,9 @@ assert.match(styles, /\.product-directory-marker\{[^}]*border-left:[^;}]*var\(--
 assert.match(styles, /\.product-directory a:hover \.product-directory-marker,\.product-directory a:focus-visible \.product-directory-marker\{[^}]*transform:translateX\(/, 'the triangle reinforces the link direction on interaction');
 
 const efiHeader = styles.split('/* EFI-inspired two-tier header */')[1] || '';
-assert.match(efiHeader, /grid-template-areas:\s*"brand \. actions"\s*"nav nav nav"/, 'desktop header uses a spacious two-tier structure');
+assert.match(efiHeader, /grid-template-areas:\s*"brand nav actions"/, 'desktop header aligns logo, navigation and actions in one row');
 assert.match(efiHeader, /\.header\{[^}]*background:#fbfcfd[^}]*border-bottom:/, 'the masthead uses a clean near-white surface and fine divider');
-assert.match(efiHeader, /\.header nav\{[^}]*grid-area:nav[^}]*justify-content:space-between/, 'primary navigation forms the balanced lower row');
+assert.match(efiHeader, /\.header nav\{[^}]*grid-area:nav[^}]*justify-content:space-between/, 'primary navigation forms the balanced center row');
 assert.match(efiHeader, /grid-template-columns:1fr auto 1fr/, 'the utility row uses equal outer columns for true symmetry');
 assert.match(efiHeader, /\.header nav\{[^}]*justify-self:center[^}]*font-family:Arial[^}]*font-weight:700/, 'navigation is centered and uses bold Arial');
 assert.match(efiHeader, /\.header::before\{[^}]*background-image:[^}]*linear-gradient/, 'the white masthead carries a restrained tonal texture');
