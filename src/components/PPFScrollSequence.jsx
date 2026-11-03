@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { PPF_SEQUENCE } from '../ppf-sequence.js'
-import { englishSiteContent } from '../content/site-content.js'
+import { useLanguage } from '../language.js'
 
-const content = englishSiteContent.home.ppfSequence
+
 
 function drawFrame(canvas, image) {
   if (!canvas || !image.complete || !image.naturalWidth) return
@@ -28,6 +28,7 @@ function preloadFrame(index, frames, canvas, onReady) {
 }
 
 export default function PPFScrollSequence() {
+  const content = useLanguage().content.home.ppfSequence
   const initialFrame = 70
   const sectionRef = useRef(null)
   const canvasRef = useRef(null)

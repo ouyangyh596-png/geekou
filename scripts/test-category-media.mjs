@@ -38,11 +38,10 @@ assert.match(
   /const media = familyMedia\[category\.slug\];/,
   'CategoryPage reads its approved family media mapping'
 );
-assert.match(
-  main,
-  /className=\{'category-page-media category-page-media-' \+ category\.slug\}[\s\S]*?<img src=\{media\.hero\} alt=\{media\.alt\}/,
-  'CategoryPage renders the mapped hero image with family alt text'
-);
+const mediaComponent = await readFile(new URL('../src/components/CategoryMedia.jsx', import.meta.url), 'utf8');
+assert.match(main, /<CategoryMedia key=\{category.slug\}/, 'media resets when category changes');
+assert.match(mediaComponent, /if \(!source \|\| failed\) return null/, 'missing and failed media render no container');
+assert.match(mediaComponent, /onError=\{\(\) => setFailed\(true\)\}/);
 assert.match(
   main,
   /\{items\.length > 0 && <ProductTable items=\{items\} \/>\}/,
@@ -53,7 +52,7 @@ assert.doesNotMatch(
   /href=\{'#product=' \+ item\.slug\}/,
   'product codes must not link to model detail pages'
 );
-assert.match(main, /<strong>\{item\.model\}<\/strong>/, 'product codes render as plain table text');
+assert.match(main, /<th scope="row">\{item\.model\}<\/th>/, 'product codes render as plain table text');
 assert.doesNotMatch(main, /function Detail\(/, 'model detail content must be removed');
 assert.doesNotMatch(main, /hash\.startsWith\('#product='\)/, 'model detail hash routes must be removed');
 assert.match(main, /href="#products"/, 'the all-families hash link remains available');

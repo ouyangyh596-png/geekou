@@ -18,8 +18,8 @@ assert.match(main, /aria-label=\{open \? content.navigation.closeLabel : content
 
 assert.doesNotMatch(styles, /https?:\/\//, 'production CSS must not load remote assets');
 assert.doesNotMatch(styles, /@import\s+url/, 'production CSS must not depend on remote font stylesheets');
-assert.match(styles, /body\{[^}]*font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif/, 'body text must use an intentional local system stack');
-assert.match(styles, /\.kicker\{[^}]*ui-monospace/, 'technical labels must use an intentional local monospace stack');
+assert.match(styles, /body\{[^}]*font-family:var\(--font-text\)/, 'body text must use an intentional local geometric sans-serif stack');
+assert.match(styles, /\.kicker\{[^}]*var\(--font-text\)/, 'technical labels must use an intentional shared geometric label stack');
 
 assert.match(
   styles,

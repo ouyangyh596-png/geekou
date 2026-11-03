@@ -17,3 +17,20 @@ export function decideProductSwipe({ deltaX, deltaY }) {
 
   return { type: 'select', offset: deltaX < 0 ? 1 : -1 }
 }
+
+// One selection per wheel gesture, including long trackpad inertia tails.
+// Normal page scrolling is never cancelled by the caller.
+export function createWheelGesture(idleMs = 240) {
+  let lastTime = -Infinity;
+  let consumed = false;
+  let accumulated = 0;
+  return ({ index, count, deltaY, time }) => {
+    if (time - lastTime >= idleMs) { consumed = false; accumulated = 0; }
+    lastTime = time;
+    if (consumed || !Number.isFinite(deltaY)) return { type: 'ignore' };
+    accumulated += deltaY;
+    const action = decideProductWheel({ index, count, deltaY: accumulated });
+    if (action.type !== 'ignore') consumed = true;
+    return action;
+  };
+}

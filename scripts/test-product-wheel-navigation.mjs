@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { decideProductSwipe, decideProductWheel } from '../src/product-wheel-navigation.js'
+import { decideProductSwipe, decideProductWheel, createWheelGesture } from '../src/product-wheel-navigation.js'
 
 const mainSource = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
 
@@ -10,7 +10,7 @@ assert.match(mainSource, /<article ref=\{activeCardRef\} className="stack-card s
   'the interactive active-card branch uses the wheel target ref')
 assert.match(mainSource, /<a ref=\{activeCardRef\} href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active"/,
   'the linked active-card branch uses the wheel target ref')
-assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: false \}\)/,
+assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: true \}\)/,
   'wheel navigation listens on the active card')
 assert.match(mainSource, /wheelTarget\.removeEventListener\('wheel', handleWheel\)/,
   'wheel navigation cleans up the active-card listener')
@@ -58,3 +58,10 @@ assert.deepEqual(decideProductSwipe({ deltaX: 30, deltaY: 2 }), { type: 'ignore'
   'a short horizontal gesture does not change products')
 
 console.log('Product wheel navigation tests passed')
+
+const gesture = createWheelGesture();
+assert.deepEqual(gesture({index:3,count:11,deltaY:80,time:0}),{type:'select',index:4});
+for(let time=10;time<1800;time+=10) assert.equal(gesture({index:4,count:11,deltaY:80,time}).type,'ignore','inertia cannot select another card');
+assert.deepEqual(gesture({index:4,count:11,deltaY:80,time:2200}),{type:'select',index:5});
+const wheelHandler=mainSource.slice(mainSource.indexOf('const handleWheel'),mainSource.indexOf('const selectOffset'));
+assert.doesNotMatch(wheelHandler,/preventDefault/,'wheel never blocks page scrolling');

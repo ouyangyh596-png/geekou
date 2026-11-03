@@ -1,6 +1,7 @@
 // 中文编辑提示：只修改引号内的英文文字。请勿重命名键、删除标点，或修改 export 语句。
 export const englishSiteContent = {
   navigation: {
+    families: 'Product families',
     products: 'Products',
     technology: 'Technology',
     company: 'Company',
@@ -12,7 +13,8 @@ export const englishSiteContent = {
   },
   home: {
     heroTitle: 'SUPER CHROME FILM',
-    heroAction: 'Explore to product',
+    heroAction: 'Explore products',
+    heroSubtitle: 'Precision-engineered films for print, wrap and protection.',
     heroVideoLabel: 'SO-FINE manufacturing facility',
     companyVideoLabel: 'SO-FINE factory aerial view',
     companyVideoCaption: 'SO-FINE factory / aerial view',
@@ -49,15 +51,22 @@ export const englishSiteContent = {
   company: {
     eyebrow: 'SO-FINE / ESTABLISHED 2005',
     title: '20 years of industrial expertise.',
+    titleLead: '20 years of industrial',
+    titleEmphasis: 'expertise.',
+    metricLabels: ['Established', 'Factory area', 'Annual capacity', 'Export countries'],
+    metricPending: 'To be confirmed',
     paragraphs: [
       'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
-      'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',
+      'Our state-of-the-art production facilities with latest technology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with extensive coating expertise to guarantee superior output for customers.',
       'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
     ]
   },
   contact: {
     kicker: "LET'S MAKE SOMETHING LAST",
     title: 'Start with a\nsurface.',
+    copyright: 'All rights reserved.',
+    telLabel: 'Tel',
+    faxLabel: 'Fax',
     formKicker: 'PROJECT INQUIRY',
     formIntroduction: 'Tell us what you are building. Our team will get back to you shortly.',
     nameLabel: 'Name *',
@@ -113,7 +122,7 @@ export const englishSiteContent = {
       eyebrow: 'AUTOFACE / CAST WRAP VINYL',
       intro: 'Cast PVC wrap and overlaminate films engineered for demanding curves, high-gloss graphics and durable protective finishes.',
       series: [
-        { name: 'White Printable Film', description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and revets.' },
+        { name: 'White Printable Film', description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and rivets.' },
         { name: 'Ultra Clear Printable Film', description: 'High performance ultra clear film enables stunning graphic design, decal effects. Unprinted areas preserve optical clarity and no need to cut around images.' },
         { name: 'Reflective Printable Film', description: 'High retro-reflective stretchable film with optimized initial tack, super conformability fits compound curves, corners and rivets, enables partially or full vehicle wrap.' },
         { name: 'Overlaminate Film', description: 'Optical clarity with low haze, true-to-original color reproduction, available in glossy, luster, matte finish. Excellent anti-yellowing performance protects printed graphic from fading under outdoor exposure.' }
@@ -173,6 +182,8 @@ export const englishSiteContent = {
     }
   },
   products: {
+    wheelHint: 'Scroll to browse products',
+    swipeHint: 'Swipe to browse products',
     choose: 'Choose a',
     surface: 'surface.',
     productLibrary: 'PRODUCT LIBRARY',
@@ -202,6 +213,12 @@ export const englishSiteContent = {
     customColour: 'Custom colour',
     colourChoicesLabel: 'Classic colour choices',
     viewerLabel: 'Interactive Cybertruck colour preview',
+    loading: 'Loading 3D preview…',
+    loadingStudio: 'Loading printable wrap studio…',
+    dragHint: 'Drag to rotate',
+    error: 'The 3D preview could not load.',
+    retry: 'Try again',
+    errorHelp: 'You can still explore every product and colour below.',
     printableWrap: {
       kicker: 'PRINTABLE CHROME / LIVE PREVIEW',
       title: 'Place your artwork.',

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { englishSiteContent } from '../content/site-content.js'
+import { useLanguage } from '../language.js'
 import {
   DEFAULT_PRINT_PLACEMENT,
   inspectArtworkFile,
@@ -8,9 +8,10 @@ import {
 } from '../printable-wrap-state.js'
 import PrintableWrapViewer from './PrintableWrapViewer.jsx'
 
-const copy = englishSiteContent.cybertruck.printableWrap
+
 
 export default function PrintableWrapConfigurator() {
+  const copy = useLanguage().content.cybertruck.printableWrap
   const [artworkUrl, setArtworkUrl] = useState('')
   const [placement, setPlacement] = useState(() => ({ ...DEFAULT_PRINT_PLACEMENT }))
   const [finish, setFinish] = useState('glossy')

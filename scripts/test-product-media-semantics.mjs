@@ -11,7 +11,7 @@ try {
 const { productImageAlt } = productMedia;
 assert.equal(typeof productImageAlt, 'function', 'productImageAlt must be exported');
 
-const fallbackModels = ['SF6000', 'AF1810', 'AF1850', 'SF5601', 'SF5602', 'SF5603', 'SF5606', 'SF5609', 'SF5604', 'SF5607'];
+const fallbackModels = ['SF6000', 'AF1810', 'AF1850'];
 for (const model of fallbackModels) {
   const product = catalogProducts.find(candidate => candidate.model === model);
   assert.ok(product, `${model}: product is missing`);
@@ -40,3 +40,10 @@ assert.equal(
 );
 
 console.log(`PASS: validated representative fallback semantics for ${fallbackModels.length} products`);
+
+assert.equal(productMedia.categoryHero(undefined), null);
+assert.equal(productMedia.categoryHero({hero:''}), null);
+assert.equal(productMedia.categoryHero({hero:'/products/ppf-family.svg'}), null);
+assert.equal(productMedia.categoryHero({hero:'/real.webp'}), '/real.webp');
+
+for (const model of ['SF5601','SF5602','SF5603','SF5606','SF5609','SF5604','SF5607']) { const p=catalogProducts.find(p=>p.model===model); assert.match(productImageAlt(p,p.image), /family photograph, representative image/); }

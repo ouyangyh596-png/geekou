@@ -3,6 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Html, OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { useLanguage } from '../language.js'
+import { familyMedia } from '../media-manifest.js'
 import { CYBERTRUCK_MODEL_PATH } from '../cybertruck-colours.js'
 import { createCybertruckInstance } from '../cybertruck-scene.js'
 
@@ -25,7 +27,7 @@ function createMicroRoughness() {
   return texture
 }
 
-function CybertruckModel({ colour }) {
+function CybertruckModel({ colour, onReady }) {
   const { scene } = useGLTF(CYBERTRUCK_MODEL_PATH)
   const grain = useMemo(createMicroRoughness, [])
   const model = useMemo(() => {
@@ -38,6 +40,7 @@ function CybertruckModel({ colour }) {
     instance.scene.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale)
     return instance
   }, [scene, grain])
+  useEffect(() => { onReady(true); }, [onReady])
   const target = useMemo(() => new THREE.Color(colour), [colour])
   const { invalidate } = useThree()
   const initialized = useRef(false)
@@ -68,7 +71,7 @@ function CameraRig() {
   const { camera, size, invalidate } = useThree()
   const controls = useRef()
   useEffect(() => {
-    const distance = 5.6 * Math.max(1, 1.25 / (size.width / size.height))
+    const distance = 4.6 * Math.max(1, 1.25 / (size.width / size.height))
     camera.position.copy(new THREE.Vector3(1, .42, .8).normalize().multiplyScalar(distance)).add(new THREE.Vector3(0, .48, 0))
     camera.lookAt(0, .48, 0)
     camera.updateProjectionMatrix()
@@ -82,6 +85,7 @@ function CameraRig() {
 
 function StudioEnvironment() {
   const { gl } = useThree()
+  useEffect(() => { onReady(true); }, [onReady])
   const target = useMemo(() => {
     const room = new RoomEnvironment()
     // Lit studio walls fill the broad chrome panels; black HDRI backgrounds
@@ -101,13 +105,15 @@ class ViewerBoundary extends Component {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
   render() {
-    return this.state.failed ? <div className="viewer-error" role="status"><p>The 3D preview could not load.</p><button type="button" onClick={() => { useGLTF.clear(CYBERTRUCK_MODEL_PATH); this.setState({ failed: false }) }}>Try again</button><p>You can still explore every product and colour below.</p></div> : this.props.children
+    return this.state.failed ? <div className="viewer-error" role="status"><p>{this.props.copy.error}</p><button type="button" onClick={() => { useGLTF.clear(CYBERTRUCK_MODEL_PATH); this.setState({ failed: false }) }}>{this.props.copy.retry}</button><p>{this.props.copy.errorHelp}</p></div> : this.props.children
   }
 }
 
 export default function CybertruckViewer({ colour }) {
+  const { content } = useLanguage();
   const host = useRef()
   const pointerStart = useRef(null)
+  const [ready, setReady] = useState(false)
   const [entered, setEntered] = useState(false)
   const [hintState, setHintState] = useState(() => {
     try { return window.localStorage.getItem(DRAG_HINT_STORAGE_KEY) === '1' ? 'hidden' : 'visible' }
@@ -138,16 +144,17 @@ export default function CybertruckViewer({ colour }) {
   const clearPointer = event => {
     if (pointerStart.current?.id === event.pointerId) pointerStart.current = null
   }
-  return <div ref={host} className="cybertruck-viewer" aria-label="Interactive Cybertruck colour preview"
+  return <div ref={host} className="cybertruck-viewer" aria-label={content.cybertruck.viewerLabel}
     onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={clearPointer} onPointerCancel={clearPointer}
     onTouchStart={event => event.stopPropagation()} onTouchEnd={event => event.stopPropagation()}>
-    <ViewerBoundary>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, 4], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={<Html center><span className="viewer-loading" role="status">Loading 3D preview…</span></Html>}>
+    {!ready && <div className="model-cover" role="status"><img src={familyMedia['super-chrome-film'].preview} alt={familyMedia['super-chrome-film'].alt} /><span>{content.cybertruck.loading}</span></div>}
+    <ViewerBoundary copy={content.cybertruck}>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, 4], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
+      <Suspense fallback={<Html center><span className="viewer-loading" role="status">{content.cybertruck.loading}</span></Html>}>
         <hemisphereLight intensity={1.2} color="#eef7ff" groundColor="#64716a" />
         <directionalLight position={[4, 6, 4]} intensity={2.4} color="#fff7eb" />
         <directionalLight position={[-4, 3, -3]} intensity={1.6} color="#c7deff" />
         <StudioEnvironment />
-        <CybertruckModel colour={colour} />
+        <CybertruckModel colour={colour} onReady={setReady} />
         <CameraRig />
       </Suspense>
     </Canvas>}</ViewerBoundary>
@@ -156,7 +163,7 @@ export default function CybertruckViewer({ colour }) {
       <span className="viewer-gesture-track" aria-hidden="true"><span className="viewer-gesture-pointer">
         <svg viewBox="0 0 24 24"><path d="M7.4 3.2c.9 0 1.6.7 1.6 1.6v5.1l.7-.8c.6-.7 1.7-.7 2.3-.1l.5.6.5-.3c.7-.4 1.6-.2 2.1.4l.4.6.5-.2c.9-.3 1.8.2 2.1 1.1l.4 1.4c.5 1.8.1 3.8-1.2 5.2l-1.5 1.7c-.7.8-1.8 1.3-2.9 1.3h-2.6c-1.2 0-2.3-.5-3.1-1.4l-3.6-4.2a1.7 1.7 0 0 1 .2-2.4c.7-.6 1.7-.5 2.3.1l.7.8V4.8c0-.9.7-1.6 1.6-1.6Z" /></svg>
       </span></span>
-      <span>Drag to rotate</span>
+      <span>{content.cybertruck.dragHint}</span>
     </div>}
   </div>
 }
