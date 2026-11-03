@@ -1,0 +1,650 @@
+# Review package: 4404553..HEAD
+
+## Commits
+331ff42 docs: remove trailing plan whitespace
+0f8c029 docs: add webpage copy implementation plan
+edb6dac test: validate approved product copy
+4379d6f fix: generalize translucent film heading
+a92aff6 chore: keep review report local
+8639bad docs: record decorative film review fix
+47eddbd fix: omit empty decorative film table
+cf38bc1 feat: add decorative film category
+813aae5 test: preserve approved series mappings
+fbf3458 copy: apply approved product wording
+
+## Files changed
+ .../plans/2026-09-08-webpage-copy-update.md        | 126 +++++++++++++++++++++
+ scripts/test-category-media.mjs                    |  33 +++++-
+ scripts/test-site-content.mjs                      |  84 +++++++++++++-
+ scripts/validate-content.mjs                       |  15 ++-
+ src/catalog.js                                     |   9 +-
+ src/content/site-content.js                        |  41 ++++---
+ src/main.jsx                                       |   2 +-
+ src/media-manifest.js                              |   5 +
+ 8 files changed, 288 insertions(+), 27 deletions(-)
+
+## Diff
+diff --git a/docs/superpowers/plans/2026-09-08-webpage-copy-update.md b/docs/superpowers/plans/2026-09-08-webpage-copy-update.md
+new file mode 100644
+index 0000000..a0ad773
+--- /dev/null
++++ b/docs/superpowers/plans/2026-09-08-webpage-copy-update.md
+@@ -0,0 +1,126 @@
++# Webpage English Copy Update Implementation Plan
++
++> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
++
++**Goal:** Apply the approved English Word copy, add SF9000 Series, and add a navigable Decorative Film category without introducing Chinese document notes.
++
++**Architecture:** Keep English editorial content in `englishSiteContent`, derive brochure series from it, and extend the existing catalog and media maps for new routable entities. Reuse the current category/detail templates and an existing suitable decorative-material image rather than adding a new presentation system.
++
++**Tech Stack:** React, Vite, JavaScript ES modules, Node assertion tests, existing hash routing.
++
++## Global Constraints
++
++- Use only English copy from `Webpage.docx`; do not publish Chinese notes or labels.
++- Preserve supplied English wording, spelling, punctuation and placeholders exactly.
++- Keep the established visual framework and centralized content architecture.
++- Do not invent specifications or model codes absent from the English source.
++
++---
++
++### Task 1: English copy and new series
++
++**Files:**
++- Modify: `scripts/test-site-content.mjs`
++- Modify: `src/content/site-content.js`
++
++**Interfaces:**
++- Consumes: `englishSiteContent.categories: Record<string, CategoryCopy>`.
++- Produces: corrected existing category copy plus `translucent-film.series` entries named `SF6000 Series` and `SF9000 Series`.
++
++- [ ] **Step 1: Write the failing content assertions**
++
++Add exact assertions for the approved Mono/Poly/Cast/PET, self-adhesive, translucent, PPF, overlaminate, cold-lamination and wall-decals English strings. Assert that SF9000 exists with: `Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.`
++
++- [ ] **Step 2: Run the focused test and verify the expected failure**
++
++Run: `pnpm test-content`
++
++Expected: FAIL on the first old description or missing SF9000 entry.
++
++- [ ] **Step 3: Apply the exact Word copy**
++
++Replace only matching string values in `englishSiteContent.categories`; append `{ name: 'SF9000 Series', description: '…' }` to the translucent series list.
++
++- [ ] **Step 4: Verify the focused test passes**
++
++Run: `pnpm test-content`
++
++Expected: `English site content tests passed`.
++
++- [ ] **Step 5: Commit the content update**
++
++Run: `git add scripts/test-site-content.mjs src/content/site-content.js && git commit -m "copy: apply approved product wording"`
++
++### Task 2: Decorative Film category and navigation
++
++**Files:**
++- Modify: `scripts/test-site-content.mjs`
++- Modify: `scripts/test-category-media.mjs`
++- Modify: `src/content/site-content.js`
++- Modify: `src/catalog.js`
++- Modify: `src/media-manifest.js`
++
++**Interfaces:**
++- Consumes: automatic category derivation from `englishSiteContent.categories`.
++- Produces: category slug `decorative-film`, one series named `Decorative Film`, shared family media, and no fabricated product record.
++
++- [ ] **Step 1: Write failing route/data/media assertions**
++
++Assert that `decorative-film` exists in English content, brochure data, catalog family metadata and `familyMedia`. Assert its introduction equals: `High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.`
++
++- [ ] **Step 2: Run focused tests and verify the expected failures**
++
++Run: `pnpm test-content && pnpm test-category-media`
++
++Expected: FAIL because `decorative-film` is absent.
++
++- [ ] **Step 3: Add the minimal category data**
++
++Add `decorative-film` to centralized content, catalog image/title/description maps and the media manifest. Reuse the existing interior wall-decals family image. Add no model/spec row because the English source provides none.
++
++- [ ] **Step 4: Verify the focused tests pass**
++
++Run: `pnpm test-content && pnpm test-category-media`
++
++Expected: both commands exit 0.
++
++- [ ] **Step 5: Commit the category update**
++
++Run: `git add scripts/test-site-content.mjs scripts/test-category-media.mjs src/content/site-content.js src/catalog.js src/media-manifest.js && git commit -m "feat: add decorative film category"`
++
++### Task 3: Browser and release verification
++
++**Files:**
++- Verify: `src/content/site-content.js`
++- Verify: `src/catalog.js`
++- Verify: `src/media-manifest.js`
++
++**Interfaces:**
++- Consumes: built Vite site and hash routes.
++- Produces: evidence that all affected pages render and navigate correctly.
++
++- [ ] **Step 1: Scan edited source for Chinese text introduced by this change**
++
++Run: `git diff HEAD~2 -- src/content/site-content.js src/catalog.js src/media-manifest.js | rg '[一-龥]'`
++
++Expected: no added Chinese content.
++
++- [ ] **Step 2: Run complete automated verification**
++
++Run: `pnpm test-release && pnpm build && git diff --check`
++
++Expected: all commands exit 0.
++
++- [ ] **Step 3: Verify affected pages in the local browser**
++
++Open the product library, `#category=translucent-film&series=SF9000%20Series`, and `#category=decorative-film`. Confirm headings, exact paragraphs, family navigation, media rendering and desktop/mobile wrapping.
++
++- [ ] **Step 4: Commit any verification-driven correction**
++
++If browser verification requires a correction, add only the affected files and commit with `fix: correct product copy presentation`; otherwise make no extra commit.
++
++- [ ] **Step 5: Push the verified commits**
++
++Run: `git push origin main`
++
++Expected: remote `main` advances to the verified local commit.
+diff --git a/scripts/test-category-media.mjs b/scripts/test-category-media.mjs
+index c75c948..8ee68f6 100644
+--- a/scripts/test-category-media.mjs
++++ b/scripts/test-category-media.mjs
+@@ -1,30 +1,59 @@
+ import assert from 'node:assert/strict';
+ import { readFile } from 'node:fs/promises';
++import { brochureSeries } from '../src/brochure-data.js';
++import { catalogProducts } from '../src/catalog.js';
++import { familyMedia } from '../src/media-manifest.js';
+ 
+ const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
+ const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
++const catalog = await readFile(new URL('../src/catalog.js', import.meta.url), 'utf8');
++
++assert.match(catalog, /'decorative-film': '\/media\/families\/interior-wall-decals\.webp'/, 'catalog includes Decorative Film family image metadata');
++assert.match(catalog, /'decorative-film': 'Decorative Film'/, 'catalog includes Decorative Film family title metadata');
++assert.match(catalog, /'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications\.'/,
++  'catalog includes the approved Decorative Film family description');
++assert.deepEqual(familyMedia['decorative-film'], {
++  hero: '/media/families/interior-wall-decals.webp',
++  preview: '/media/families/interior-wall-decals.webp',
++  alt: 'Interior bedroom with an installed botanical wall decal mural'
++});
++assert.equal(catalogProducts.some(product => product.category === 'decorative-film'), false, 'Decorative Film has no fabricated product record');
++
++const decorativeFilmHash = '#category=decorative-film';
++const decorativeFilmParams = new URLSearchParams(decorativeFilmHash.slice(1));
++const decorativeFilmSlug = decorativeFilmParams.get('category');
++const decorativeFilmInfo = brochureSeries[decorativeFilmSlug];
++const decorativeFilmSeries = decorativeFilmParams.get('series') || (decorativeFilmInfo.series.length === 1 ? decorativeFilmInfo.series[0][0] : '');
++const decorativeFilmItems = catalogProducts.filter(product => product.category === decorativeFilmSlug && (!decorativeFilmSeries || product.group === decorativeFilmSeries));
++
++assert.equal(decorativeFilmSlug, 'decorative-film', 'Decorative Film hash resolves to its category slug');
++assert.equal(decorativeFilmInfo.displayName, 'Decorative Film', 'Decorative Film route resolves its heading');
++assert.equal(decorativeFilmInfo.intro, 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.', 'Decorative Film route resolves its approved copy');
++assert.equal(familyMedia[decorativeFilmSlug].hero, '/media/families/interior-wall-decals.webp', 'Decorative Film route resolves its shared family image');
++assert.equal(decorativeFilmSeries, 'Decorative Film', 'Decorative Film route selects its sole series');
++assert.deepEqual(decorativeFilmItems, [], 'Decorative Film route has no product-table items');
+ 
+ assert.match(
+   main,
+   /const media = familyMedia\[category\.slug\];/,
+   'CategoryPage reads its approved family media mapping'
+ );
+ assert.match(
+   main,
+   /className=\{'category-page-media category-page-media-' \+ category\.slug\}[\s\S]*?<img src=\{media\.hero\} alt=\{media\.alt\}/,
+   'CategoryPage renders the mapped hero image with family alt text'
+ );
+ assert.match(
+   main,
+-  /<ProductTable items=\{items\} \/>/,
+-  'the selected series displays its product specification table'
++  /\{items\.length > 0 && <ProductTable items=\{items\} \/>\}/,
++  'CategoryPage omits the product specification table when the selected series has no items'
+ );
+ assert.match(
+   main,
+   /alt=\{productImageAlt\(product, image, index\)\}/,
+   'detail-gallery images use fallback-aware alt text'
+ );
+ assert.match(
+   main,
+   /href=\{'#product=' \+ item\.slug\}/,
+   'product codes link to their full detail pages'
+diff --git a/scripts/test-site-content.mjs b/scripts/test-site-content.mjs
+index e335937..9d2e480 100644
+--- a/scripts/test-site-content.mjs
++++ b/scripts/test-site-content.mjs
+@@ -37,21 +37,21 @@ function assertEditorSafeContent(value, location = 'englishSiteContent') {
+   }
+ }
+ 
+ const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck']
+ assert.deepEqual(Object.keys(englishSiteContent), sections)
+ for (const section of sections) assert.ok(englishSiteContent[section], `Missing ${section}`)
+ for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
+   assert.equal(typeof englishSiteContent.navigation[key], 'string')
+   assert.ok(englishSiteContent.navigation[key].trim())
+ }
+-for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals']) {
++for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals', 'decorative-film']) {
+   assert.ok(englishSiteContent.categories[slug], `Missing category copy: ${slug}`)
+ }
+ assert.ok(englishSiteContent.home.heroTitle)
+ assert.ok(englishSiteContent.products.productLibrary)
+ assert.ok(englishSiteContent.cybertruck.title)
+ assert.equal(copy.en.products, englishSiteContent.navigation.products)
+ assert.equal(companyProfile.title, englishSiteContent.company.title)
+ assert.deepEqual(englishSiteContent.technology, {
+   kicker: 'THE SO-FINE DIFFERENCE',
+   title: 'Precision is\nthe foundation.',
+@@ -67,20 +67,102 @@ assert.deepEqual(englishSiteContent.company.paragraphs, [
+   'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
+   'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',
+   'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
+ ])
+ assert.equal(capabilities[2][1], englishSiteContent.technology.capabilities[2].name)
+ assert.equal(brochureSeries['car-wrapping'].displayName, englishSiteContent.categories['car-wrapping'].displayName)
+ assert.equal(
+   englishSiteContent.categories['one-way-vision'].intro,
+   'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.'
+ )
++assert.deepEqual(
++  englishSiteContent.categories['one-way-vision'].series,
++  [
++    { name: 'Monomeric PVC', description: 'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.' },
++    { name: 'Polymeric PVC', description: 'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.' },
++    { name: 'Cast PVC', description: 'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.' },
++    { name: 'Perforated PET', description: 'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.' }
++  ]
++)
++assert.equal(
++  englishSiteContent.categories['self-adhesive-vinyl'].intro,
++  'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive and liner configurations for large-format solvent, eco-solvent, UV and latex printing.'
++)
++assert.deepEqual(
++  englishSiteContent.categories['self-adhesive-vinyl'].series,
++  [
++    { name: 'Monomeric PVC', description: 'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!' },
++    { name: 'Polymeric PVC', description: 'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.' },
++    { name: 'Super Transparent PVC Vinyl', description: 'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.' },
++    { name: 'Super Glossy PVC Vinyl', description: 'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.' }
++  ]
++)
++assert.equal(
++  englishSiteContent.categories['translucent-film'].intro,
++  'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.'
++)
++assert.deepEqual(englishSiteContent.categories['translucent-film'].series, [
++  {
++    name: 'SF6000 Series',
++    description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.'
++  },
++  {
++    name: 'SF9000 Series',
++    description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.'
++  }
++])
++assert.equal(englishSiteContent.categories['translucent-film'].displayName, 'Translucent Film')
++assert.equal(
++  englishSiteContent.categories.ppf.intro,
++  'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.'
++)
++assert.equal(
++  englishSiteContent.categories.overlaminate.intro,
++  'Cast and polymeric PVC overlaminate films with clear permanent adhesive and PET liner for printed-graphic protection.'
++)
++assert.equal(
++  englishSiteContent.categories['cold-lamination'].intro,
++  'Cold lamination films in monomeric PVC, polymeric PVC, PET and floor-lamination PVC constructions.'
++)
++assert.equal(
++  englishSiteContent.categories['wall-decals'].intro,
++  'Decorative self-adhesive wall-covering materials that conform around 90\u00b0 corners without lifting, provide a customized and unique touch to any space.'
++)
++assert.deepEqual(
++  englishSiteContent.categories['wall-decals'].series,
++  [
++    { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
++    { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
++  ]
++)
++assert.equal(
++  englishSiteContent.categories['decorative-film'].intro,
++  'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++)
++assert.deepEqual(englishSiteContent.categories['decorative-film'].series, [
++  {
++    name: 'Decorative Film',
++    description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++  }
++])
++assert.deepEqual(
++  brochureSeries['decorative-film'],
++  {
++    displayName: 'Decorative Film',
++    eyebrow: 'SO-FINE / DECORATIVE FILM',
++    intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
++    series: [[
++      'Decorative Film',
++      'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++    ]]
++  }
++)
+ 
+ for (const modulePath of ['../src/language.js', '../src/content/company.js', '../src/brochure-data.js']) {
+   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
+   assert.match(source, /import\s*{\s*englishSiteContent\s*}/, `${modulePath} must import centralized English copy`)
+ }
+ for (const [modulePath, inlineCopy] of [
+   ['../src/main.jsx', ['SUPER CHROME FILM', 'Every layer is considered', 'Preview the finish across a Cybertruck surface']],
+   ['../src/components/PPFScrollSequence.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
+ ]) {
+   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
+diff --git a/scripts/validate-content.mjs b/scripts/validate-content.mjs
+index 06e83e6..ad43ec1 100644
+--- a/scripts/validate-content.mjs
++++ b/scripts/validate-content.mjs
+@@ -27,21 +27,22 @@ const expectedCatalogue = {
+   ],
+   overlaminate: [
+     ['SF5601', 'Cast PVC Overlaminate Film'], ['SF5602', 'Cast PVC Overlaminate Film'], ['SF5603', 'Cast PVC Overlaminate Film'], ['SF5606', 'Cast PVC Overlaminate Film'], ['SF5609', 'Cast PVC Overlaminate Film'],
+     ['SF5604', 'Polymeric PVC Overlaminate Film'], ['SF5607', 'Polymeric PVC Overlaminate Film']
+   ],
+   'cold-lamination': [
+     ['SF3180', 'Monomeric PVC'], ['SF3181', 'Monomeric PVC'], ['SF3182', 'Monomeric PVC'],
+     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
+     ['SF3400', 'Floor Lamination PVC'], ['SF3401', 'Floor Lamination PVC']
+   ],
+-  'wall-decals': [['SF4001', 'PVC-Coated Polyester Fabric'], ['SF4002', '100% Polyester']]
++  'wall-decals': [['SF4001', 'PVC-Coated Polyester Fabric'], ['SF4002', '100% Polyester']],
++  'decorative-film': []
+ }
+ 
+ const expectedCategories = Object.keys(expectedCatalogue)
+ const bannedScrapedText = /Wholesale Factory|Site Map|--Language--|18px|admin@|Product Origin|Delivery Time|Supply Capacity/i
+ 
+ function assertCleanStrings(value, path) {
+   if (typeof value === 'string') {
+     assert.doesNotMatch(value, bannedScrapedText, `${path}: scraped text is not allowed`)
+   } else if (Array.isArray(value)) {
+     value.forEach((item, index) => assertCleanStrings(item, `${path}[${index}]`))
+@@ -49,26 +50,27 @@ function assertCleanStrings(value, path) {
+     Object.entries(value).forEach(([key, item]) => assertCleanStrings(item, `${path}.${key}`))
+   }
+ }
+ 
+ assert.deepEqual(Object.keys(brochureSeries), expectedCategories)
+ assert.deepEqual(
+   Object.values(brochureSeries).map(series => series.displayName),
+   [
+     'One Way Vision Film',
+     'Self-Adhesive Vinyl',
+-    'Translucent Film - SF6000 Series',
++    'Translucent Film',
+     'Paint Protection Film',
+     'Car Wrap Film',
+     'Overlaminate Film',
+     'Cold Lamination Film',
+-    'Wall Decals Self-Adhesive Material'
++    'Wall Decals Self-Adhesive Material',
++    'Decorative Film'
+   ],
+   'Every brochure family must have its exact visible display name'
+ )
+ assert.equal(catalogProducts.length, 82, 'The brochure catalogue must contain exactly 82 models')
+ assert.deepEqual(catalogProducts.map(product => product.category), expectedCategories.flatMap(category => expectedCatalogue[category].map(() => category)))
+ 
+ for (const [category, expectedModels] of Object.entries(expectedCatalogue)) {
+   const actualModels = catalogProducts
+     .filter(product => product.category === category)
+     .map(({ model, group }) => [model, group])
+@@ -99,22 +101,25 @@ assertCleanStrings(brochureSeries, 'brochureSeries')
+ const af1840 = catalogProducts.find(product => product.model === 'AF1840')
+ assert.ok(af1840, 'AF1840 is missing')
+ assert.ok(!af1840.specs.some(([label]) => label === 'Print compatibility'), 'AF1840 must not claim unsupported print compatibility')
+ 
+ const sf1503 = catalogProducts.find(product => product.model === 'SF1503')
+ assert.ok(sf1503, 'SF1503 is missing')
+ assert.ok(sf1503.specs.some(([label, value]) => label === 'Print compatibility' && value === 'SOL / ESOL / UV / Latex'), 'SF1503 must support SOL / ESOL / UV / Latex')
+ 
+ const perforatedPet = brochureSeries['one-way-vision'].series.find(([name]) => name === 'Perforated PET')
+ assert.ok(perforatedPet, 'Perforated PET series is missing')
+-assert.match(perforatedPet[1], /30%/, 'Perforated PET must state its 30% ratio')
+-assert.doesNotMatch(perforatedPet[1], /20%/, 'Perforated PET must not claim a 20% ratio')
++assert.equal(
++  perforatedPet[1],
++  'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.',
++  'Perforated PET must preserve the approved English copy'
++)
+ 
+ const sf6000 = catalogProducts.find(product => product.model === 'SF6000')
+ assert.ok(sf6000, 'SF6000 is missing')
+ for (const [label, value] of [
+   ['Face thickness without adhesive', '80 µm (ISO 534-80)'],
+   ['Face thickness with adhesive', '100 µm (ISO 534-80)'],
+   ['Release liner', '75 µm matte PET (ISO 534-80)'],
+   ['Features', '2.22 m seamless width'],
+   ['Features', 'High release power; no curling'],
+   ['Features', 'Five-year outdoor weathering warranty'],
+diff --git a/src/catalog.js b/src/catalog.js
+index 869aeb4..666a277 100644
+--- a/src/catalog.js
++++ b/src/catalog.js
+@@ -1,19 +1,20 @@
+ const images = {
+   'one-way-vision': '/products/sf1413-1.jpg',
+   'self-adhesive-vinyl': '/products/sf2410-1.jpg',
+   'translucent-film': '/products/translucent-film-family.svg',
+   ppf: '/products/ppf-family.svg',
+   'car-wrapping': '/products/polymeric car wrapping film-1.jpg',
+   overlaminate: '/products/overlaminate-family.svg',
+   'cold-lamination': '/products/sf3180-1.jpg',
+-  'wall-decals': '/products/sf4001-1.jpg'
++  'wall-decals': '/products/sf4001-1.jpg',
++  'decorative-film': '/media/families/interior-wall-decals.webp'
+ }
+ 
+ const modelImages = {
+   SF1413: '/products/sf1413-1.jpg',
+   SF1865: '/products/sf1865-1.jpg',
+   SF1913: '/products/sf1913-1.jpg',
+   SF1914: '/products/sf1914-1.jpg',
+   SF2410: '/products/sf2410-1.jpg',
+   SF2610: '/products/sf2610-1.jpg',
+   SF3180: '/products/sf3180-1.jpg',
+@@ -25,32 +26,34 @@ const modelImages = {
+ }
+ 
+ const familyTitles = {
+   'one-way-vision': 'One Way Vision Film',
+   'self-adhesive-vinyl': 'Self-Adhesive Vinyl',
+   'translucent-film': 'Translucent Film',
+   ppf: 'Paint Protection Film',
+   'car-wrapping': 'Car Wrap Film',
+   overlaminate: 'Overlaminate Film',
+   'cold-lamination': 'Cold Lamination Film',
+-  'wall-decals': 'Wall Decals Self-Adhesive Material'
++  'wall-decals': 'Wall Decals Self-Adhesive Material',
++  'decorative-film': 'Decorative Film'
+ }
+ 
+ const familyDescriptions = {
+   'one-way-vision': 'Perforated printable film for vehicle, retail and building-glass graphics.',
+   'self-adhesive-vinyl': 'Self-adhesive vinyl for large-format digital printing applications.',
+   'translucent-film': 'Translucent polymeric PVC film for illuminated graphics.',
+   ppf: 'Automotive protection and finish film.',
+   'car-wrapping': 'High-conformability vehicle wrap film.',
+   overlaminate: 'Protective PVC overlaminate film for printed graphics.',
+   'cold-lamination': 'Cold lamination film for graphic protection.',
+-  'wall-decals': 'Decorative self-adhesive material for interior surfaces.'
++  'wall-decals': 'Decorative self-adhesive material for interior surfaces.',
++  'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+ }
+ 
+ const compatible = 'SOL / ESOL / UV / Latex'
+ const solventCompatible = 'SOL / ESOL / UV'
+ 
+ function product(category, group, model, specs, options = {}) {
+   const image = options.image ?? modelImages[model] ?? images[category]
+   return {
+     family: familyTitles[category], category, group, model,
+     title: options.title ?? familyTitles[category],
+diff --git a/src/content/site-content.js b/src/content/site-content.js
+index 2dc45c0..739ed1a 100644
+--- a/src/content/site-content.js
++++ b/src/content/site-content.js
+@@ -69,42 +69,45 @@ export const englishSiteContent = {
+     sendLabel: 'Send inquiry',
+     successMessage: 'Thank you — your inquiry has been received.',
+     errorPrefix: 'Unable to send. Please email'
+   },
+   categories: {
+     'one-way-vision': {
+       displayName: 'One Way Vision Film',
+       eyebrow: 'SO-FINE / ONE WAY VISION FILM',
+       intro: 'Perforated printable film is made with selected raw materials and optimal adhesive formulation for vehicle, retail and building-glass graphics. Highly printable, easy to apply and remove without residue.',
+       series: [
+-        { name: 'Monomeric PVC', description: 'Perforated film with a choice of ratios for glass graphics and easy viewing through the reverse side.' },
+-        { name: 'Polymeric PVC', description: 'Perforated film for durable, high-conformability printed graphics.' },
+-        { name: 'Cast PVC', description: 'High-conformability perforated film for demanding applications.' },
+-        { name: 'Perforated PET', description: 'PET-based perforated options with 30% perforation ratios.' }
++        { name: 'Monomeric PVC', description: 'Low initial tack for ease of application. Vibrant graphic visible from outside, clear outward view from the interior.' },
++        { name: 'Polymeric PVC', description: 'Excellent dimensional stability, resistant to shrinkage and deformationfor long-term outdoor application.' },
++        { name: 'Cast PVC', description: 'Highly-conformable flexible material for demanding application, available in dual color structure, white/white, white/black or black/black.' },
++        { name: 'Perforated PET', description: 'PVC-free solution for long durability, environmentally friendly commitment. Available either with adhesive or without adhesive.' }
+       ]
+     },
+     'self-adhesive-vinyl': {
+       displayName: 'Self-Adhesive Vinyl',
+       eyebrow: 'SO-FINE / SELF-ADHESIVE VINYL',
+-      intro: 'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive systems and liner configurations for large-format solvent, eco-solvent, UV and latex printing.',
++      intro: 'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive and liner configurations for large-format solvent, eco-solvent, UV and latex printing.',
+       series: [
+-        { name: 'Monomeric PVC', description: 'Vinyl for short-to-medium-term and point-of-purchase promotional applications.' },
+-        { name: 'Polymeric PVC', description: 'Vinyl with dimensional stability, conformability and weather resistance for signage, vehicles and architectural graphics.' },
+-        { name: 'Super Transparent PVC Vinyl', description: 'Ultra-clear vinyl for glass graphics with high gloss and a partially see-through appearance.' },
+-        { name: 'Super Glossy PVC Vinyl', description: 'High-gloss vinyl designed to make printed graphics vivid.' }
++        { name: 'Monomeric PVC', description: 'Ideal choice for short-medium term and point-of-purchase promotional applications. Let your creation stunning!' },
++        { name: 'Polymeric PVC', description: 'All-round choice for a multitude of long-term digital print applications. Specialized air-egress\u00a0(bubble-free) technology ensures easy installation and no more bubbles and wrinkles.' },
++        { name: 'Super Transparent PVC Vinyl', description: 'Ultra clear film is perfect solution for graphic application on glass, makes your signage noticeably attractive while remains partially see-through.' },
++        { name: 'Super Glossy PVC Vinyl', description: 'Looking for a substrate to shine your creation? The vinyl is with surface glossiness up to xx (60), makes the graphic more vivid and gives maximum visual appeal.' }
+       ]
+     },
+     'translucent-film': {
+-      displayName: 'Translucent Film - SF6000 Series',
++      displayName: 'Translucent Film',
+       eyebrow: 'SO-FINE / TRANSLUCENT FILM',
+-      intro: 'SF6000 is a translucent polymeric PVC film with saturated colour, weathering resistance and a solvent-based pressure-sensitive adhesive for illuminated graphics.',
+-      series: [{ name: 'SF6000 Series', description: 'Translucent film for dry or wet application, with 75 µm matte PET liner and high release power.' }]
++      intro: 'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.',
++      series: [
++        { name: 'SF6000 Series', description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.' },
++        { name: 'SF9000 Series', description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.' }
++      ]
+     },
+     ppf: {
+       displayName: 'Paint Protection Film',
+       eyebrow: 'AUTOFACE / PAINT PROTECTION FILM',
+       intro: 'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.',
+       series: [{ name: 'High-Clarity TPU Protection', description: 'TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }]
+     },
+     'car-wrapping': {
+       displayName: 'Car Wrap Film',
+       eyebrow: 'AUTOFACE / CAR WRAP FILM',
+@@ -132,24 +135,32 @@ export const englishSiteContent = {
+       series: [
+         { name: 'Monomeric PVC', description: '70 µm glossy, semi-matte and matte cold lamination films.' },
+         { name: 'Polymeric PVC', description: '60 µm polymeric cold lamination films in glossy and matte finishes.' },
+         { name: 'PET', description: '36 µm glossy PET cold lamination film.' },
+         { name: 'Floor Lamination PVC', description: 'Grainy-textured PVC for floor-lamination applications.' }
+       ]
+     },
+     'wall-decals': {
+       displayName: 'Wall Decals Self-Adhesive Material',
+       eyebrow: 'SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL',
+-      intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting; SF4001 also suits walls, floors and carpets because of its textured finish.',
++      intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting, provide a customized and unique touch to any space.',
++      series: [
++        { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
++        { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
++      ]
++    },
++    'decorative-film': {
++      displayName: 'Decorative Film',
++      eyebrow: 'SO-FINE / DECORATIVE FILM',
++      intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
+       series: [
+-        { name: 'PVC-Coated Polyester Fabric', description: '250 gsm PVC-coated polyester fabric with high-tack removable adhesive.' },
+-        { name: '100% Polyester', description: '115 gsm polyester with high-tack removable adhesive.' }
++        { name: 'Decorative Film', description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.' }
+       ]
+     }
+   },
+   products: {
+     choose: 'Choose a',
+     surface: 'surface.',
+     productLibrary: 'PRODUCT LIBRARY',
+     start: 'Start with a material family, then explore the exact models, specifications and images inside.',
+     productDetail: 'PRODUCT DETAIL',
+     specs: 'TECHNICAL SPECIFICATIONS',
+diff --git a/src/main.jsx b/src/main.jsx
+index ebf8933..e6b5763 100644
+--- a/src/main.jsx
++++ b/src/main.jsx
+@@ -242,21 +242,21 @@ function ProductTable({ items }) {
+ function CategoryPage({ category, series }) {
+   const { t } = useLanguage();
+   const [selectedColour, setSelectedColour] = useState(DEFAULT_CLASSIC_COLOUR);
+   const { info } = category;
+   const activeSeries = series || (info.series.length === 1 ? info.series[0][0] : '');
+   const items = products.filter(product => product.category === category.slug && (!activeSeries || product.group === activeSeries));
+   const media = familyMedia[category.slug];
+   const isClassicColours = activeSeries === 'Super Chrome Film Classic Colours';
+   const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || content.cybertruck.customColour;
+   const [cybertruckTitleLead, cybertruckTitleEmphasis] = content.cybertruck.title.split('\n');
+-  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{activeSeries && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
++  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{items.length > 0 && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
+ }
+ 
+ function Detail({ product }) {
+   const { t } = useLanguage();
+   return <main className="detail"><Header /><div className="detail-hero"><div><p className="kicker">{product.family} / {t('productDetail')}</p><div className="detail-model">{product.model}</div><h1><Lines text={product.title} /></h1><p>{product.description}</p></div><div className="detail-gallery">{(product.gallery || [product.image]).map((image, index) => <div className="detail-hero-image" key={image}><img src={image} alt={productImageAlt(product, image, index)} /><span>{product.model}</span></div>)}</div></div><div className="spec-area"><div><p className="kicker">{t('specs')}</p><h2>{t('made')}<br /><em>{t('perform')}</em></h2></div><div className="spec-table">{product.specs.map(([label, value], index) => <div key={label + '-' + index}><span>{label}</span><b>{value}</b></div>)}</div></div><div className="detail-next"><a href="#products">← {t('back')}</a><a href="#contact">{t('request')} <ArrowUpRight size={16} /></a></div></main>;
+ }
+ 
+ function App() {
+   const [hash, setHash] = useState(window.location.hash);
+   const previousHash = useRef(window.location.hash);
+diff --git a/src/media-manifest.js b/src/media-manifest.js
+index ddde2b7..7eb1b0d 100644
+--- a/src/media-manifest.js
++++ b/src/media-manifest.js
+@@ -39,12 +39,17 @@ export const familyMedia = {
+   },
+   'cold-lamination': {
+     hero: '/media/families/cold-lamination-film-roll.webp',
+     preview: '/media/families/cold-lamination-film-roll.webp',
+     alt: 'Film with release liner, representative cold-lamination material detail'
+   },
+   'wall-decals': {
+     hero: '/media/families/interior-wall-decals.webp',
+     preview: '/media/families/interior-wall-decals.webp',
+     alt: 'Interior bedroom with an installed botanical wall decal mural'
++  },
++  'decorative-film': {
++    hero: '/media/families/interior-wall-decals.webp',
++    preview: '/media/families/interior-wall-decals.webp',
++    alt: 'Interior bedroom with an installed botanical wall decal mural'
+   }
+ };

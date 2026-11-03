@@ -15,6 +15,17 @@ assert.doesNotMatch(main,/landing-brand-logos|01 \/ 05/);
 assert.match(css,/\.home-page \.landing h1\.landing-title[^}]*color:white;[^}]*background:none/);
 assert.match(css,/linear-gradient\(to top,rgba\(11,31,58,\.75\),transparent 60%\)/);
 assert.match(css,/\.home-page \.landing-copy[^}]*bottom:64px/);
+// Hero remains readable when the preceding TVC changes its document position.
+assert.doesNotMatch(main, /--hero-progress|window\.scrollY \/ 520/);
+assert.match(css, /\.home-page \.landing-copy[^}]*width:100%;[^}]*max-width:var\(--content-width\);[^}]*padding:0 var\(--page-gutter\)/);
+assert.match(css, /\.landing-brand-lockup[^}]*flex-direction:column;[^}]*align-items:flex-start/);
+assert.match(css, /\.home-page \.landing-image[^}]*inset:96px 0 0;[^}]*height:auto;[^}]*border:0/);
+assert.match(css, /\.home-page \.landing::after[^}]*z-index:1;[^}]*pointer-events:none/);
+assert.match(css, /\.home-page \.landing-image,\.home-page \.landing::after \{ top:80px/);
+const hero = main.split('<section className="landing"')[1].split('</section>')[0];
+assert.match(hero, /src="\/media\/home\/hero-factory\.mp4"/);
+assert.doesNotMatch(hero, /landing-brand-logos|scroll-cue|AUTOFACE|<figcaption/);
+
 for(const key of ['signage','automotive']) assert.ok(existsSync(`public${homeMedia[key]}`));
 assert.match(main,/content.home.materialItems\[2\].description/);
 assert.match(main,/const selectedCategory = categories\[selectedIndex\]/);

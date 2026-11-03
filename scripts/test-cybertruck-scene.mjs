@@ -1,6 +1,14 @@
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import * as THREE from 'three'
+
+// Readiness belongs to the model, whose GLTF has resolved. An environment
+// effect referencing that callback crashes before the first frame renders.
+const viewerSource = readFileSync(new URL('../src/components/CybertruckViewer.jsx', import.meta.url), 'utf8')
+const studioSource = viewerSource.slice(viewerSource.indexOf('function StudioEnvironment('), viewerSource.indexOf('class ViewerBoundary'))
+assert.doesNotMatch(studioSource, /\bonReady\b/, 'studio environment must not reference the model readiness callback')
+assert.match(viewerSource, /function CybertruckModel\(\{ colour, onReady \}\)/)
+assert.match(viewerSource, /<CybertruckModel colour=\{colour\} onReady=\{setReady\}/)
 
 const modulePath = new URL('../src/cybertruck-scene.js', import.meta.url)
 assert.ok(existsSync(modulePath), 'viewer needs an isolated scene factory, not a shared cached scene')

@@ -32,5 +32,5 @@ export function useLanguage() {
     localStorage.setItem('sofine-language',value);
     window.dispatchEvent(new Event('sofine-language-change'));
   };
-  return {lang,change,content:contentCache[lang],t:key => copy[lang]?.[key] || copy.en[key] || key};
+  return {lang,change,content:contentCache[lang],t:key => (lang === 'zh' ? contentCache.zh.navigation[key] || contentCache.zh.products[key] : copy[lang]?.[key]) || copy.en[key] || key};
 }

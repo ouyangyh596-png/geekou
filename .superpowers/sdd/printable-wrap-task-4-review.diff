@@ -1,0 +1,439 @@
+# Review package: 507e21d..343928b
+
+## Commits
+343928b feat: add printable chrome configurator
+
+## Files changed
+ package.json                                 |   1 +
+ scripts/test-printable-wrap-configurator.mjs |  66 +++++++++++++
+ src/components/PrintableWrapConfigurator.jsx | 137 +++++++++++++++++++++++++++
+ src/content/site-content.js                  |  25 ++++-
+ src/main.jsx                                 |   7 +-
+ src/polish.css                               |  37 ++++++++
+ 6 files changed, 271 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/package.json b/package.json
+index 1a3d1c7..6863ef8 100644
+--- a/package.json
++++ b/package.json
+@@ -18,20 +18,21 @@
+     "test-api": "node scripts/test-api.mjs",
+     "test-media": "node scripts/test-media-manifest.mjs",
+     "test-product-media": "node scripts/test-product-media-semantics.mjs",
+     "test-home-media": "node scripts/test-home-media.mjs",
+     "test-product-wheel": "node scripts/test-product-wheel-navigation.mjs",
+     "test-category-media": "node scripts/test-category-media.mjs",
+     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
+     "test-printable-wrap": "node scripts/test-printable-wrap-state.mjs",
+     "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs && node scripts/test-printable-wrap-webgl.mjs",
+     "test-printable-wrap-viewer": "node scripts/test-printable-wrap-viewer.mjs",
++    "test-printable-wrap-configurator": "node scripts/test-printable-wrap-configurator.mjs",
+     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
+     "test-polish": "node scripts/test-site-polish.mjs",
+     "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets && pnpm test-printable-wrap"
+   },
+   "dependencies": {
+     "@react-three/drei": "^10.7.8",
+     "@react-three/fiber": "^9.7.0",
+     "@vitejs/plugin-react": "latest",
+     "lucide-react": "latest",
+diff --git a/scripts/test-printable-wrap-configurator.mjs b/scripts/test-printable-wrap-configurator.mjs
+new file mode 100644
+index 0000000..9ea1f09
+--- /dev/null
++++ b/scripts/test-printable-wrap-configurator.mjs
+@@ -0,0 +1,66 @@
++import assert from 'node:assert/strict'
++import { existsSync, readFileSync } from 'node:fs'
++
++const readSource = relativePath => {
++  const url = new URL(relativePath, import.meta.url)
++  return existsSync(url) ? readFileSync(url, 'utf8') : ''
++}
++
++const main = readSource('../src/main.jsx')
++const component = readSource('../src/components/PrintableWrapConfigurator.jsx')
++const content = readSource('../src/content/site-content.js')
++const styles = readSource('../src/polish.css')
++
++assert.match(main, /React\.lazy\(\(\) => import\('\.\/components\/PrintableWrapConfigurator\.jsx'\)\)/,
++  'the printable configurator must be lazy loaded')
++assert.match(main, /const isPrintableChrome = activeSeries === 'Printable Super Glossy Chrome Wrap Film'/,
++  'the printable configurator route must match the complete series name exactly')
++assert.match(main, /\{isPrintableChrome && <PrintableWrapConfigurator \/>\}/,
++  'the exact printable route must mount the configurator')
++assert.match(main, /const isClassicColours = activeSeries === 'Super Chrome Film classic colours'/,
++  'the classic-colours route must remain independently matched')
++
++assert.ok(component, 'the printable configurator component must exist')
++assert.match(component, /type="file"/)
++assert.match(component, /accept="image\/png,image\/jpeg,image\/webp"/,
++  'the local chooser must advertise only the supported artwork formats')
++assert.match(component, /validateArtworkFile\(file\)/,
++  'selected artwork must pass through the Task 1 validator')
++assert.match(component, /URL\.createObjectURL\(file\)/,
++  'accepted artwork must use a local object URL')
++assert.ok((component.match(/URL\.revokeObjectURL\(/g) ?? []).length >= 2,
++  'replacement/removal and unmount must revoke object URLs')
++assert.doesNotMatch(component, /\b(?:fetch|XMLHttpRequest|FormData)\b/,
++  'the configurator must not call network upload APIs')
++
++assert.match(component, /value="glossy"/)
++assert.match(component, /value="matte"/)
++assert.match(component, /'positionArtwork'/)
++assert.match(component, /'rotateVehicle'/)
++assert.match(component, /type="range"[\s\S]*?min="0\.35"[\s\S]*?max="2\.5"/,
++  'the scale control must expose the Task 1 bounds')
++assert.match(component, /type="range"[\s\S]*?min="-180"[\s\S]*?max="180"/,
++  'the rotation control must expose the Task 1 bounds')
++assert.match(component, /updatePrintPlacement\(current, patch\)/,
++  'viewer dragging and sliders must share bounded placement updates')
++assert.match(component, /handleReset/)
++assert.match(component, /handleRemove/)
++assert.match(component, /role=\{error \? 'alert' : 'status'\}/,
++  'upload validation feedback must be announced inline')
++assert.match(component, /<PrintableWrapViewer[\s\S]*?artworkUrl=\{artworkUrl\}[\s\S]*?placement=\{placement\}[\s\S]*?finish=\{finish\}[\s\S]*?editMode=\{editMode\}/,
++  'the configurator must pass pure state values to the viewer')
++
++assert.match(content, /printableWrap:\s*\{/,
++  'printable UI copy must live in the English content module')
++assert.match(styles, /\.printable-wrap-config\s*\{[^}]*width:min\(1440px,calc\(100% - 72px\)\)/,
++  'the configurator must reuse the 1440px section width')
++assert.match(styles, /\.printable-wrap-layout\s*\{[^}]*display:grid[^}]*grid-template-columns:/,
++  'desktop controls must sit beside the viewer')
++assert.match(styles, /@media \(max-width: 800px\)[\s\S]*?\.printable-wrap-layout\s*\{[^}]*grid-template-columns:minmax\(0,1fr\)/,
++  'mobile controls must stack below the viewer')
++assert.match(styles, /\.printable-control[^}]*min-height:44px/,
++  'interactive printable controls must meet the 44px touch target')
++assert.match(styles, /\.printable-wrap-controls[^}]*grid-column:/,
++  'controls must occupy a separate layout column outside the canvas')
++
++console.log('Printable wrap configurator source contracts passed')
+diff --git a/src/components/PrintableWrapConfigurator.jsx b/src/components/PrintableWrapConfigurator.jsx
+new file mode 100644
+index 0000000..1bcf9da
+--- /dev/null
++++ b/src/components/PrintableWrapConfigurator.jsx
+@@ -0,0 +1,137 @@
++import { useEffect, useRef, useState } from 'react'
++import { englishSiteContent } from '../content/site-content.js'
++import {
++  DEFAULT_PRINT_PLACEMENT,
++  updatePrintPlacement,
++  validateArtworkFile,
++} from '../printable-wrap-state.js'
++import PrintableWrapViewer from './PrintableWrapViewer.jsx'
++
++const copy = englishSiteContent.cybertruck.printableWrap
++
++export default function PrintableWrapConfigurator() {
++  const [artworkUrl, setArtworkUrl] = useState('')
++  const [placement, setPlacement] = useState(() => ({ ...DEFAULT_PRINT_PLACEMENT }))
++  const [finish, setFinish] = useState('glossy')
++  const [editMode, setEditMode] = useState('positionArtwork')
++  const [error, setError] = useState('')
++  const artworkUrlRef = useRef('')
++  const fileInputRef = useRef(null)
++
++  const revokeArtwork = () => {
++    if (!artworkUrlRef.current) return
++    URL.revokeObjectURL(artworkUrlRef.current)
++    artworkUrlRef.current = ''
++  }
++
++  useEffect(() => () => {
++    if (artworkUrlRef.current) URL.revokeObjectURL(artworkUrlRef.current)
++  }, [])
++
++  const changePlacement = patch => {
++    setPlacement(current => updatePrintPlacement(current, patch))
++  }
++
++  const handleArtworkChange = event => {
++    const file = event.target.files?.[0]
++    if (!file) return
++
++    const validation = validateArtworkFile(file)
++    if (!validation.valid) {
++      setError(validation.message)
++      event.target.value = ''
++      return
++    }
++
++    const nextArtworkUrl = URL.createObjectURL(file)
++    revokeArtwork()
++    artworkUrlRef.current = nextArtworkUrl
++    setArtworkUrl(nextArtworkUrl)
++    setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
++    setEditMode('positionArtwork')
++    setError('')
++  }
++
++  const handleRemove = () => {
++    revokeArtwork()
++    setArtworkUrl('')
++    setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
++    setError('')
++    if (fileInputRef.current) fileInputRef.current.value = ''
++  }
++
++  const handleReset = () => {
++    setPlacement({ ...DEFAULT_PRINT_PLACEMENT })
++    setFinish('glossy')
++    setEditMode('positionArtwork')
++    setError('')
++  }
++
++  return <section className="printable-wrap-config" aria-labelledby="printable-wrap-title">
++    <div className="printable-wrap-heading">
++      <div>
++        <p className="kicker">{copy.kicker}</p>
++        <h2 id="printable-wrap-title">{copy.title}</h2>
++      </div>
++      <p>{copy.description}</p>
++    </div>
++
++    <div className="printable-wrap-layout">
++      <PrintableWrapViewer
++        artworkUrl={artworkUrl}
++        placement={placement}
++        finish={finish}
++        editMode={editMode}
++        onPlacementChange={changePlacement}
++      />
++
++      <div className="printable-wrap-controls">
++        <div className="printable-control-group">
++          <span className="printable-control-label">{copy.artworkLabel}</span>
++          <label className="printable-control printable-upload-control">
++            <span>{artworkUrl ? copy.replaceArtwork : copy.uploadArtwork}</span>
++            <input
++              ref={fileInputRef}
++              type="file"
++              accept="image/png,image/jpeg,image/webp"
++              onChange={handleArtworkChange}
++            />
++          </label>
++          <p className="printable-upload-note">{copy.uploadNote}</p>
++          <p className={error ? 'printable-upload-status is-error' : 'printable-upload-status'} role={error ? 'alert' : 'status'} aria-live="polite">
++            {error || (artworkUrl ? copy.artworkReady : copy.noArtwork)}
++          </p>
++        </div>
++
++        <fieldset className="printable-control-group">
++          <legend>{copy.interactionLabel}</legend>
++          <div className="printable-segmented">
++            <button className="printable-control" type="button" aria-pressed={editMode === 'positionArtwork'} onClick={() => setEditMode('positionArtwork')}>{copy.positionArtwork}</button>
++            <button className="printable-control" type="button" aria-pressed={editMode === 'rotateVehicle'} onClick={() => setEditMode('rotateVehicle')}>{copy.rotateVehicle}</button>
++          </div>
++          <p className="printable-control-help">{editMode === 'positionArtwork' ? copy.positionHelp : copy.rotateHelp}</p>
++        </fieldset>
++
++        <fieldset className="printable-control-group">
++          <legend>{copy.finishLabel}</legend>
++          <div className="printable-segmented printable-finish-options">
++            <label className="printable-control"><input type="radio" name="printable-finish" value="glossy" checked={finish === 'glossy'} onChange={() => setFinish('glossy')} />{copy.glossy}</label>
++            <label className="printable-control"><input type="radio" name="printable-finish" value="matte" checked={finish === 'matte'} onChange={() => setFinish('matte')} />{copy.matte}</label>
++          </div>
++        </fieldset>
++
++        <div className="printable-control-group printable-sliders">
++          <label htmlFor="printable-scale">{copy.scaleLabel}<output htmlFor="printable-scale">{placement.scale.toFixed(2)}×</output></label>
++          <input id="printable-scale" type="range" min="0.35" max="2.5" step="0.05" value={placement.scale} onChange={event => changePlacement({ scale: event.target.value })} />
++          <label htmlFor="printable-rotation">{copy.rotationLabel}<output htmlFor="printable-rotation">{Math.round(placement.rotation)}°</output></label>
++          <input id="printable-rotation" type="range" min="-180" max="180" step="1" value={placement.rotation} onChange={event => changePlacement({ rotation: event.target.value })} />
++        </div>
++
++        <div className="printable-actions">
++          <button className="printable-control printable-action-primary" type="button" onClick={handleReset}>{copy.reset}</button>
++          <button className="printable-control" type="button" onClick={handleRemove} disabled={!artworkUrl}>{copy.remove}</button>
++        </div>
++      </div>
++    </div>
++  </section>
++}
+diff --git a/src/content/site-content.js b/src/content/site-content.js
+index b8e57d8..10903d6 100644
+--- a/src/content/site-content.js
++++ b/src/content/site-content.js
+@@ -194,13 +194,36 @@ export const englishSiteContent = {
+     viewModels: 'View models',
+     productCode: 'Product code'
+   },
+   cybertruck: {
+     kicker: 'SUPER CHROME FILM / CLASSIC COLOURS',
+     title: 'Cybertruck\ncolour study.',
+     description: 'Preview the finish across a Cybertruck surface. Drag to rotate and select a classic colour.',
+     surfaceColour: 'Surface colour',
+     customColour: 'Custom colour',
+     colourChoicesLabel: 'Classic colour choices',
+-    viewerLabel: 'Interactive Cybertruck colour preview'
++    viewerLabel: 'Interactive Cybertruck colour preview',
++    printableWrap: {
++      kicker: 'PRINTABLE CHROME / LIVE PREVIEW',
++      title: 'Place your artwork.',
++      description: 'Preview your design over a Silver mirror-chrome base, then compare glossy and matte overlaminate finishes.',
++      artworkLabel: 'Artwork',
++      uploadArtwork: 'Choose artwork',
++      replaceArtwork: 'Replace artwork',
++      uploadNote: 'PNG, JPEG or WebP, up to 12 MB. Your image stays in this browser and is never uploaded.',
++      noArtwork: 'No artwork selected. The Silver chrome substrate is shown.',
++      artworkReady: 'Artwork ready. Drag on the vehicle to position it.',
++      interactionLabel: 'Preview interaction',
++      positionArtwork: 'Position artwork',
++      rotateVehicle: 'Rotate vehicle',
++      positionHelp: 'Drag on the preview to move your artwork across the printable area.',
++      rotateHelp: 'Drag on the preview to inspect the finish from another angle.',
++      finishLabel: 'Overlaminate finish',
++      glossy: 'Glossy',
++      matte: 'Matte',
++      scaleLabel: 'Artwork scale',
++      rotationLabel: 'Artwork rotation',
++      reset: 'Reset settings',
++      remove: 'Remove artwork'
++    }
+   }
+ }
+diff --git a/src/main.jsx b/src/main.jsx
+index d7f65e7..bb06925 100644
+--- a/src/main.jsx
++++ b/src/main.jsx
+@@ -9,23 +9,27 @@ import { companyProfile, capabilities, contactDetails } from './content/company.
+ import { englishSiteContent } from './content/site-content.js';
+ import { readInquiryError } from './inquiry-errors.js';
+ import { decideHashNavigation, isHomeRoute } from './scroll-navigation.js';
+ import { languageOptions, useLanguage } from './language.js';
+ import { familyMedia, homeMedia } from './media-manifest.js';
+ import { decideProductSwipe, decideProductWheel } from './product-wheel-navigation.js';
+ import PPFScrollSequence from './components/PPFScrollSequence.jsx';
+ import PreviewBoundary from './components/PreviewBoundary.jsx';
+ import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
+ const LazyCybertruckViewer = React.lazy(() => import('./components/CybertruckViewer.jsx'));
++const LazyPrintableWrapConfigurator = React.lazy(() => import('./components/PrintableWrapConfigurator.jsx'));
+ function CybertruckViewer(props) {
+   return <PreviewBoundary><React.Suspense fallback={<div className="cybertruck-viewer viewer-placeholder" role="status">Loading 3D preview…</div>}><LazyCybertruckViewer {...props} /></React.Suspense></PreviewBoundary>;
+ }
++function PrintableWrapConfigurator() {
++  return <PreviewBoundary><React.Suspense fallback={<section className="printable-wrap-config printable-wrap-placeholder" role="status">Loading printable wrap studio…</section>}><LazyPrintableWrapConfigurator /></React.Suspense></PreviewBoundary>;
++}
+ 
+ const products = catalogProducts;
+ const content = englishSiteContent;
+ const categories = Object.entries(brochureSeries).map(([slug, info]) => ({
+   slug,
+   name: info.displayName,
+   description: info.intro,
+   info
+ }));
+ 
+@@ -308,23 +312,24 @@ function ProductTable({ items }) {
+ }
+ 
+ function CategoryPage({ category, series }) {
+   const { t } = useLanguage();
+   const [selectedColour, setSelectedColour] = useState(DEFAULT_CLASSIC_COLOUR);
+   const { info } = category;
+   const activeSeries = series || (info.series.length === 1 ? info.series[0][0] : '');
+   const items = products.filter(product => product.category === category.slug && (!activeSeries || product.group === activeSeries));
+   const media = familyMedia[category.slug];
+   const isClassicColours = activeSeries === 'Super Chrome Film classic colours';
++  const isPrintableChrome = activeSeries === 'Printable Super Glossy Chrome Wrap Film';
+   const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || content.cybertruck.customColour;
+   const [cybertruckTitleLead, cybertruckTitleEmphasis] = content.cybertruck.title.split('\n');
+-  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{items.length > 0 && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
++  return <main className="category-page"><Header /><div className="category-page-head"><div className="category-page-copy"><p className="kicker">{info.eyebrow}</p><h1>{category.name}</h1><p>{info.intro}</p></div><div className={'category-page-media category-page-media-' + category.slug}><img src={media.hero} alt={media.alt} width="1600" height="900" decoding="async" /><span aria-hidden="true">{String(categories.findIndex(item => item.slug === category.slug) + 1).padStart(2, '0')} / {String(categories.length).padStart(2, '0')}</span></div></div><div className="series-grid">{info.series.map(([name, description], index) => <a href={'#category=' + category.slug + '&series=' + encodeURIComponent(name)} className={'series-card reveal' + (activeSeries === name ? ' series-card-selected' : '')} key={name}><span>{String(index + 1).padStart(2, '0')}</span><h2>{name}</h2><p>{description}</p><b className="text-link">{activeSeries === name ? content.products.selected : content.products.viewModels} <ArrowUpRight size={16} /></b></a>)}</div>{isPrintableChrome && <PrintableWrapConfigurator />}{isClassicColours && <section className="cybertruck-config"><div><p className="kicker">{content.cybertruck.kicker}</p><h2>{cybertruckTitleLead}<br /><em>{cybertruckTitleEmphasis}</em></h2><p>{content.cybertruck.description}</p><label className="cybertruck-picker-label" htmlFor="cybertruck-colour">{content.cybertruck.surfaceColour} <span>{selectedColourName}</span></label><input id="cybertruck-colour" className="cybertruck-color-picker" type="color" value={selectedColour} onChange={event => setSelectedColour(event.target.value.toUpperCase())} /><div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div></div><CybertruckViewer colour={selectedColour} /></section>}{items.length > 0 && <ProductTable items={items} />}<div className="detail-next category-back"><a href="#products">← {t('allFamilies')}</a></div></main>;
+ }
+ 
+ function App() {
+   const [hash, setHash] = useState(window.location.hash);
+   const previousHash = useRef(window.location.hash);
+   useEffect(() => {
+     const savedScroll = () => Number(sessionStorage.getItem('sofine-home-scroll') || 0);
+     const saveHomeScroll = () => sessionStorage.setItem('sofine-home-scroll', String(window.scrollY));
+     const applyNavigation = action => window.setTimeout(() => {
+       if (action.type === 'preserve') return;
+diff --git a/src/polish.css b/src/polish.css
+index 099cd0a..b8878ca 100644
+--- a/src/polish.css
++++ b/src/polish.css
+@@ -117,20 +117,52 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
+ .viewer-placeholder, .viewer-error { display: grid; place-content: center; padding: 28px; color: #e2edf4; text-align: center; }
+ .viewer-loading { display: block; white-space: nowrap; color: #edf4f9; font-size: 13px; padding: 10px 16px; border-radius: 30px; background: #21323e; }
+ .viewer-error { height: 100%; }
+ .viewer-error p { color: #dce8f0 !important; }
+ .viewer-error button { color: white; border: 1px solid #8caec5; border-radius: 24px; padding: 12px 18px; }
+ .cybertruck-picker-label { max-width: 280px; font-size: 13px; gap: 12px; align-items: baseline; }
+ .cybertruck-color-picker { width: min(100%, 280px); height: 44px; background: #fff; padding: 3px; border-radius: 8px; }
+ .cybertruck-swatches { gap: 4px; max-width: 300px; }
+ .cybertruck-swatches button { width: 36px; height: 36px; border: 6px solid transparent; background-clip: padding-box; }
+ .cybertruck-swatches button:hover, .cybertruck-swatches button.is-selected { transform: none; box-shadow: inset 0 0 0 1px #fff, 0 0 0 1px #7098b4; }
++
++/* Printable chrome controls stay outside the WebGL stage. */
++.printable-wrap-config { width:min(1440px,calc(100% - 72px)); margin:70px auto 0; padding:clamp(24px,3vw,44px); background:#e8f2f8; }
++.printable-wrap-placeholder { display:grid; min-height:280px; place-items:center; color:var(--muted); }
++.printable-wrap-heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,.7fr); gap:clamp(24px,5vw,80px); align-items:end; margin-bottom:clamp(28px,4vw,52px); }
++.printable-wrap-heading h2 { margin:16px 0 0; font-size:clamp(38px,4.5vw,68px); line-height:1; letter-spacing:-.055em; }
++.printable-wrap-heading > p { max-width:46ch; margin:0; color:var(--muted); font-size:14px; line-height:1.7; }
++.printable-wrap-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(280px,.72fr); gap:clamp(24px,3vw,44px); align-items:stretch; }
++.printable-wrap-layout > .printable-wrap-viewer { min-height:430px; height:100%; background:radial-gradient(circle at 50% 45%,#4d5c67,#17222b 72%); }
++.printable-wrap-controls { grid-column:2; display:flex; flex-direction:column; gap:22px; min-width:0; padding:4px 0; }
++.printable-control-group { min-width:0; margin:0; padding:0 0 20px; border:0; border-bottom:1px solid rgba(9,61,107,.17); }
++.printable-control-group legend,.printable-control-label { display:block; margin-bottom:10px; color:var(--ink); font-size:12px; font-weight:700; letter-spacing:.055em; text-transform:uppercase; }
++.printable-control { min-height:44px; }
++.printable-upload-control { position:relative; display:flex; align-items:center; justify-content:center; width:100%; padding:10px 16px; overflow:hidden; border:1px solid rgba(9,61,107,.32); border-radius:8px; background:#fff; color:var(--blue); font-size:13px; font-weight:700; cursor:pointer; }
++.printable-upload-control input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
++.printable-upload-control:focus-within { outline:3px solid #4c9dd3; outline-offset:3px; }
++.printable-upload-note,.printable-upload-status,.printable-control-help { margin:9px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
++.printable-upload-status { min-height:18px; color:#315e7d; }
++.printable-upload-status.is-error { color:#a52424; font-weight:600; }
++.printable-segmented { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
++.printable-segmented button,.printable-finish-options label { display:flex; align-items:center; justify-content:center; gap:8px; padding:9px 12px; border:1px solid rgba(9,61,107,.25); border-radius:8px; background:rgba(255,255,255,.72); color:var(--ink); font-size:12px; text-align:center; cursor:pointer; }
++.printable-segmented button[aria-pressed="true"],.printable-finish-options label:has(input:checked) { border-color:var(--blue); background:var(--blue); color:#fff; }
++.printable-finish-options input { width:16px; height:16px; margin:0; accent-color:var(--blue); }
++.printable-sliders { display:grid; grid-template-columns:1fr; gap:9px; }
++.printable-sliders label { display:flex; justify-content:space-between; gap:16px; color:var(--ink); font-size:12px; font-weight:700; }
++.printable-sliders label:not(:first-child) { margin-top:10px; }
++.printable-sliders output { color:var(--blue); font-variant-numeric:tabular-nums; }
++.printable-sliders input[type="range"] { width:100%; min-height:44px; margin:0; accent-color:var(--blue); cursor:pointer; }
++.printable-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
++.printable-actions button { padding:9px 12px; border:1px solid rgba(9,61,107,.28); border-radius:8px; color:var(--blue); font-size:12px; font-weight:700; }
++.printable-actions button.printable-action-primary { background:var(--ink); color:#fff; }
++.printable-actions button:disabled { cursor:not-allowed; opacity:.45; }
+ @media (max-width: 800px) {
+   .statement h2, .showcase h2, .technology h2, .contact h2, .category-page h1 { font-size: clamp(42px, 11.5vw, 72px); }
+   .statement, .showcase, .technology { padding-top: 84px; padding-bottom: 84px; }
+   .company-layout { min-height: 0; }
+   .company-layout .statement-copy { padding-top: 36px; padding-bottom: 10px; }
+   .statement-heading h2 { line-height: 1.06; }
+   .stack-card-active { aspect-ratio: auto; min-height: 430px; }
+   .stack-card-content { min-height: 430px; }
+   .stack-card-content:not(.stack-card-content-interactive) { min-height: 400px; }
+   .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { padding-bottom: 0; }
+@@ -138,20 +170,25 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
+   .stack-card-content-interactive { grid-template-rows: 240px auto; }
+   .stack-card-content-interactive .stack-card-copy { padding: 20px 22px 24px; }
+   .stack-selector.is-shuffling .stack-card-active { animation: stack-shuffle-mobile 650ms var(--motion-ease); }
+   .product-gesture-hint { bottom: 14px; font-size: 9px; }
+   .product-wheel-hint { display: none; }
+   .product-swipe-hint { display: flex; }
+   .cybertruck-config { grid-template-columns: minmax(0,1fr); gap: 28px; padding: 24px; }
+   .cybertruck-config > .cybertruck-viewer { grid-row: 1; height: 300px; }
+   .cybertruck-config h2 { font-size: clamp(38px, 9vw, 56px); }
+   .cybertruck-config .cybertruck-swatches { max-width: 100%; }
++  .printable-wrap-config { width:calc(100% - 40px); margin-top:45px; padding:24px; }
++  .printable-wrap-heading { grid-template-columns:minmax(0,1fr); gap:16px; }
++  .printable-wrap-layout { grid-template-columns:minmax(0,1fr); }
++  .printable-wrap-layout > .printable-wrap-viewer { grid-row:1; min-height:300px; height:300px; }
++  .printable-wrap-controls { grid-column:1; grid-row:2; }
+   .viewer-gesture-hint { bottom:8px; font-size:10px; }
+   .mail-link { font-size: clamp(16px, 5vw, 22px); max-width: 100%; overflow-wrap: anywhere; }
+ }
+ @keyframes stack-shuffle-mobile {
+   0%,100% { transform: none; }
+   35% { transform: translateX(-8px) rotate(-1deg) scale(.985); }
+   65% { transform: translateX(6px) rotate(.7deg); }
+ }
+ @media (prefers-reduced-motion: reduce) {
+   html, html:has(.home-page) { scroll-behavior: auto; }

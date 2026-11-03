@@ -8,9 +8,9 @@ export default class PreviewBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children
     return <div className="cybertruck-viewer viewer-error" role="status">
-      <p>The 3D preview is temporarily unavailable.</p>
-      <button type="button" onClick={() => window.location.reload()}>Reload preview</button>
-      <p>You can still explore every product and colour below.</p>
+      <p>{this.props.copy.error}</p>
+      <button type="button" onClick={() => window.location.reload()}>{this.props.copy.reload}</button>
+      <p>{this.props.copy.errorHelp}</p>
     </div>
   }
 }

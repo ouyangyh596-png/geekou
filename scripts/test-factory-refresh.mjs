@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { englishSiteContent as content } from '../src/content/site-content.js';
+const css = readFileSync('src/polish.css', 'utf8');
+const main = readFileSync('src/main.jsx', 'utf8');
+assert.doesNotMatch(content.company.paragraphs.join(' '), /tchnology|entensive|gurantee/);
+assert.equal(content.company.metricLabels.length, 4);
+assert.match(main, /lang === 'zh' \? '待确认' : 'TODO'/);
+assert.match(css, /\.statement-heading\s*\{[^}]*display:block/);
+assert.match(css, /\.company-evidence\s*\{[^}]*z-index:auto/);
+assert.match(css, /\.company-evidence figcaption\s*\{[^}]*z-index:2/);
+assert.match(css, /\.statement::after[^}]*rgba\(11,31,58,\.6\)/);
+assert.match(css, /\.company-layout \.statement-copy p[^}]*font-size:17px; line-height:1.6/);
+assert.doesNotMatch(main, /className="company-evidence reveal"/);
+console.log('Factory panel, readable caption, copy and pending metrics passed');

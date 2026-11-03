@@ -1,0 +1,639 @@
+# Review package: f8a4a67..521d727
+
+## Commits
+521d727 fix: preserve printable silver and paint bounds
+947f182 feat: add printable wrap material
+
+## Files changed
+ package.json                          |   1 +
+ scripts/test-printable-wrap-scene.mjs | 276 ++++++++++++++++++++++++++++++++++
+ scripts/test-printable-wrap-webgl.mjs | 127 ++++++++++++++++
+ src/printable-wrap-scene.js           | 178 ++++++++++++++++++++++
+ 4 files changed, 582 insertions(+)
+
+## Diff
+diff --git a/package.json b/package.json
+index 6a57667..60f4aa8 100644
+--- a/package.json
++++ b/package.json
+@@ -16,20 +16,21 @@
+     "test-header-directory": "node scripts/test-header-product-directory.mjs",
+     "test-request-validation": "node scripts/test-request-validation.mjs",
+     "test-api": "node scripts/test-api.mjs",
+     "test-media": "node scripts/test-media-manifest.mjs",
+     "test-product-media": "node scripts/test-product-media-semantics.mjs",
+     "test-home-media": "node scripts/test-home-media.mjs",
+     "test-product-wheel": "node scripts/test-product-wheel-navigation.mjs",
+     "test-category-media": "node scripts/test-category-media.mjs",
+     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
+     "test-printable-wrap": "node scripts/test-printable-wrap-state.mjs",
++    "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs && node scripts/test-printable-wrap-webgl.mjs",
+     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
+     "test-polish": "node scripts/test-site-polish.mjs",
+     "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets && pnpm test-printable-wrap"
+   },
+   "dependencies": {
+     "@react-three/drei": "^10.7.8",
+     "@react-three/fiber": "^9.7.0",
+     "@vitejs/plugin-react": "latest",
+     "lucide-react": "latest",
+diff --git a/scripts/test-printable-wrap-scene.mjs b/scripts/test-printable-wrap-scene.mjs
+new file mode 100644
+index 0000000..60ad2f5
+--- /dev/null
++++ b/scripts/test-printable-wrap-scene.mjs
+@@ -0,0 +1,276 @@
++import assert from 'node:assert/strict'
++import { existsSync, readFileSync } from 'node:fs'
++import * as THREE from 'three'
++import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
++import { finishMaterialSettings } from '../src/printable-wrap-state.js'
++
++const modulePath = new URL('../src/printable-wrap-scene.js', import.meta.url)
++assert.ok(existsSync(modulePath), 'printable wrap needs an isolated scene factory')
++const { createPrintableWrapInstance } = await import(modulePath)
++
++const alphaMap = new THREE.Texture()
++const mapPixel = new Uint8Array([32, 224, 64, 128])
++const map = new THREE.DataTexture(mapPixel, 1, 1, THREE.RGBAFormat)
++map.needsUpdate = true
++const grain = new THREE.Texture()
++const artwork = new THREE.Texture()
++const paint = new THREE.MeshStandardMaterial({
++  name: 'car_paint_mat', color: '#173f24', map, alphaMap,
++  opacity: .63, transparent: true, alphaTest: .24, alphaHash: true,
++  alphaToCoverage: true, premultipliedAlpha: true, side: THREE.DoubleSide,
++  forceSinglePass: true, depthWrite: false, depthTest: false, depthFunc: THREE.GreaterDepth,
++  blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.DstColorFactor,
++  blendEquation: THREE.SubtractEquation, blendSrcAlpha: THREE.DstAlphaFactor,
++  blendDstAlpha: THREE.OneMinusDstAlphaFactor, blendEquationAlpha: THREE.ReverseSubtractEquation,
++  blendColor: new THREE.Color('#123456'), blendAlpha: .37,
++  polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 3,
++})
++const glass = new THREE.MeshPhysicalMaterial({ name: 'glass_windows_mat', opacity: .3, transparent: true })
++const trim = new THREE.MeshStandardMaterial({ name: 'body_mat', color: '#08090a' })
++const geometry = new THREE.BoxGeometry(2, 2, 6)
++geometry.boundingBox = null
++const source = new THREE.Group()
++source.position.set(11, 22, 33)
++source.rotation.set(.2, .5, -.4)
++source.scale.set(2, 3, 4)
++const body = new THREE.Mesh(geometry, paint)
++body.name = 'car_paint'
++source.add(body)
++for (const [name, material] of [['glass', glass], ['body', [trim]], ['carpet', trim]]) {
++  const mesh = new THREE.Mesh(geometry, material)
++  mesh.name = name
++  mesh.position.set(100, 100, 100)
++  source.add(mesh)
++}
++const sourceJSON = JSON.stringify(source.toJSON())
++const a = createPrintableWrapInstance(source, grain)
++const b = createPrintableWrapInstance(source, grain)
++assert.notEqual(a.scene, source)
++assert.notEqual(a.scene, b.scene)
++assert.equal(a.printMaterials.length, 1)
++const material = a.printMaterials[0]
++assert.ok(material.isMeshPhysicalMaterial)
++assert.equal(material.color.getHexString(), 'b4b4b4')
++assert.equal(material.metalness, 1)
++assert.equal(a.scene.getObjectByName('car_paint').material, material)
++assert.equal(a.scene.getObjectByName('glass').material, glass)
++assert.deepEqual(a.scene.getObjectByName('body').material, [trim])
++assert.equal(a.scene.getObjectByName('carpet').material, trim)
++a.scene.traverse(object => { if (object.isMesh) assert.equal(object.geometry, geometry) })
++assert.equal(geometry.boundingBox, null, 'measuring projection must not mutate shared geometry')
++
++const preservedFields = [
++  'opacity', 'transparent', 'alphaTest', 'alphaHash', 'alphaToCoverage', 'premultipliedAlpha',
++  'alphaMap', 'map', 'side', 'forceSinglePass', 'depthWrite', 'depthTest', 'depthFunc',
++  'blending', 'blendSrc', 'blendDst', 'blendEquation', 'blendSrcAlpha', 'blendDstAlpha',
++  'blendEquationAlpha', 'blendAlpha', 'blendColor', 'polygonOffset', 'polygonOffsetFactor', 'polygonOffsetUnits',
++]
++function assertPreserved() {
++  for (const field of preservedFields) assert.deepEqual(material[field], paint[field], field)
++}
++assertPreserved()
++const uniforms = material.userData.printUniforms
++assert.equal(uniforms.uArtwork.value, null)
++assert.equal(uniforms.uHasArtwork.value, 0)
++assert.deepEqual(uniforms.uOffset.value.toArray(), [0, 0])
++assert.equal(uniforms.uScale.value, 1)
++assert.equal(uniforms.uRotation.value, 0)
++a.setArtwork(artwork)
++assert.equal(uniforms.uArtwork.value, artwork)
++assert.equal(uniforms.uHasArtwork.value, 1)
++a.setPlacement({ x: .25, y: -.4, scale: 1.7, rotation: 90 })
++assert.deepEqual(uniforms.uOffset.value.toArray(), [.25, -.4])
++assert.equal(uniforms.uScale.value, 1.7)
++assert.equal(uniforms.uRotation.value, Math.PI / 2, 'Task 1 degrees become shader radians')
++assert.equal(b.printMaterials[0].userData.printUniforms.uArtwork.value, null)
++assert.equal(b.printMaterials[0].userData.printUniforms.uScale.value, 1)
++for (const finish of ['matte', 'gloss', 'matte', 'gloss']) {
++  a.setFinish(finish)
++  const settings = finishMaterialSettings(finish)
++  for (const key of ['roughness', 'clearcoat', 'clearcoatRoughness']) assert.equal(material[key], settings[key])
++  assert.equal(material.roughnessMap, settings.useGrain ? grain : null)
++  assert.equal(material.color.getHexString(), 'b4b4b4')
++  assert.equal(uniforms.uArtwork.value, artwork)
++  assertPreserved()
++}
++a.setArtwork(null)
++assert.equal(uniforms.uHasArtwork.value, 0)
++assert.equal(uniforms.uArtwork.value, null)
++assert.equal(JSON.stringify(source.toJSON()), sourceJSON, 'source scene/material state stays untouched')
++
++const shader = { uniforms: {}, vertexShader: THREE.ShaderLib.physical.vertexShader, fragmentShader: THREE.ShaderLib.physical.fragmentShader }
++material.onBeforeCompile(shader)
++for (const [key, value] of Object.entries(uniforms)) assert.equal(shader.uniforms[key], value)
++assert.match(shader.vertexShader, /uMeshToModel \* vec4\( transformed, 1\.0 \)/)
++assert.match(shader.vertexShader, /uModelNormalMatrix \* objectNormal/)
++assert.match(shader.fragmentShader, /normalize\( vPrintNormal \)\.x > 0\.5/)
++assert.match(shader.fragmentShader, /vec2\( -vPrintPosition\.z, vPrintPosition\.y \)/)
++assert.match(shader.fragmentShader, /uProjectionMin/)
++assert.match(shader.fragmentShader, /uProjectionSize/)
++assert.match(shader.fragmentShader, /printUv = .*uOffset.*uScale/)
++assert.match(shader.fragmentShader, /cos\( uRotation \)/)
++assert.match(shader.fragmentShader, /sin\( uRotation \)/)
++assert.match(shader.fragmentShader, /greaterThanEqual\( printUv, vec2\( 0\.0 \) \)/)
++assert.match(shader.fragmentShader, /lessThanEqual\( printUv, vec2\( 1\.0 \) \)/)
++assert.match(shader.fragmentShader, /diffuseColor\.rgb = mix\( diffuseColor\.rgb, printTexel\.rgb, printTexel\.a \)/)
++assert.doesNotMatch(shader.fragmentShader, /#include <map_fragment>/, 'source map RGB must not modulate fixed Silver or artwork')
++assert.match(shader.fragmentShader, /diffuseColor\.a \*= sampledDiffuseColor\.a/, 'source map alpha remains part of exported alpha')
++assert.doesNotMatch(shader.fragmentShader, /diffuseColor\s*\*=\s*sampledDiffuseColor/)
++const injection = shader.fragmentShader.slice(shader.fragmentShader.indexOf('// PRINT_BASE_COLOR_BEGIN'), shader.fragmentShader.indexOf('// PRINT_BASE_COLOR_END'))
++assert.ok(injection.length > 0)
++assert.doesNotMatch(injection, /discard|diffuseColor\.a\s*=|opacity\s*=|gl_FragColor|gl_FragDepth/)
++assert.ok(shader.fragmentShader.indexOf('// PRINT_BASE_COLOR_END') < shader.fragmentShader.indexOf('#include <lights_physical_fragment>'))
++for (const chunk of ['alphamap_fragment', 'alphatest_fragment', 'alphahash_fragment', 'opaque_fragment']) {
++  assert.ok(shader.fragmentShader.includes(`#include <${chunk}>`), `${chunk} remains intact`)
++}
++assert.deepEqual(uniforms.uProjectionMin.value.toArray(), [-3, -1])
++assert.deepEqual(uniforms.uProjectionSize.value.toArray(), [6, 2])
++assert.ok(uniforms.uMeshToModel.value.equals(new THREE.Matrix4()), 'outer root transform excluded')
++
++// Multiple paint mesh transforms must project into one common model-local rectangle.
++const nested = new THREE.Group()
++const pivot = new THREE.Group()
++pivot.position.set(0, 2, 1)
++pivot.rotation.x = Math.PI / 2
++pivot.scale.set(1, 2, 3)
++nested.add(pivot)
++const panel = new THREE.Mesh(geometry, [trim, paint])
++panel.name = 'door'
++panel.position.set(0, 1, 0)
++pivot.add(panel)
++const namedPaint = new THREE.Mesh(geometry, trim)
++namedPaint.name = 'CAR_PAINT.001'
++nested.add(namedPaint)
++const c = createPrintableWrapInstance(nested)
++assert.equal(c.printMaterials.length, 2, 'mesh-name and material-name contracts both classify paint')
++assert.equal(c.scene.getObjectByName('door').material[0], trim)
++assert.equal(c.scene.getObjectByName('door').material[1], c.printMaterials[0])
++const cu = c.printMaterials[0].userData.printUniforms
++pivot.updateMatrix()
++panel.updateMatrix()
++const expectedMatrix = pivot.matrix.clone().multiply(panel.matrix)
++assert.ok(cu.uMeshToModel.value.equals(expectedMatrix))
++assert.ok(cu.uModelNormalMatrix.value.equals(new THREE.Matrix3().getNormalMatrix(expectedMatrix)))
++assert.equal(c.printMaterials[1].userData.printUniforms.uProjectionMin, cu.uProjectionMin)
++c.scene.rotation.y = 1.2
++c.scene.scale.setScalar(.01)
++c.scene.updateMatrixWorld(true)
++assert.ok(cu.uMeshToModel.value.equals(expectedMatrix), 'viewer transform cannot move the print')
++
++// A multi-material mesh contributes only triangles assigned to paint groups.
++const groupedGeometry = new THREE.BufferGeometry()
++groupedGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
++  1, 0, 2,
++  1, 1, 0,
++  1, 0, 0,
++  1, 100, 102,
++  1, 101, 100,
++  1, 100, 100,
++  1, 1000, 1000,
++], 3))
++groupedGeometry.setIndex([0, 1, 2, 3, 4, 5])
++groupedGeometry.addGroup(0, 3, 1)
++groupedGeometry.addGroup(3, 3, 0)
++const groupedPanel = new THREE.Mesh(groupedGeometry, [trim, paint])
++groupedPanel.name = 'door_groups'
++const groupedSource = new THREE.Group()
++groupedSource.add(groupedPanel)
++const grouped = createPrintableWrapInstance(groupedSource)
++const groupedUniforms = grouped.printMaterials[0].userData.printUniforms
++assert.deepEqual(groupedUniforms.uProjectionMin.value.toArray(), [-2, 0])
++assert.deepEqual(groupedUniforms.uProjectionSize.value.toArray(), [2, 1])
++
++// Explicit resource ownership: neither cached GLB resources nor caller textures are owned.
++const resources = [geometry, paint, trim, glass, map, alphaMap, grain, artwork, ...b.printMaterials]
++let sharedDisposals = 0
++let ownedDisposals = 0
++resources.forEach(resource => resource.addEventListener('dispose', () => sharedDisposals++))
++material.addEventListener('dispose', () => ownedDisposals++)
++a.dispose()
++a.dispose()
++assert.equal(ownedDisposals, 1, 'owned materials released once, even under repeated cleanup')
++assert.equal(sharedDisposals, 0, 'cached geometry/materials and caller textures remain live')
++b.dispose()
++c.dispose()
++grouped.dispose()
++const empty = createPrintableWrapInstance(new THREE.Group())
++assert.deepEqual(empty.printMaterials, [])
++empty.setArtwork(null)
++empty.setPlacement({ x: 0, y: 0, scale: 1, rotation: 0 })
++empty.setFinish('matte')
++empty.dispose()
++
++// Exercise the actual asset as well as the synthetic naming/alpha edge cases.
++const bytes = readFileSync(new URL('../public/models/Tesla_Cybertruck3.glb', import.meta.url))
++const gltf = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
++const real = createPrintableWrapInstance(gltf.scene)
++assert.equal(real.printMaterials.length, 1)
++let sharedMeshes = 0
++let realSharedDisposals = 0
++let realOwnedDisposals = 0
++real.scene.traverse(object => {
++  if (!object.isMesh) return
++  const original = gltf.scene.getObjectByName(object.name)
++  assert.equal(object.geometry, original.geometry)
++  original.geometry.addEventListener('dispose', () => realSharedDisposals++)
++  original.material.addEventListener('dispose', () => realSharedDisposals++)
++  if (object.name === 'car_paint') {
++    for (const field of preservedFields) assert.deepEqual(object.material[field], original.material[field], `GLB ${field}`)
++  } else {
++    assert.equal(object.material, original.material, `GLB ${object.name} remains shared`)
++    sharedMeshes++
++  }
++})
++assert.equal(sharedMeshes, 10)
++const realUniforms = real.printMaterials[0].userData.printUniforms
++const projectionTolerance = 1e-6
++const assertClose = (actual, expected, label) => {
++  assert.ok(Math.abs(actual - expected) < projectionTolerance, `${label}: ${actual} != ${expected} ± ${projectionTolerance}`)
++}
++for (const [index, expected] of [-2.9907585182162757, 0.45549860930202113].entries()) {
++  assertClose(realUniforms.uProjectionMin.value.getComponent(index), expected, `GLB projection min[${index}]`)
++}
++for (const [index, expected] of [5.982898437155785, 1.448123281161195].entries()) {
++  assertClose(realUniforms.uProjectionSize.value.getComponent(index), expected, `GLB projection size[${index}]`)
++}
++
++const localBounds = object => {
++  const meshToModel = new THREE.Matrix4()
++  for (let node = object; node && node !== gltf.scene; node = node.parent) meshToModel.premultiply(node.matrix)
++  const bounds = new THREE.Box3()
++  const point = new THREE.Vector3()
++  const position = object.geometry.getAttribute('position')
++  for (let index = 0; index < position.count; index++) {
++    point.fromBufferAttribute(position, index).applyMatrix4(meshToModel)
++    bounds.expandByPoint(point)
++  }
++  return { bounds, meshToModel }
++}
++for (const suffix of ['B', 'F']) {
++  const leftCenter = localBounds(gltf.scene.getObjectByName(`wheel_${suffix}L`)).bounds.getCenter(new THREE.Vector3())
++  const rightCenter = localBounds(gltf.scene.getObjectByName(`wheel_${suffix}R`)).bounds.getCenter(new THREE.Vector3())
++  assert.ok(leftCenter.x > 0 && rightCenter.x < 0 && leftCenter.x > rightCenter.x, `GLB wheel_${suffix}L establishes +X as left`)
++}
++const realPaint = gltf.scene.getObjectByName('car_paint')
++const { meshToModel: realPaintToModel } = localBounds(realPaint)
++const realNormalMatrix = new THREE.Matrix3().getNormalMatrix(realPaintToModel)
++const realPositions = realPaint.geometry.getAttribute('position')
++const realNormals = realPaint.geometry.getAttribute('normal')
++const realPoint = new THREE.Vector3()
++const realNormal = new THREE.Vector3()
++let leftOutwardNormals = 0
++let rightOutwardNormals = 0
++for (let index = 0; index < realPositions.count; index++) {
++  realPoint.fromBufferAttribute(realPositions, index).applyMatrix4(realPaintToModel)
++  realNormal.fromBufferAttribute(realNormals, index).applyMatrix3(realNormalMatrix).normalize()
++  if (realPoint.x > 1 && realNormal.x > .5) leftOutwardNormals++
++  if (realPoint.x < -1 && realNormal.x < -.5) rightOutwardNormals++
++}
++assert.ok(leftOutwardNormals > 0, 'real +X paint side has exported outward normals accepted by the left-side mask')
++assert.ok(rightOutwardNormals > 0, 'real -X paint side has opposite exported outward normals rejected by the left-side mask')
++real.printMaterials[0].addEventListener('dispose', () => realOwnedDisposals++)
++real.dispose()
++assert.equal(realOwnedDisposals, 1)
++assert.equal(realSharedDisposals, 0)
++console.log('Actual GLB: 1 owned paint, 10 shared non-paint meshes, 11 shared geometries; dispose: owned=1 shared=0')
++console.log('Printable wrap isolation, Silver, full alpha/depth/blending, shader, projection, finish and disposal checks passed')
+diff --git a/scripts/test-printable-wrap-webgl.mjs b/scripts/test-printable-wrap-webgl.mjs
+new file mode 100644
+index 0000000..4fc8114
+--- /dev/null
++++ b/scripts/test-printable-wrap-webgl.mjs
+@@ -0,0 +1,127 @@
++import assert from 'node:assert/strict'
++import { spawn } from 'node:child_process'
++import { existsSync, readdirSync } from 'node:fs'
++import { homedir } from 'node:os'
++import { dirname, resolve } from 'node:path'
++import { fileURLToPath, pathToFileURL } from 'node:url'
++
++const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
++const dependencyRoot = resolve(dirname(process.execPath), '..')
++const playwrightModule = resolve(dependencyRoot, 'node_modules/playwright/index.mjs')
++const viteEntry = resolve(root, 'node_modules/vite/bin/vite.js')
++const origin = 'http://127.0.0.1:4182'
++const browserCache = resolve(homedir(), 'Library/Caches/ms-playwright')
++const browserExecutable = readdirSync(browserCache)
++  .filter(entry => entry.startsWith('chromium_headless_shell-'))
++  .sort()
++  .reverse()
++  .map(entry => resolve(browserCache, entry, 'chrome-headless-shell-mac-arm64/chrome-headless-shell'))
++  .find(existsSync)
++
++assert.ok(existsSync(playwrightModule), 'the bundled Playwright module must be available')
++assert.ok(browserExecutable, 'the bundled Playwright Chromium browser must be available')
++
++const server = spawn(process.execPath, [viteEntry, '--host', '127.0.0.1', '--port', '4182', '--strictPort'], {
++  cwd: root,
++  stdio: ['ignore', 'pipe', 'pipe'],
++})
++let serverLog = ''
++server.stdout.on('data', chunk => { serverLog += chunk })
++server.stderr.on('data', chunk => { serverLog += chunk })
++
++async function waitForServer() {
++  for (let attempt = 0; attempt < 80; attempt++) {
++    try {
++      const response = await fetch(origin)
++      if (response.ok) return
++    } catch {
++      // Vite is still starting.
++    }
++    await new Promise(resolveWait => setTimeout(resolveWait, 100))
++  }
++  throw new Error(`Vite did not start:\n${serverLog}`)
++}
++
++const { chromium } = await import(pathToFileURL(playwrightModule))
++let browser
++try {
++  await waitForServer()
++  browser = await chromium.launch({ headless: true, executablePath: browserExecutable })
++  const page = await browser.newPage()
++  await page.goto(origin, { waitUntil: 'domcontentloaded' })
++  const result = await page.evaluate(async () => {
++    const THREE = await import('/@id/three')
++    const { createPrintableWrapInstance } = await import('/src/printable-wrap-scene.js')
++    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
++    renderer.outputColorSpace = THREE.LinearSRGBColorSpace
++    renderer.setClearColor(0x000000, 0)
++    renderer.setSize(16, 16, false)
++    const target = new THREE.WebGLRenderTarget(16, 16, {
++      format: THREE.RGBAFormat,
++      type: THREE.UnsignedByteType,
++    })
++    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 10)
++    camera.position.set(5, 0, 0)
++    camera.lookAt(0, 0, 0)
++    camera.updateMatrixWorld(true)
++    const artwork = new THREE.DataTexture(new Uint8Array([255, 0, 255, 0]), 1, 1, THREE.RGBAFormat)
++    artwork.needsUpdate = true
++
++    const render = sourceMap => {
++      const paint = new THREE.MeshStandardMaterial({
++        name: 'car_paint_mat',
++        color: '#173f24',
++        map: sourceMap,
++        opacity: 1,
++        transparent: true,
++      })
++      const source = new THREE.Group()
++      const mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 6), paint)
++      mesh.name = 'car_paint'
++      source.add(mesh)
++      const instance = createPrintableWrapInstance(source)
++      const printMaterial = instance.printMaterials[0]
++      printMaterial.metalness = 0
++      printMaterial.roughness = 1
++      printMaterial.clearcoat = 0
++      instance.setArtwork(artwork)
++      instance.scene.add(new THREE.AmbientLight(0xffffff, Math.PI))
++      renderer.setRenderTarget(target)
++      renderer.clear()
++      renderer.render(instance.scene, camera)
++      const pixels = new Uint8Array(16 * 16 * 4)
++      renderer.readRenderTargetPixels(target, 0, 0, 16, 16, pixels)
++      const offset = (8 * 16 + 8) * 4
++      const pixel = [...pixels.slice(offset, offset + 4)]
++      instance.dispose()
++      mesh.geometry.dispose()
++      paint.dispose()
++      return pixel
++    }
++
++    const baseline = render(null)
++    const sourceMap = new THREE.DataTexture(new Uint8Array([32, 224, 64, 128]), 1, 1, THREE.RGBAFormat)
++    sourceMap.needsUpdate = true
++    const mapped = render(sourceMap)
++    const unpremultiply = pixel => pixel.slice(0, 3).map(channel => Math.round(channel * 255 / pixel[3]))
++    const output = { baseline, mapped, baselineRgb: unpremultiply(baseline), mappedRgb: unpremultiply(mapped) }
++    sourceMap.dispose()
++    artwork.dispose()
++    target.dispose()
++    renderer.dispose()
++    return output
++  })
++
++  assert.ok(result.baseline[3] >= 254, `opaque baseline alpha must be 255: ${result.baseline}`)
++  assert.ok(Math.abs(result.mapped[3] - 128) <= 1, `source map alpha must survive: ${result.mapped}`)
++  for (let channel = 0; channel < 3; channel++) {
++    assert.ok(
++      Math.abs(result.mappedRgb[channel] - result.baselineRgb[channel]) <= 2,
++      `transparent artwork/source map RGB tinted Silver: ${JSON.stringify(result)}`,
++    )
++  }
++  console.log(`Printable wrap WebGL map-alpha isolation passed: ${JSON.stringify(result)}`)
++} finally {
++  await browser?.close()
++  server.kill('SIGTERM')
++}
+diff --git a/src/printable-wrap-scene.js b/src/printable-wrap-scene.js
+new file mode 100644
+index 0000000..6951616
+--- /dev/null
++++ b/src/printable-wrap-scene.js
+@@ -0,0 +1,178 @@
++import * as THREE from 'three'
++import { mapMaterialShape } from './cybertruck-colours.js'
++import { finishMaterialSettings } from './printable-wrap-state.js'
++
++const isPaint = (object, material) => /^car_paint(?:$|[_.])/i.test(object.name) || /^car_paint_mat/i.test(material.name)
++
++function attachPrintShader(material, uniforms) {
++  material.userData.printUniforms = uniforms
++  material.customProgramCacheKey = () => 'printable-wrap-left-v2'
++  material.onBeforeCompile = shader => {
++    Object.assign(shader.uniforms, uniforms)
++    shader.vertexShader = shader.vertexShader.replace('#include <common>', `
++      #include <common>
++      uniform mat4 uMeshToModel;
++      uniform mat3 uModelNormalMatrix;
++      varying vec3 vPrintPosition;
++      varying vec3 vPrintNormal;
++    `).replace('#include <project_vertex>', `
++      vPrintPosition = ( uMeshToModel * vec4( transformed, 1.0 ) ).xyz;
++      vPrintNormal = uModelNormalMatrix * objectNormal;
++      #include <project_vertex>
++    `)
++    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
++      #include <common>
++      uniform sampler2D uArtwork;
++      uniform float uHasArtwork;
++      uniform vec2 uOffset;
++      uniform float uScale;
++      uniform float uRotation;
++      uniform vec2 uProjectionMin;
++      uniform vec2 uProjectionSize;
++      varying vec3 vPrintPosition;
++      varying vec3 vPrintNormal;
++    `).replace('#include <map_fragment>', `
++      #ifdef USE_MAP
++        vec4 sampledDiffuseColor = texture2D( map, vMapUv );
++        #ifdef DECODE_VIDEO_TEXTURE
++          sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
++        #endif
++        // Preserve the exported map alpha without tinting fixed Silver or artwork.
++        diffuseColor.a *= sampledDiffuseColor.a;
++      #endif
++    `).replace('#include <color_fragment>', `
++      #include <color_fragment>
++      // PRINT_BASE_COLOR_BEGIN
++      // +X is the GLB's left side. Use exported outward normals, never view-facing normals.
++      if ( uHasArtwork > 0.5 && normalize( vPrintNormal ).x > 0.5 ) {
++        vec2 printSide = vec2( -vPrintPosition.z, vPrintPosition.y );
++        vec2 printUv = ( printSide - uProjectionMin ) / uProjectionSize;
++        printUv = ( printUv - vec2( 0.5 ) - uOffset ) / uScale;
++        float printCos = cos( uRotation );
++        float printSin = sin( uRotation );
++        // Inverse rotation maps the surface back into the artwork's coordinates.
++        printUv = mat2( printCos, -printSin, printSin, printCos ) * printUv + vec2( 0.5 );
++        if ( all( greaterThanEqual( printUv, vec2( 0.0 ) ) ) && all( lessThanEqual( printUv, vec2( 1.0 ) ) ) ) {
++          vec4 printTexel = texture2D( uArtwork, printUv );
++          diffuseColor.rgb = mix( diffuseColor.rgb, printTexel.rgb, printTexel.a );
++        }
++      }
++      // PRINT_BASE_COLOR_END
++    `)
++  }
++}
++
++// Clone only the scene graph and paint. Cached geometry, non-paint materials and
++// caller-supplied artwork/grain/alpha textures remain shared and are never disposed.
++export function createPrintableWrapInstance(source, grain = null) {
++  const scene = source.clone(true)
++  const printMaterials = []
++  const bounds = new THREE.Box3()
++  const point = new THREE.Vector3()
++  const commonUniforms = {
++    uArtwork: { value: null },
++    uHasArtwork: { value: 0 },
++    uOffset: { value: new THREE.Vector2() },
++    uScale: { value: 1 },
++    uRotation: { value: 0 },
++    uProjectionMin: { value: new THREE.Vector2() },
++    uProjectionSize: { value: new THREE.Vector2(1, 1) },
++  }
++  scene.updateMatrixWorld(true)
++  scene.traverse(object => {
++    if (!object.isMesh) return
++    // Preserve GLB internal transforms but exclude the viewer/root transform.
++    // Each mesh owns a shader material so its local-to-model matrix is independent.
++    const meshToModel = new THREE.Matrix4()
++    for (let node = object; node && node !== scene; node = node.parent) {
++      meshToModel.premultiply(node.matrix)
++    }
++    const hasMaterialGroups = Array.isArray(object.material)
++    const paintMaterialIndices = new Set()
++    object.material = mapMaterialShape(object.material, (original, materialIndex = 0) => {
++      if (!isPaint(object, original)) return original
++      paintMaterialIndices.add(materialIndex)
++      const material = new THREE.MeshPhysicalMaterial()
++      // Base Material.copy preserves ALL exported alpha/depth/blending fields,
++      // including custom blend factors/equations, coverage/hash and polygon offset.
++      THREE.Material.prototype.copy.call(material, original)
++      material.alphaMap = original.alphaMap ?? null
++      material.map = original.map ?? null // A base map can carry exported alpha too.
++      material.color.set('#B4B4B4')
++      material.metalness = 1
++      attachPrintShader(material, {
++        ...commonUniforms,
++        uMeshToModel: { value: meshToModel },
++        uModelNormalMatrix: { value: new THREE.Matrix3().getNormalMatrix(meshToModel) },
++      })
++      printMaterials.push(material)
++      return material
++    })
++    if (paintMaterialIndices.size === 0) return
++    // Read positions directly: computeBoundingBox() would mutate cached geometry.
++    const positions = object.geometry.getAttribute('position')
++    if (!positions) return
++    const expandByVertex = vertexIndex => {
++      point.fromBufferAttribute(positions, vertexIndex).applyMatrix4(meshToModel)
++      bounds.expandByPoint(point)
++    }
++    if (!hasMaterialGroups) {
++      for (let vertexIndex = 0; vertexIndex < positions.count; vertexIndex++) expandByVertex(vertexIndex)
++      return
++    }
++    const indices = object.geometry.getIndex()
++    const elementCount = indices?.count ?? positions.count
++    const drawStart = object.geometry.drawRange.start
++    const drawEnd = Math.min(drawStart + object.geometry.drawRange.count, elementCount)
++    for (const group of object.geometry.groups) {
++      if (!paintMaterialIndices.has(group.materialIndex ?? 0)) continue
++      const groupStart = Math.max(group.start, drawStart)
++      const groupEnd = Math.min(group.start + group.count, drawEnd)
++      for (let elementIndex = groupStart; elementIndex < groupEnd; elementIndex++) {
++        expandByVertex(indices ? indices.getX(elementIndex) : elementIndex)
++      }
++    }
++  })
++  if (!bounds.isEmpty()) {
++    // In a left-side view, front (+Z) is on the image's left; Y remains up.
++    commonUniforms.uProjectionMin.value.set(-bounds.max.z, bounds.min.y)
++    commonUniforms.uProjectionSize.value.set(
++      Math.max(bounds.max.z - bounds.min.z, 1e-6),
++      Math.max(bounds.max.y - bounds.min.y, 1e-6),
++    )
++  }
++
++  function setFinish(finish) {
++    const { roughness, clearcoat, clearcoatRoughness, useGrain } = finishMaterialSettings(finish)
++    for (const material of printMaterials) {
++      const roughnessMap = useGrain ? grain : null
++      if (material.roughnessMap !== roughnessMap) material.needsUpdate = true
++      material.roughness = roughness
++      material.clearcoat = clearcoat
++      material.clearcoatRoughness = clearcoatRoughness
++      material.roughnessMap = roughnessMap
++    }
++  }
++  setFinish('gloss')
++  let disposed = false
++  return {
++    scene,
++    printMaterials,
++    setArtwork(texture) {
++      commonUniforms.uArtwork.value = texture
++      commonUniforms.uHasArtwork.value = texture ? 1 : 0
++    },
++    // Placement comes from Task 1's validated state (rotation is in degrees).
++    setPlacement({ x, y, scale, rotation }) {
++      commonUniforms.uOffset.value.set(x, y)
++      commonUniforms.uScale.value = scale
++      commonUniforms.uRotation.value = THREE.MathUtils.degToRad(rotation)
++    },
++    setFinish,
++    dispose() {
++      if (disposed) return
++      disposed = true
++      printMaterials.forEach(material => material.dispose())
++    },
++  }
++}

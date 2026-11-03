@@ -12,5 +12,8 @@ Approved specification: docs/design-refresh-prompt.md. Work on existing design-r
 8. Contact/footer: two columns, contact details, form and copyright. Verify build and browser.
 9. Categories: hide absent/failed media, equal cards, accessible striped tables and duplicate-spec TODO. Verify media tests and browser.
 10. Language: reactive localized content, complete Chinese and English fallback. Verify language/content tests.
+11. TVC: independent full-viewport showcase above retained hero, responsive/reduced-motion poster, silent WebM/MP4 loop and user-activated full-film modal. Verify assets, close/pause/focus and language behavior.
 
 Each numbered block is independently committed as style: <block> ... after targeted verification. Final validation: pnpm test-release, build, screenshot every category and home at 1440/1024/390; collect data/image TODOs and evidence in docs/design-refresh.
+
+Continuation status: source changes and available command checks completed; independent commits and browser screenshots are blocked by the current filesystem/server policy. See verification.md for exact evidence and remaining execution work. Do not treat the intended commit list as completed commits.

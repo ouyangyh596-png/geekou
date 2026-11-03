@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { brochureSeries } from '../src/brochure-data.js';
 import { catalogProducts } from '../src/catalog.js';
 import { familyMedia } from '../src/media-manifest.js';
+import { specificationValue, numericSpecificationColumns } from '../src/product-specs.js';
 
 const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
@@ -73,4 +74,15 @@ assert.match(
   'mobile category hero media uses a responsive aspect ratio'
 );
 
-console.log('PASS: validated category hero and product media semantics');
+const measurementRows = [
+  { specs: [['Thickness', '50 µm'], ['Weight', '120 g/m²'], ['Temperature', '-40 to +90 °C'], ['Strength', '>22 MPa (ISO 527)'], ['Finish', 'Glossy']] },
+  { specs: [['Thickness', '–'], ['Weight', '150 g/m²'], ['Temperature', '10 °C'], ['Strength', '24 MPa'], ['Finish', 'Matte']] }
+];
+assert.equal(specificationValue(measurementRows[1], 'Thickness'), 'N/A');
+assert.equal(specificationValue(measurementRows[1], 'Missing'), 'N/A');
+assert.equal(specificationValue({ specs: [['Empty', '  ']] }, 'Empty'), 'N/A');
+assert.deepEqual([...numericSpecificationColumns(measurementRows, ['Thickness', 'Weight', 'Temperature', 'Strength', 'Finish', 'Missing'])], ['Thickness', 'Weight', 'Temperature', 'Strength']);
+assert.match(catalog, /TODO:.*AF1810.*AF1850/, 'identical source specs remain marked for verified differences');
+assert.deepEqual(catalogProducts.find(item => item.model === 'AF1810').specs, catalogProducts.find(item => item.model === 'AF1850').specs, 'no model differences are invented');
+
+console.log('PASS: validated category media, source specs and numeric column formatting');

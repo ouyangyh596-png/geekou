@@ -12,6 +12,7 @@ export const englishSiteContent = {
     closeLabel: 'Close navigation'
   },
   home: {
+    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'A surface. A possibility.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
     heroTitle: 'SUPER CHROME FILM',
     heroAction: 'Explore products',
     heroSubtitle: 'Precision-engineered films for print, wrap and protection.',
@@ -65,6 +66,10 @@ export const englishSiteContent = {
     kicker: "LET'S MAKE SOMETHING LAST",
     title: 'Start with a\nsurface.',
     copyright: 'All rights reserved.',
+    factoryName: 'ZHEJIANG SO-FINE SELF-ADHESIVE PRODUCTS CO., LTD.',
+    factoryAddress: 'No. 99 Wufu Road, Tianzihu Modern Industrial Park, Anji County, Zhejiang, China',
+    salesName: 'NINGBO SO-FINE IMPORT AND EXPORT CO., LTD.',
+    salesAddress: 'Block 66, No. 31 West Hongtang Road, Hongtang Town, Jiangbei District, Ningbo, Zhejiang, P.R. China 315033',
     telLabel: 'Tel',
     faxLabel: 'Fax',
     formKicker: 'PROJECT INQUIRY',
@@ -218,8 +223,13 @@ export const englishSiteContent = {
     dragHint: 'Drag to rotate',
     error: 'The 3D preview could not load.',
     retry: 'Try again',
+    reload: 'Reload preview',
+    previewAlt: 'Chrome film finish on a Cybertruck',
     errorHelp: 'You can still explore every product and colour below.',
     printableWrap: {
+      validation: { fileType: 'Choose a PNG, JPEG or WebP image.', fileSize: 'Choose an image smaller than 12 MB.', decode: 'We could not read this image. Choose a valid PNG, JPEG or WebP image.', dimensionsError: 'Choose an image no larger than 8192 px per side and 32 megapixels.' },
+      viewerLabel: 'Interactive printable Cybertruck wrap preview',
+      errorHelp: 'You can still configure your artwork while the preview reloads.',
       kicker: 'PRINTABLE CHROME / LIVE PREVIEW',
       title: 'Place your artwork.',
       description: 'Preview your design over a Silver mirror-chrome base, then compare glossy and matte overlaminate finishes.',

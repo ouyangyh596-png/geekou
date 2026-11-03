@@ -19,7 +19,7 @@ function preloadFrame(index, frames, canvas, onReady) {
   const image = new Image()
   image.decoding = 'async'
   image.onload = () => {
-    if (index === 0 || index === onReady.current) drawFrame(canvas, image)
+    if (index === onReady.current) drawFrame(canvas, image)
     onReady.callback(index)
   }
   image.src = url

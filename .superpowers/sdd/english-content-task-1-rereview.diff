@@ -1,0 +1,428 @@
+# Review package: f831653..adb6a6b
+
+## Commits
+adb6a6b docs: record Task 1 fix verification
+6c964cd fix: complete English content contract
+6e3492e feat: add centralized English site content
+
+## Files changed
+ .superpowers/sdd/english-content-task-1-report.md |  98 ++++++++++++
+ package.json                                      |   3 +-
+ scripts/test-site-content.mjs                     |  61 ++++++++
+ scripts/validate-content.mjs                      |   2 +-
+ src/content/site-content.js                       | 180 ++++++++++++++++++++++
+ 5 files changed, 342 insertions(+), 2 deletions(-)
+
+## Diff
+diff --git a/.superpowers/sdd/english-content-task-1-report.md b/.superpowers/sdd/english-content-task-1-report.md
+new file mode 100644
+index 0000000..d98381d
+--- /dev/null
++++ b/.superpowers/sdd/english-content-task-1-report.md
+@@ -0,0 +1,98 @@
++# Centralized English Content — Task 1 Report
++
++## Status
++
++DONE_WITH_CONCERNS
++
++## Files changed
++
++- `src/content/site-content.js` — added the documented `englishSiteContent` editing contract with all eight required sections, current category records, and purpose-based main-site labels.
++- `scripts/test-site-content.mjs` — added the required Node assertion contract test.
++- `package.json` — added `test-content` and chained it after the existing validator in `validate:content`.
++- `.superpowers/sdd/english-content-task-1-report.md` — this required execution report (written after the implementation commit so it can contain the final commit hash; intentionally not included in that commit).
++
++## TDD evidence
++
++### RED
++
++The specified command was attempted first:
++
++```text
++pnpm exec node scripts/test-site-content.mjs
++```
++
++It exited 1 before Node started because this shell did not have `node` on `PATH`: `Command "node" not found`. The bundled Node executable was then used directly to obtain valid RED evidence:
++
++```text
++/Users/geekou/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node scripts/test-site-content.mjs
++```
++
++Result: exit 1 with `ERR_MODULE_NOT_FOUND` for `src/content/site-content.js`, the expected missing-feature failure.
++
++### GREEN
++
++After adding the minimal contract implementation:
++
++```text
++pnpm test-content
++```
++
++Result: exit 0 and `English site content tests passed`.
++
++## Test commands and output summary
++
++- `pnpm test-content` — PASS, exit 0; printed `English site content tests passed`.
++- `pnpm validate:content` — FAIL in the pre-existing `scripts/validate-content.mjs` assertion before the newly chained content test runs. The committed validator expects the car-wrap group `Classic Colours`; the committed catalog currently returns `Super Chrome Film Classic Colours` for 14 AF models.
++- `node --check src/content/site-content.js` — PASS, exit 0.
++- `node --check scripts/test-site-content.mjs` — PASS, exit 0.
++- `git diff --check` / `git diff --cached --check` — PASS, exit 0.
++
++Commands using pnpm were run with the Codex bundled Node and pnpm directories on `PATH` because the default task shell exposes pnpm but not node.
++
++## Self-review
++
++- Confirmed the exact required top-level export and section names.
++- Confirmed all five navigation values and all eight current category slugs are present.
++- Preserved current English wording and represented category series as `{ name, description }` records.
++- Kept media paths, routes, product codes, technical specifications, non-English data, styling, and behavior outside this change.
++- Aligned product label keys with the existing English translation contract (`start`, `specs`, `view`, and `request`) for the next migration task.
++- Confirmed only the three Task 1 implementation files were staged and committed; existing untracked task briefs were left untouched.
++
++## Commit
++
++`6e3492efc3b1d8fcc530818a8ae983cdb9e271c4` (`feat: add centralized English site content`)
++
++## Concerns
++
++- The required aggregate `pnpm validate:content` command is not green due to the pre-existing `Classic Colours` versus `Super Chrome Film Classic Colours` mismatch described above. Fixing that validator/catalog discrepancy is outside Task 1's authorized file scope.
++- The default shell lacks a discoverable Node executable, so the documented pnpm test commands require the bundled Node directory on `PATH` in this environment.
++
++## Fix Report
++
++### Changes
++
++- Added every user-facing English string from `src/components/PPFScrollSequence.jsx` to `englishSiteContent.home.ppfSequence`, splitting dynamic accessibility wording into string fragments so frame numbers and sequence length remain outside the content contract.
++- Strengthened `scripts/test-site-content.mjs` with exact PPF wording checks, exact top-level sections, recursive non-empty string validation, supported array-shape validation, and representative route/media/runtime-data boundary guards.
++- Updated only the 14 stale `Classic Colours` expectations in `scripts/validate-content.mjs` to the canonical `Super Chrome Film Classic Colours`; catalog grouping data was not changed.
++
++### TDD and verification
++
++- RED: `PATH="/Users/geekou/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH" pnpm test-content` — exit 1 because `englishSiteContent.home.ppfSequence` was missing.
++- RED: `PATH="/Users/geekou/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH" pnpm validate:content` — exit 1 on the stale `Classic Colours` expected group.
++- GREEN: `PATH="/Users/geekou/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH" pnpm test-content` — exit 0; printed `English site content tests passed`.
++- GREEN: `PATH="/Users/geekou/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH" pnpm validate:content` — exit 0; validated 82 brochure-backed products and printed `English site content tests passed`.
++- `git diff --check` — exit 0.
++
++### Self-review
++
++- Confirmed `src/components/PPFScrollSequence.jsx` was not changed, preserving frame numbers, paths, timing, dimensions, and behavior.
++- Confirmed `src/catalog.js` and `src/brochure-data.js` were not changed, preserving catalog grouping.
++- Confirmed the implementation diff contains only the three requested code/test files.
++
++### Commit
++
++`6c964cdf6b104ef51e346a1d81df00ec3891c9a7` (`fix: complete English content contract`)
++
++### Concerns
++
++None.
+diff --git a/package.json b/package.json
+index 783c16a..ebd63ab 100644
+--- a/package.json
++++ b/package.json
+@@ -2,21 +2,22 @@
+   "name": "so-fine-site",
+   "private": true,
+   "version": "0.1.0",
+   "type": "module",
+   "scripts": {
+     "dev": "vite",
+     "server": "node server/index.mjs",
+     "start": "NODE_ENV=production node server/index.mjs",
+     "build": "vite build",
+     "preview": "vite preview",
+-    "validate:content": "node scripts/validate-content.mjs",
++    "validate:content": "node scripts/validate-content.mjs && pnpm test-content",
++    "test-content": "node scripts/test-site-content.mjs",
+     "test-language": "node scripts/test-language.mjs",
+     "test-scroll": "node scripts/test-scroll-navigation.mjs",
+     "test-request-validation": "node scripts/test-request-validation.mjs",
+     "test-api": "node scripts/test-api.mjs",
+     "test-media": "node scripts/test-media-manifest.mjs",
+     "test-product-media": "node scripts/test-product-media-semantics.mjs",
+     "test-home-media": "node scripts/test-home-media.mjs",
+     "test-category-media": "node scripts/test-category-media.mjs",
+     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
+     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+diff --git a/scripts/test-site-content.mjs b/scripts/test-site-content.mjs
+new file mode 100644
+index 0000000..895347c
+--- /dev/null
++++ b/scripts/test-site-content.mjs
+@@ -0,0 +1,61 @@
++import assert from 'node:assert/strict'
++import { englishSiteContent } from '../src/content/site-content.js'
++
++const contentRecordKeys = new Set(['name', 'description'])
++const forbiddenKeys = /^(?:dimensions?|duration|frame|frames|height|href|image|media|path|route|src|timing|url|width)$/i
++const forbiddenValue = /(?:^\/|https?:\/\/|\.(?:avif|gif|jpe?g|mp4|png|svg|webm|webp)$)/i
++
++function assertEditorSafeContent(value, location = 'englishSiteContent') {
++  if (typeof value === 'string') {
++    assert.ok(value.trim(), `${location} must be a non-empty string`)
++    assert.doesNotMatch(value, forbiddenValue, `${location} must not contain a route, URL, or media path`)
++    return
++  }
++
++  if (Array.isArray(value)) {
++    assert.ok(value.length, `${location} must not be an empty array`)
++    const containsStrings = value.every(item => typeof item === 'string')
++    const containsCopyRecords = value.every(item => item && typeof item === 'object' && !Array.isArray(item))
++    assert.ok(containsStrings || containsCopyRecords, `${location} must contain only strings or copy records`)
++    value.forEach((item, index) => {
++      if (containsCopyRecords) {
++        assert.deepEqual(Object.keys(item).sort(), [...contentRecordKeys].sort(), `${location}[${index}] must contain only name and description`)
++      }
++      assertEditorSafeContent(item, `${location}[${index}]`)
++    })
++    return
++  }
++
++  assert.ok(value && typeof value === 'object', `${location} must be a string, array, or object`)
++  for (const [key, item] of Object.entries(value)) {
++    assert.doesNotMatch(key, forbiddenKeys, `${location}.${key} crosses the content-only boundary`)
++    assertEditorSafeContent(item, `${location}.${key}`)
++  }
++}
++
++const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck']
++assert.deepEqual(Object.keys(englishSiteContent), sections)
++for (const section of sections) assert.ok(englishSiteContent[section], `Missing ${section}`)
++for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
++  assert.equal(typeof englishSiteContent.navigation[key], 'string')
++  assert.ok(englishSiteContent.navigation[key].trim())
++}
++for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals']) {
++  assert.ok(englishSiteContent.categories[slug], `Missing category copy: ${slug}`)
++}
++assert.ok(englishSiteContent.home.heroTitle)
++assert.ok(englishSiteContent.products.productLibrary)
++assert.ok(englishSiteContent.cybertruck.title)
++assert.deepEqual(englishSiteContent.home.ppfSequence, {
++  presentationLabel: 'PPF product motion presentation',
++  kicker: 'SO-FINE / PPF SYSTEM',
++  titleLead: 'Protection',
++  titleEmphasis: 'in motion.',
++  description: 'Paint protection film engineered for clarity, resilience and a precise finish across every curve.',
++  action: 'Explore PPF',
++  canvasLabelPrefix: 'SO-FINE paint protection film rendering frame',
++  progressLabelPrefix: 'Frame',
++  progressLabelInfix: 'of'
++})
++assertEditorSafeContent(englishSiteContent)
++console.log('English site content tests passed')
+diff --git a/scripts/validate-content.mjs b/scripts/validate-content.mjs
+index 488d721..06e83e6 100644
+--- a/scripts/validate-content.mjs
++++ b/scripts/validate-content.mjs
+@@ -16,21 +16,21 @@ const expectedCatalogue = {
+     ['SF21602', 'Polymeric PVC'], ['SF21802', 'Polymeric PVC'], ['SF21102', 'Polymeric PVC'], ['SF29160', 'Polymeric PVC'],
+     ['SF2900', 'Super Transparent PVC Vinyl'], ['SF2901', 'Super Transparent PVC Vinyl'],
+     ['SF2800', 'Super Glossy PVC Vinyl'], ['SF2832', 'Super Glossy PVC Vinyl']
+   ],
+   'translucent-film': [['SF6000', 'SF6000 Series']],
+   ppf: [['AF1810', 'High-Clarity TPU Protection'], ['AF1850', 'High-Clarity TPU Protection']],
+   'car-wrapping': [
+     ['SF5501', 'Cast PVC Wrap Film'], ['SF5511', 'Cast PVC Wrap Film'], ['SF5503', 'Cast PVC Wrap Film'], ['SF5513', 'Cast PVC Wrap Film'], ['SF9908', 'Cast PVC Wrap Film'], ['AF50100G', 'Cast PVC Wrap Film'],
+     ['SF5505', 'Polymeric PVC Wrap Film'], ['SF5525', 'Polymeric PVC Wrap Film'],
+     ['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film'],
+-    ['AF-50202M', 'Classic Colours'], ['AF-50403M', 'Classic Colours'], ['AF-50880M', 'Classic Colours'], ['AF-50720M', 'Classic Colours'], ['AF-50800M', 'Classic Colours'], ['AF-50810M', 'Classic Colours'], ['AF-50280M', 'Classic Colours'], ['AF-50700M', 'Classic Colours'], ['AF-50521M', 'Classic Colours'], ['AF-50100M', 'Classic Colours'], ['AF-50601M', 'Classic Colours'], ['AF-50701M', 'Classic Colours'], ['AF-50405M', 'Classic Colours'], ['AF-50850M', 'Classic Colours']
++    ['AF-50202M', 'Super Chrome Film Classic Colours'], ['AF-50403M', 'Super Chrome Film Classic Colours'], ['AF-50880M', 'Super Chrome Film Classic Colours'], ['AF-50720M', 'Super Chrome Film Classic Colours'], ['AF-50800M', 'Super Chrome Film Classic Colours'], ['AF-50810M', 'Super Chrome Film Classic Colours'], ['AF-50280M', 'Super Chrome Film Classic Colours'], ['AF-50700M', 'Super Chrome Film Classic Colours'], ['AF-50521M', 'Super Chrome Film Classic Colours'], ['AF-50100M', 'Super Chrome Film Classic Colours'], ['AF-50601M', 'Super Chrome Film Classic Colours'], ['AF-50701M', 'Super Chrome Film Classic Colours'], ['AF-50405M', 'Super Chrome Film Classic Colours'], ['AF-50850M', 'Super Chrome Film Classic Colours']
+   ],
+   overlaminate: [
+     ['SF5601', 'Cast PVC Overlaminate Film'], ['SF5602', 'Cast PVC Overlaminate Film'], ['SF5603', 'Cast PVC Overlaminate Film'], ['SF5606', 'Cast PVC Overlaminate Film'], ['SF5609', 'Cast PVC Overlaminate Film'],
+     ['SF5604', 'Polymeric PVC Overlaminate Film'], ['SF5607', 'Polymeric PVC Overlaminate Film']
+   ],
+   'cold-lamination': [
+     ['SF3180', 'Monomeric PVC'], ['SF3181', 'Monomeric PVC'], ['SF3182', 'Monomeric PVC'],
+     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
+     ['SF3400', 'Floor Lamination PVC'], ['SF3401', 'Floor Lamination PVC']
+   ],
+diff --git a/src/content/site-content.js b/src/content/site-content.js
+new file mode 100644
+index 0000000..faab6ba
+--- /dev/null
++++ b/src/content/site-content.js
+@@ -0,0 +1,180 @@
++// 中文编辑提示：只修改引号内的英文文字。请勿重命名键、删除标点，或修改 export 语句。
++export const englishSiteContent = {
++  navigation: {
++    products: 'Products',
++    technology: 'Technology',
++    company: 'Company',
++    contact: 'Contact',
++    talk: 'Talk to us',
++    languageLabel: 'Language',
++    openLabel: 'Open navigation',
++    closeLabel: 'Close navigation'
++  },
++  home: {
++    heroTitle: 'SUPER CHROME FILM',
++    heroAction: 'Explore to product',
++    heroVideoLabel: 'SO-FINE manufacturing facility',
++    companyVideoLabel: 'SO-FINE factory aerial view',
++    companyVideoCaption: 'SO-FINE factory / aerial view',
++    materialKicker: 'MATERIAL IN CONTEXT',
++    materialTitle: 'Surfaces for\nevery scale.',
++    materialItems: [
++      { name: '01 / MATERIAL DETAIL', description: 'Red self-adhesive material roll detail' },
++      { name: '02 / ILLUMINATED SIGNAGE', description: 'Illuminated storefront light box and backlit window graphics at night' },
++      { name: '03 / AUTOMOTIVE FINISH', description: 'Matte red wrapped sports car photographed outdoors' }
++    ],
++    ppfSequence: {
++      presentationLabel: 'PPF product motion presentation',
++      kicker: 'SO-FINE / PPF SYSTEM',
++      titleLead: 'Protection',
++      titleEmphasis: 'in motion.',
++      description: 'Paint protection film engineered for clarity, resilience and a precise finish across every curve.',
++      action: 'Explore PPF',
++      canvasLabelPrefix: 'SO-FINE paint protection film rendering frame',
++      progressLabelPrefix: 'Frame',
++      progressLabelInfix: 'of'
++    }
++  },
++  technology: {
++    kicker: 'THE SO-FINE DIFFERENCE',
++    title: 'Precision is\nthe foundation.',
++    introduction: 'Every layer is considered — from selected raw materials to final inspection.',
++    capabilities: [
++      { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials.' },
++      { name: 'R&D and quality control', description: 'Dedicated laboratory testing and controlled production standards.' },
++      { name: 'Integrated manufacturing', description: 'Material handling, coating expertise, manufacturing, sales and service.' },
++      { name: 'Application expertise', description: 'Solutions for digital printing, signage and automotive detailing.' }
++    ]
++  },
++  company: {
++    eyebrow: 'SO-FINE / ESTABLISHED 2005',
++    title: '20 years of industrial expertise.',
++    paragraphs: [
++      'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
++      'Our modern production facilities, well-equipped R&D laboratory and quality-control system combine carefully selected domestic and imported raw materials with deep adhesive and coating expertise.',
++      'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing applications.'
++    ]
++  },
++  contact: {
++    kicker: "LET'S MAKE SOMETHING LAST",
++    title: 'Start with a\nsurface.',
++    formKicker: 'PROJECT INQUIRY',
++    formIntroduction: 'Tell us what you are building. Our team will get back to you shortly.',
++    nameLabel: 'Name *',
++    emailLabel: 'Email *',
++    phoneLabel: 'Phone',
++    subjectLabel: 'Subject *',
++    messageLabel: 'Message *',
++    sendingLabel: 'Sending…',
++    sendLabel: 'Send inquiry',
++    successMessage: 'Thank you — your inquiry has been received.',
++    errorPrefix: 'Unable to send. Please email'
++  },
++  categories: {
++    'one-way-vision': {
++      displayName: 'One Way Vision Film',
++      eyebrow: 'SO-FINE / ONE WAY VISION FILM',
++      intro: 'Perforated printable films made with selected raw materials and an adhesive formulation for vehicle, retail and building-glass graphics. They apply easily and remove without residue.',
++      series: [
++        { name: 'Monomeric PVC', description: 'Perforated film with a choice of ratios for glass graphics and easy viewing through the reverse side.' },
++        { name: 'Polymeric PVC', description: 'Perforated film for durable, high-conformability printed graphics.' },
++        { name: 'Cast PVC', description: 'High-conformability perforated film for demanding applications.' },
++        { name: 'Perforated PET', description: 'PET-based perforated options with 30% perforation ratios.' }
++      ]
++    },
++    'self-adhesive-vinyl': {
++      displayName: 'Self-Adhesive Vinyl',
++      eyebrow: 'SO-FINE / SELF-ADHESIVE VINYL',
++      intro: 'A range of self-adhesive vinyl with varied thicknesses, finishes, adhesive systems and liner configurations for large-format solvent, eco-solvent, UV and latex printing.',
++      series: [
++        { name: 'Monomeric PVC', description: 'Vinyl for short-to-medium-term and point-of-purchase promotional applications.' },
++        { name: 'Polymeric PVC', description: 'Vinyl with dimensional stability, conformability and weather resistance for signage, vehicles and architectural graphics.' },
++        { name: 'Super Transparent PVC Vinyl', description: 'Ultra-clear vinyl for glass graphics with high gloss and a partially see-through appearance.' },
++        { name: 'Super Glossy PVC Vinyl', description: 'High-gloss vinyl designed to make printed graphics vivid.' }
++      ]
++    },
++    'translucent-film': {
++      displayName: 'Translucent Film - SF6000 Series',
++      eyebrow: 'SO-FINE / TRANSLUCENT FILM',
++      intro: 'SF6000 is a translucent polymeric PVC film with saturated colour, weathering resistance and a solvent-based pressure-sensitive adhesive for illuminated graphics.',
++      series: [{ name: 'SF6000 Series', description: 'Translucent film for dry or wet application, with 75 µm matte PET liner and high release power.' }]
++    },
++    ppf: {
++      displayName: 'Paint Protection Film',
++      eyebrow: 'AUTOFACE / PAINT PROTECTION FILM',
++      intro: 'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.',
++      series: [{ name: 'High-Clarity TPU Protection', description: 'TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }]
++    },
++    'car-wrapping': {
++      displayName: 'Car Wrap Film',
++      eyebrow: 'AUTOFACE / CAR WRAP FILM',
++      intro: 'Vehicle wrap films with high conformability for surfaces with deep corrugations, offered in cast, polymeric, PVC-free and classic-colour options.',
++      series: [
++        { name: 'Cast PVC Wrap Film', description: '50 µm wrap films for complex curves, reflective graphics and high-gloss finishes.' },
++        { name: 'Polymeric PVC Wrap Film', description: 'Flexible polymeric wrap films for vehicle graphics.' },
++        { name: 'PVC-Free Film', description: 'PVC-free wrap-film alternatives.' },
++        { name: 'Super Chrome Film Classic Colours', description: 'Individual classic colour wrap films.' }
++      ]
++    },
++    overlaminate: {
++      displayName: 'Overlaminate Film',
++      eyebrow: 'SO-FINE / OVERLAMINATE FILM',
++      intro: 'Cast and polymeric PVC overlaminate films with clear permanent adhesive and PET liner for printed-graphic protection.',
++      series: [
++        { name: 'Cast PVC Overlaminate Film', description: 'Cast PVC overlaminate options in glossy, matte, self-healing and grainy-textured finishes.' },
++        { name: 'Polymeric PVC Overlaminate Film', description: 'Polymeric PVC overlaminate options in matte and super-glossy finishes.' }
++      ]
++    },
++    'cold-lamination': {
++      displayName: 'Cold Lamination Film',
++      eyebrow: 'SO-FINE / COLD LAMINATION FILM',
++      intro: 'Cold lamination films in monomeric PVC, polymeric PVC, PET and floor-lamination PVC constructions.',
++      series: [
++        { name: 'Monomeric PVC', description: '70 µm glossy, semi-matte and matte cold lamination films.' },
++        { name: 'Polymeric PVC', description: '60 µm polymeric cold lamination films in glossy and matte finishes.' },
++        { name: 'PET', description: '36 µm glossy PET cold lamination film.' },
++        { name: 'Floor Lamination PVC', description: 'Grainy-textured PVC for floor-lamination applications.' }
++      ]
++    },
++    'wall-decals': {
++      displayName: 'Wall Decals Self-Adhesive Material',
++      eyebrow: 'SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL',
++      intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting; SF4001 also suits walls, floors and carpets because of its textured finish.',
++      series: [
++        { name: 'PVC-Coated Polyester Fabric', description: '250 gsm PVC-coated polyester fabric with high-tack removable adhesive.' },
++        { name: '100% Polyester', description: '115 gsm polyester with high-tack removable adhesive.' }
++      ]
++    }
++  },
++  products: {
++    choose: 'Choose a',
++    surface: 'surface.',
++    productLibrary: 'PRODUCT LIBRARY',
++    start: 'Start with a material family, then explore the exact models, specifications and images inside.',
++    productDetail: 'PRODUCT DETAIL',
++    specs: 'TECHNICAL SPECIFICATIONS',
++    made: 'Made to',
++    perform: 'perform.',
++    back: 'Back to products',
++    allFamilies: 'All product families',
++    view: 'View model',
++    request: 'Request a quote',
++    familyCountLabel: 'FAMILIES',
++    exploreProducts: 'Explore products',
++    selectPrefix: 'Select',
++    previousFamily: 'Previous product family',
++    nextFamily: 'Next product family',
++    selected: 'Selected',
++    viewModels: 'View models',
++    productCode: 'Product code'
++  },
++  cybertruck: {
++    kicker: 'SUPER CHROME FILM / CLASSIC COLOURS',
++    title: 'Cybertruck\ncolour study.',
++    description: 'Preview the finish across a Cybertruck surface. Drag to rotate and select a classic colour.',
++    surfaceColour: 'Surface colour',
++    customColour: 'Custom colour',
++    colourChoicesLabel: 'Classic colour choices',
++    viewerLabel: 'Interactive Cybertruck colour preview'
++  }
++}

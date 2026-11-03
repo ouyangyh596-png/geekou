@@ -85,7 +85,6 @@ function CameraRig() {
 
 function StudioEnvironment() {
   const { gl } = useThree()
-  useEffect(() => { onReady(true); }, [onReady])
   const target = useMemo(() => {
     const room = new RoomEnvironment()
     // Lit studio walls fill the broad chrome panels; black HDRI backgrounds
@@ -147,7 +146,7 @@ export default function CybertruckViewer({ colour }) {
   return <div ref={host} className="cybertruck-viewer" aria-label={content.cybertruck.viewerLabel}
     onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={clearPointer} onPointerCancel={clearPointer}
     onTouchStart={event => event.stopPropagation()} onTouchEnd={event => event.stopPropagation()}>
-    {!ready && <div className="model-cover" role="status"><img src={familyMedia['super-chrome-film'].preview} alt={familyMedia['super-chrome-film'].alt} /><span>{content.cybertruck.loading}</span></div>}
+    {!ready && <div className="model-cover" role="status"><img src={familyMedia['super-chrome-film'].preview} alt={content.cybertruck.previewAlt} /><span>{content.cybertruck.loading}</span></div>}
     <ViewerBoundary copy={content.cybertruck}>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, 4], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
       <Suspense fallback={<Html center><span className="viewer-loading" role="status">{content.cybertruck.loading}</span></Html>}>
         <hemisphereLight intensity={1.2} color="#eef7ff" groundColor="#64716a" />

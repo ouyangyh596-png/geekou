@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { brochureSeries } from '../src/brochure-data.js';
 
-const [main, styles] = await Promise.all([
+const [main, styles, polish, picker] = await Promise.all([
   readFile(new URL('../src/main.jsx', import.meta.url), 'utf8'),
-  readFile(new URL('../src/styles.css', import.meta.url), 'utf8')
+  readFile(new URL('../src/styles.css', import.meta.url), 'utf8'),
+  readFile(new URL('../src/polish.css', import.meta.url), 'utf8'),
+  readFile(new URL('../src/components/LanguagePicker.jsx', import.meta.url), 'utf8')
 ]);
 
 assert.match(main, /function ProductDirectory\(/, 'the header exposes a dedicated product directory component');
@@ -18,7 +20,7 @@ assert.match(styles, /\.product-nav-item:hover \.product-directory/, 'the dropdo
 assert.match(styles, /\.product-nav-item:focus-within \.product-directory/, 'the dropdown opens for keyboard focus');
 assert.match(styles, /@media\(max-width:800px\)\{\s*\.product-nav-item\{display:block\}\s*\.product-directory\{display:none/, 'the desktop dropdown is suppressed on mobile');
 assert.match(styles, /\.nav-link::after/, 'the primary navigation underline is styled');
-assert.match(styles, /\.header \.logo\{width:148px;height:148px\}/, 'the desktop brand mark has the enlarged display size');
+assert.match(polish, /\.header \.logo \{[^}]*width:112px/, 'the shared header uses the refreshed brand size');
 assert.match(styles, /\.product-directory\{[^}]*border-radius:[^;}]+;[^}]*background:linear-gradient/, 'the dropdown uses a rounded layered card surface');
 assert.match(styles, /\.product-directory-label\{[^}]*color:var\(--blue\)[^}]*font:[^;}]*12px/, 'the directory title is larger and uses the brand blue');
 assert.match(styles, /\.product-directory ul\{[^}]*column-gap:[^;}]+;[^}]*row-gap:[^;}]+;[^}]*background:transparent/, 'the product grid uses open spacing instead of table separators');
@@ -30,19 +32,16 @@ assert.match(main, /<span className="product-directory-marker" aria-hidden="true
 assert.match(styles, /\.product-directory-marker\{[^}]*border-left:[^;}]*var\(--blue\)/, 'the product marker is a brand-blue right-pointing triangle');
 assert.match(styles, /\.product-directory a:hover \.product-directory-marker,\.product-directory a:focus-visible \.product-directory-marker\{[^}]*transform:translateX\(/, 'the triangle reinforces the link direction on interaction');
 
-const efiHeader = styles.split('/* EFI-inspired two-tier header */')[1] || '';
-assert.match(efiHeader, /grid-template-areas:\s*"brand nav actions"/, 'desktop header aligns logo, navigation and actions in one row');
-assert.match(efiHeader, /\.header\{[^}]*background:#fbfcfd[^}]*border-bottom:/, 'the masthead uses a clean near-white surface and fine divider');
-assert.match(efiHeader, /\.header nav\{[^}]*grid-area:nav[^}]*justify-content:space-between/, 'primary navigation forms the balanced center row');
-assert.match(efiHeader, /grid-template-columns:1fr auto 1fr/, 'the utility row uses equal outer columns for true symmetry');
-assert.match(efiHeader, /\.header nav\{[^}]*justify-self:center[^}]*font-family:Arial[^}]*font-weight:700/, 'navigation is centered and uses bold Arial');
-assert.match(efiHeader, /\.header::before\{[^}]*background-image:[^}]*linear-gradient/, 'the white masthead carries a restrained tonal texture');
-assert.match(efiHeader, /\.header nav>\*\{[^}]*flex:1 1 0[^}]*justify-content:center/, 'all four primary navigation cells have equal width');
-assert.match(efiHeader, /\.nav-chevron\{[^}]*transition:transform/, 'the product chevron has a polished motion treatment');
-assert.match(efiHeader, /\.product-nav-item:hover \.nav-chevron,\.product-nav-item:focus-within \.nav-chevron\{[^}]*transform:rotate\(180deg\)/, 'the chevron rotates when the product menu opens');
-assert.match(efiHeader, /\.header-actions\{[^}]*grid-area:actions/, 'language and contact controls sit in the upper utility row');
-assert.match(efiHeader, /\.header-cta\{[^}]*border-radius:999px[^}]*background:var\(--blue\)/, 'contact action uses a rounded brand-blue capsule');
-assert.match(efiHeader, /\.language-select\{[^}]*font-family:Arial[^}]*font-weight:700/, 'the language control matches the bold Arial navigation');
-assert.match(efiHeader, /@media\(max-width:800px\)[\s\S]*\.header,\.landing \.header\{[^}]*background:#fbfcfd/, 'mobile retains the textured near-white masthead');
-
-console.log('PASS: header product directory contract is present');
+const header = polish.split('/* Header:')[1].split('/* Hero */')[0];
+assert.match(header, /\.header nav \{[^}]*gap:32px!important[^}]*font-size:15px!important/, 'navigation uses 15px type and 32px gaps');
+assert.match(header, /\.header nav>\* \{[^}]*flex:0 0 auto/, 'legacy equal-width nav cells must not enlarge link spacing');
+assert.match(header, /\.header \.nav-link \{[^}]*gap:6px/, 'Products keeps six pixels before its arrow');
+assert.match(header, /\.header nav \{[^}]*height:auto/, 'navigation must fit inside the shared header height');
+assert.match(header, /\.language-picker summary \{[^}]*min-width:44px[^}]*min-height:48px/, 'language summary has a touch-sized target');
+assert.match(picker, /languageOptions.find\(\(\[,code\]\) => code === lang\)/, 'summary derives its label from current language');
+assert.match(picker, /dir="auto"/, 'language names support their natural writing direction');
+assert.match(picker, /event.key === 'Escape'/, 'Escape dismisses the picker');
+assert.match(picker, /document.addEventListener\('pointerdown', dismiss\)/, 'outside interaction dismisses the picker');
+assert.match(picker, /change\(code\)/, 'selecting a language updates the shared language state');
+assert.match(picker, /aria-current=\{code === lang/, 'the active language is exposed accessibly');
+console.log('PASS: header product directory and refreshed language control contracts are present');

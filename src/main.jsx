@@ -6,7 +6,6 @@ import './polish.css';
 import { catalogProducts } from './catalog.js';
 import { brochureSeries } from './brochure-data.js';
 import { contactDetails as englishContactDetails } from './content/company.js';
-import { chineseSiteContent } from './content/site-content.zh.js';
 import { readInquiryError } from './inquiry-errors.js';
 import { decideHashNavigation, isHomeRoute } from './scroll-navigation.js';
 import { languageOptions, useLanguage } from './language.js';
@@ -14,7 +13,9 @@ import { familyMedia, homeMedia } from './media-manifest.js';
 import { categoryOrder } from './category-order.js';
 import { decideProductSwipe, createWheelGesture } from './product-wheel-navigation.js';
 import CategoryMedia from './components/CategoryMedia.jsx';
+import { specificationValue, numericSpecificationColumns } from './product-specs.js';
 import LanguagePicker from './components/LanguagePicker.jsx';
+import TvcShowcase from './components/TvcShowcase.jsx';
 import PPFScrollSequence from './components/PPFScrollSequence.jsx';
 import PreviewBoundary from './components/PreviewBoundary.jsx';
 import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
@@ -22,11 +23,11 @@ const LazyCybertruckViewer = React.lazy(() => import('./components/CybertruckVie
 const LazyPrintableWrapConfigurator = React.lazy(() => import('./components/PrintableWrapConfigurator.jsx'));
 function CybertruckViewer(props) {
   const { content } = useLanguage();
-  return <PreviewBoundary><React.Suspense fallback={<div className="cybertruck-viewer viewer-placeholder" role="status"><img src={familyMedia['super-chrome-film'].preview} alt={familyMedia['super-chrome-film'].alt} /><span>{content.cybertruck.loading}</span></div>}><LazyCybertruckViewer {...props} /></React.Suspense></PreviewBoundary>;
+  return <PreviewBoundary copy={content.cybertruck}><React.Suspense fallback={<div className="cybertruck-viewer viewer-placeholder" role="status"><img src={familyMedia['super-chrome-film'].preview} alt={content.cybertruck.previewAlt} /><span>{content.cybertruck.loading}</span></div>}><LazyCybertruckViewer {...props} /></React.Suspense></PreviewBoundary>;
 }
 function PrintableWrapConfigurator() {
   const { content } = useLanguage();
-  return <PreviewBoundary><React.Suspense fallback={<section className="printable-wrap-config printable-wrap-placeholder" role="status">{content.cybertruck.loadingStudio}</section>}><LazyPrintableWrapConfigurator /></React.Suspense></PreviewBoundary>;
+  return <PreviewBoundary copy={content.cybertruck}><React.Suspense fallback={<section className="printable-wrap-config printable-wrap-placeholder" role="status">{content.cybertruck.loadingStudio}</section>}><LazyPrintableWrapConfigurator /></React.Suspense></PreviewBoundary>;
 }
 
 const products = catalogProducts;
@@ -169,16 +170,10 @@ function Home() {
   const { content, lang } = useLanguage();
   const companyProfile = content.company;
   const capabilities = content.technology.capabilities.map(({name,description},index) => [String(index+1).padStart(2,'0'),name,description]);
-  const contactDetails = {...englishContactDetails, ...(lang === 'zh' ? Object.fromEntries(['factoryName','factoryAddress','salesName','salesAddress'].map(key => [key,chineseSiteContent.contact[key]])) : {})};
+  const contactDetails = {...englishContactDetails, ...Object.fromEntries(['factoryName','factoryAddress','salesName','salesAddress'].map(key => [key,content.contact[key]]))};
   const [technologyTitleLead, technologyTitleEmphasis] = content.technology.title.split('\n');
   const [contactTitleLead, contactTitleEmphasis] = content.contact.title.split('\n');
   useEffect(() => {
-    const onScroll = () => {
-      const progress = Math.min(window.scrollY / 520, 1);
-      document.documentElement.style.setProperty('--hero-progress', progress.toFixed(3));
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add('is-visible');
@@ -186,14 +181,14 @@ function Home() {
     }), { threshold: 0, rootMargin: '0px 0px -10% 0px' });
     document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
     return () => {
-      window.removeEventListener('scroll', onScroll);
       observer.disconnect();
     };
   }, []);
   return <main className="home-page">
+    <TvcShowcase />
     <section className="landing" id="top"><Header /><div className="landing-copy container"><div className="landing-brand-lockup"><h1 className="landing-title">{content.home.heroTitle}</h1><p className="landing-subtitle">{content.home.heroSubtitle}</p><a className="landing-product-button" href="#category=super-chrome-film">{content.home.heroAction} <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label={content.home.heroVideoLabel}><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video></div></section>
     <PPFScrollSequence />
-    <section className="statement" id="company"><figure className="company-evidence reveal"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label={content.home.companyVideoLabel}><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>{content.home.companyVideoCaption}</figcaption></figure><div className="statement-inner container"><div className="factory-panel"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal">{content.company.titleLead}<br /><em>{content.company.titleEmphasis}</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div><dl className="factory-metrics">{content.company.metricLabels.map(label => <div key={label}><dd aria-label={content.company.metricPending}>{lang === 'zh' ? '待确认' : 'TODO'}</dd><dt>{label}</dt></div>)}</dl></div></section>
+    <section className="statement" id="company"><figure className="company-evidence"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label={content.home.companyVideoLabel}><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>{content.home.companyVideoCaption}</figcaption></figure><div className="statement-inner container"><div className="factory-panel"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal">{content.company.titleLead}<br /><em>{content.company.titleEmphasis}</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div><dl className="factory-metrics">{content.company.metricLabels.map(label => <div key={label}><dd aria-label={content.company.metricPending}>{lang === 'zh' ? '待确认' : 'TODO'}</dd><dt>{label}</dt></div>)}</dl></div></section>
     <ProductShowcase />
     <section className="technology" id="technology"><div className="wide-heading container"><p className="kicker">{content.technology.kicker}</p><h2 className="reveal">{technologyTitleLead}<br /><em>{technologyTitleEmphasis}</em></h2></div><div className="tech-grid reveal"><div className="tech-intro"><Layers size={32} strokeWidth={1.5} aria-hidden="true" /><span className="tech-intro-copy">{content.technology.introduction}</span></div>{capabilities.map(([number, title, description], index) => { const Icon = [Factory, FlaskConical, Workflow, ScanLine][index]; return <div className="tech-card" key={number}><Icon size={32} strokeWidth={1.5} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>; })}</div></section>
     <section className="contact" id="contact"><div className="contact-inner container"><div className="contact-layout"><div className="contact-information"><p className="kicker">{content.contact.kicker}</p><h2 className="reveal">{contactTitleLead}<br /><em>{contactTitleEmphasis}</em></h2><a className="mail-link" href={'mailto:' + contactDetails.email}>{contactDetails.email} <ArrowUpRight size={20} /></a><a href={'tel:' + contactDetails.phones[0]}>{contactDetails.phones[0]}</a><p>{contactDetails.factoryAddress}</p></div><ContactForm /></div><footer><div className="contact-companies"><div className="contact-company"><b>{contactDetails.factoryName}</b><span>{contactDetails.factoryAddress}</span></div><div className="contact-company"><b>{contactDetails.salesName}</b><span>{contactDetails.salesAddress}</span></div><div className="contact-company contact-methods">{contactDetails.phones.map(phone => <a key={phone} href={'tel:' + phone}>{content.contact.telLabel}: {phone}</a>)}<span>{content.contact.faxLabel}: {contactDetails.fax}</span><a href={'mailto:' + contactDetails.email}>{contactDetails.email}</a></div></div><p className="copyright">© {new Date().getFullYear()} SO-FINE. {content.contact.copyright}</p></footer></div></section>
@@ -303,8 +298,8 @@ function ProductShowcase() {
 function ProductTable({ items }) {
   const { content } = useLanguage();
   const columns = [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))];
-  const valueFor = (item, column) => { const value = item.specs.find(([label]) => label === column)?.[1]; return !value || /^[-–—]$/.test(value.trim()) ? 'N/A' : value; };
-  return <div className="product-spec-table container" role="region" aria-label={content.products.specs} tabIndex="0"><table><thead><tr><th scope="col">{content.products.productCode}</th>{columns.map(column => <th scope="col" key={column}>{column}</th>)}</tr></thead><tbody>{items.map(item => <tr key={item.slug}><th scope="row">{item.model}</th>{columns.map(column => <td className={/^[\d.,% µm²×x/ -]+$/.test(valueFor(item,column)) ? 'numeric' : undefined} key={column}>{valueFor(item,column)}</td>)}</tr>)}</tbody></table></div>;
+  const numericColumns = numericSpecificationColumns(items, columns);
+  return <div className="product-spec-table container" role="region" aria-label={content.products.specs} tabIndex="0"><table><thead><tr><th scope="col">{content.products.productCode}</th>{columns.map(column => <th scope="col" className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{column}</th>)}</tr></thead><tbody>{items.map(item => <tr key={item.slug}><th scope="row">{item.model}</th>{columns.map(column => <td className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{specificationValue(item, column)}</td>)}</tr>)}</tbody></table></div>;
 
 }
 
@@ -354,7 +349,6 @@ function App() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('hashchange', onHashChange);
-      window.removeEventListener('scroll', onScroll);
     };
   }, []);
   const categoryParams = hash.startsWith('#category=') ? new URLSearchParams(hash.slice(1)) : null;

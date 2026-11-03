@@ -1,0 +1,322 @@
+# Review package: 521d727..507e21d
+
+## Commits
+507e21d feat: build printable wrap viewer
+
+## Files changed
+ package.json                           |   1 +
+ scripts/test-printable-wrap-viewer.mjs |  59 +++++++++
+ src/components/PrintableWrapViewer.jsx | 213 +++++++++++++++++++++++++++++++++
+ 3 files changed, 273 insertions(+)
+
+## Diff
+diff --git a/package.json b/package.json
+index 60f4aa8..1a3d1c7 100644
+--- a/package.json
++++ b/package.json
+@@ -17,20 +17,21 @@
+     "test-request-validation": "node scripts/test-request-validation.mjs",
+     "test-api": "node scripts/test-api.mjs",
+     "test-media": "node scripts/test-media-manifest.mjs",
+     "test-product-media": "node scripts/test-product-media-semantics.mjs",
+     "test-home-media": "node scripts/test-home-media.mjs",
+     "test-product-wheel": "node scripts/test-product-wheel-navigation.mjs",
+     "test-category-media": "node scripts/test-category-media.mjs",
+     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
+     "test-printable-wrap": "node scripts/test-printable-wrap-state.mjs",
+     "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs && node scripts/test-printable-wrap-webgl.mjs",
++    "test-printable-wrap-viewer": "node scripts/test-printable-wrap-viewer.mjs",
+     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
+     "test-polish": "node scripts/test-site-polish.mjs",
+     "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets && pnpm test-printable-wrap"
+   },
+   "dependencies": {
+     "@react-three/drei": "^10.7.8",
+     "@react-three/fiber": "^9.7.0",
+     "@vitejs/plugin-react": "latest",
+     "lucide-react": "latest",
+diff --git a/scripts/test-printable-wrap-viewer.mjs b/scripts/test-printable-wrap-viewer.mjs
+new file mode 100644
+index 0000000..6c1d83f
+--- /dev/null
++++ b/scripts/test-printable-wrap-viewer.mjs
+@@ -0,0 +1,59 @@
++import assert from 'node:assert/strict'
++import { existsSync, readFileSync } from 'node:fs'
++
++const componentUrl = new URL('../src/components/PrintableWrapViewer.jsx', import.meta.url)
++assert.ok(existsSync(componentUrl), 'printable wrap needs its own viewer component')
++
++const source = readFileSync(componentUrl, 'utf8')
++
++assert.match(source, /useGLTF\(CYBERTRUCK_MODEL_PATH\)/,
++  'the printable viewer must load the shared Cybertruck GLB')
++assert.match(source, /createPrintableWrapInstance\(scene, grain\)/,
++  'the cached GLB must be cloned through the printable scene factory')
++assert.match(source, /const model = useMemo\([\s\S]*?\}, \[scene, grain\]\)/,
++  'placement, finish and artwork changes must not rebuild the GLB instance')
++
++assert.match(source, /new THREE\.TextureLoader\(\)/,
++  'artwork must be decoded by Three TextureLoader')
++assert.match(source, /texture\.colorSpace = THREE\.SRGBColorSpace/,
++  'uploaded colour artwork must be sampled as sRGB')
++assert.match(source, /model\.setArtwork\(texture\)/,
++  'a decoded texture must be applied through the printable instance')
++assert.match(source, /texture\.dispose\(\)/,
++  'the viewer must release its owned GPU texture')
++assert.match(source, /model\.setArtwork\(null\)/,
++  'replacement and unmount cleanup must detach the old artwork')
++
++assert.match(source, /model\.setPlacement\(placement\)/,
++  'placement updates must flow into uniforms on the existing instance')
++assert.match(source, /model\.setFinish\(finish\)/,
++  'finish updates must flow into materials on the existing instance')
++assert.match(source, /frameloop="demand"/,
++  'the printable stage must render on demand')
++assert.ok((source.match(/invalidate\(\)/g) ?? []).length >= 4,
++  'camera, texture, placement and finish updates must invalidate demand rendering')
++
++assert.match(source, /LEFT_SIDE_CAMERA_DIRECTION\s*=\s*new THREE\.Vector3\(1,\s*\.42,\s*\.18\)/,
++  'the default camera must face the model from its +X printable left side')
++assert.match(source, /enabled=\{editMode !== 'positionArtwork'\}/,
++  'OrbitControls must be disabled while artwork positioning owns pointer input')
++assert.match(source, /if \(editMode !== 'positionArtwork'\) return/,
++  'rotate mode must leave pointer input to OrbitControls')
++assert.match(source, /deltaX\s*\/\s*stageWidth/,
++  'horizontal pointer deltas must be normalized to stage width')
++assert.match(source, /deltaY\s*\/\s*stageHeight/,
++  'vertical pointer deltas must be normalized to stage height')
++assert.match(source, /stageWidth\s*=\s*Math\.max\(width, 1\)/,
++  'a temporarily zero-width stage must not produce infinite placement')
++assert.match(source, /stageHeight\s*=\s*Math\.max\(height, 1\)/,
++  'a temporarily zero-height stage must not produce infinite placement')
++assert.match(source, /onPlacementChange\(\{\s*x:\s*nextX,\s*y:\s*nextY\s*\}\)/,
++  'pointer movement must callback position only, preserving slider-owned scale and rotation')
++assert.match(source, /Math\.min\(1, Math\.max\(-1,/,
++  'pointer placement must stay within the Task 1 bounds')
++assert.match(source, /aria-label="Interactive printable Cybertruck wrap preview"/,
++  'the Three.js stage needs an accessible name')
++assert.match(source, /role="region"/,
++  'the stage label must be exposed through a nameable landmark role')
++
++console.log('Printable wrap viewer source contracts passed')
+diff --git a/src/components/PrintableWrapViewer.jsx b/src/components/PrintableWrapViewer.jsx
+new file mode 100644
+index 0000000..a39fdb5
+--- /dev/null
++++ b/src/components/PrintableWrapViewer.jsx
+@@ -0,0 +1,213 @@
++import { Component, Suspense, useEffect, useMemo, useRef, useState } from 'react'
++import { Canvas, useThree } from '@react-three/fiber'
++import { Environment, Html, OrbitControls, useGLTF } from '@react-three/drei'
++import * as THREE from 'three'
++import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
++import { CYBERTRUCK_MODEL_PATH } from '../cybertruck-colours.js'
++import { createPrintableWrapInstance } from '../printable-wrap-scene.js'
++
++const LEFT_SIDE_CAMERA_DIRECTION = new THREE.Vector3(1, .42, .18)
++
++function createMicroRoughness() {
++  const size = 64
++  const data = new Uint8Array(size * size * 4)
++  for (let index = 0; index < data.length; index += 4) {
++    const grain = 232 + ((index * 13 + (index >> 4) * 7) % 24)
++    data[index] = grain; data[index + 1] = grain; data[index + 2] = grain; data[index + 3] = 255
++  }
++  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat)
++  texture.wrapS = texture.wrapT = THREE.RepeatWrapping
++  texture.repeat.set(28, 28)
++  texture.magFilter = THREE.LinearFilter
++  texture.minFilter = THREE.LinearMipmapLinearFilter
++  texture.generateMipmaps = true
++  texture.needsUpdate = true
++  return texture
++}
++
++function PrintableWrapModel({ artworkUrl, placement, finish }) {
++  const { scene } = useGLTF(CYBERTRUCK_MODEL_PATH)
++  const grain = useMemo(createMicroRoughness, [])
++  const model = useMemo(() => {
++    const instance = createPrintableWrapInstance(scene, grain)
++    const bounds = new THREE.Box3().setFromObject(instance.scene)
++    const size = bounds.getSize(new THREE.Vector3())
++    const center = bounds.getCenter(new THREE.Vector3())
++    const scale = 3.4 / Math.max(size.x, size.y, size.z)
++    instance.scene.scale.multiplyScalar(scale)
++    instance.scene.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale)
++    return instance
++  }, [scene, grain])
++  const { invalidate } = useThree()
++
++  useEffect(() => {
++    model.setPlacement(placement)
++    invalidate()
++  }, [model, placement, invalidate])
++
++  useEffect(() => {
++    model.setFinish(finish)
++    invalidate()
++  }, [model, finish, invalidate])
++
++  useEffect(() => {
++    model.setArtwork(null)
++    invalidate()
++    if (!artworkUrl) return undefined
++
++    let active = true
++    let released = false
++    let texture
++    const releaseTexture = () => {
++      if (released || !texture) return
++      released = true
++      texture.dispose()
++    }
++    texture = new THREE.TextureLoader().load(
++      artworkUrl,
++      () => {
++        if (!active) return
++        model.setArtwork(texture)
++        invalidate()
++      },
++      undefined,
++      () => {
++        if (!active) return
++        model.setArtwork(null)
++        releaseTexture()
++        invalidate()
++      },
++    )
++    texture.colorSpace = THREE.SRGBColorSpace
++    texture.magFilter = THREE.LinearFilter
++
++    return () => {
++      active = false
++      model.setArtwork(null)
++      releaseTexture()
++      invalidate()
++    }
++  }, [model, artworkUrl, invalidate])
++
++  useEffect(() => () => {
++    model.dispose()
++    grain.dispose()
++  }, [model, grain])
++
++  return <primitive object={model.scene} dispose={null} />
++}
++
++function CameraRig({ editMode }) {
++  const { camera, size, invalidate } = useThree()
++  const controls = useRef()
++  useEffect(() => {
++    const distance = 5.6 * Math.max(1, 1.25 / (size.width / size.height))
++    camera.position.copy(LEFT_SIDE_CAMERA_DIRECTION).normalize().multiplyScalar(distance).add(new THREE.Vector3(0, .48, 0))
++    camera.lookAt(0, .48, 0)
++    camera.updateProjectionMatrix()
++    controls.current?.update()
++    invalidate()
++  }, [camera, size.width, size.height, invalidate])
++  return <OrbitControls ref={controls} makeDefault enabled={editMode !== 'positionArtwork'}
++    enablePan={false} enableZoom={false} target={[0, .48, 0]}
++    minPolarAngle={.35} maxPolarAngle={Math.PI / 2.05}
++    enableDamping dampingFactor={.09} rotateSpeed={.6} />
++}
++
++function StudioEnvironment() {
++  const { gl } = useThree()
++  const target = useMemo(() => {
++    const room = new RoomEnvironment()
++    room.add(new THREE.AmbientLight('#ffffff', .7))
++    const generator = new THREE.PMREMGenerator(gl)
++    const result = generator.fromScene(room, .04)
++    room.dispose()
++    generator.dispose()
++    return result
++  }, [gl])
++  useEffect(() => () => target.dispose(), [target])
++  return <Environment map={target.texture} environmentIntensity={1.1} />
++}
++
++class ViewerBoundary extends Component {
++  state = { failed: false }
++  static getDerivedStateFromError() { return { failed: true } }
++  render() {
++    return this.state.failed ? <div className="viewer-error" role="status"><p>The 3D preview could not load.</p><button type="button" onClick={() => { useGLTF.clear(CYBERTRUCK_MODEL_PATH); this.setState({ failed: false }) }}>Try again</button><p>You can still configure your artwork while the preview reloads.</p></div> : this.props.children
++  }
++}
++
++export default function PrintableWrapViewer({ artworkUrl, placement, finish, editMode, onPlacementChange }) {
++  const host = useRef()
++  const activePointer = useRef(null)
++  const [entered, setEntered] = useState(false)
++
++  useEffect(() => {
++    const observer = new IntersectionObserver(entries => {
++      if (entries.some(entry => entry.isIntersecting)) { setEntered(true); observer.disconnect() }
++    }, { rootMargin: '300px' })
++    observer.observe(host.current)
++    return () => observer.disconnect()
++  }, [])
++
++  useEffect(() => { activePointer.current = null }, [editMode])
++
++  const handlePointerDown = event => {
++    if (editMode !== 'positionArtwork') return
++    if (event.button !== 0 && event.pointerType === 'mouse') return
++    activePointer.current = {
++      id: event.pointerId,
++      x: event.clientX,
++      y: event.clientY,
++      placementX: placement.x,
++      placementY: placement.y,
++    }
++    event.currentTarget.setPointerCapture?.(event.pointerId)
++    event.preventDefault()
++  }
++
++  const handlePointerMove = event => {
++    if (editMode !== 'positionArtwork') return
++    const start = activePointer.current
++    if (!start || start.id !== event.pointerId) return
++    const { width, height } = event.currentTarget.getBoundingClientRect()
++    const stageWidth = Math.max(width, 1)
++    const stageHeight = Math.max(height, 1)
++    const deltaX = event.clientX - start.x
++    const deltaY = event.clientY - start.y
++    const nextX = Math.min(1, Math.max(-1, start.placementX + deltaX / stageWidth))
++    const nextY = Math.min(1, Math.max(-1, start.placementY - deltaY / stageHeight))
++    activePointer.current = {
++      ...start,
++      x: event.clientX,
++      y: event.clientY,
++      placementX: nextX,
++      placementY: nextY,
++    }
++    onPlacementChange({ x: nextX, y: nextY })
++    event.preventDefault()
++  }
++
++  const clearPointer = event => {
++    if (activePointer.current?.id !== event.pointerId) return
++    activePointer.current = null
++    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
++  }
++
++  return <div ref={host} className="cybertruck-viewer printable-wrap-viewer"
++    role="region" aria-label="Interactive printable Cybertruck wrap preview"
++    onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
++    onPointerUp={clearPointer} onPointerCancel={clearPointer}
++    style={{ touchAction: editMode === 'positionArtwork' ? 'none' : 'auto' }}>
++    <ViewerBoundary>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, .9], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
++      <Suspense fallback={<Html center><span className="viewer-loading" role="status">Loading 3D preview…</span></Html>}>
++        <hemisphereLight intensity={1.2} color="#eef7ff" groundColor="#64716a" />
++        <directionalLight position={[4, 6, 4]} intensity={2.4} color="#fff7eb" />
++        <directionalLight position={[-4, 3, -3]} intensity={1.6} color="#c7deff" />
++        <StudioEnvironment />
++        <PrintableWrapModel artworkUrl={artworkUrl} placement={placement} finish={finish} />
++        <CameraRig editMode={editMode} />
++      </Suspense>
++    </Canvas>}</ViewerBoundary>
++  </div>
++}
