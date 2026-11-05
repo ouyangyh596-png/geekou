@@ -1,0 +1,100 @@
+# Review package: 0866281..cb9d704
+
+## Commits
+cb9d704 fix: preserve position when switching product series
+
+## Files changed
+ scripts/test-scroll-navigation.mjs | 40 ++++++++++++++++++++++++++++++++++++++
+ src/scroll-navigation.js           |  9 +++++++++
+ 2 files changed, 49 insertions(+)
+
+## Diff
+diff --git a/scripts/test-scroll-navigation.mjs b/scripts/test-scroll-navigation.mjs
+index cb622f8..b791c04 100644
+--- a/scripts/test-scroll-navigation.mjs
++++ b/scripts/test-scroll-navigation.mjs
+@@ -30,11 +30,51 @@ assert.deepEqual(
+   { type: 'anchor', id: 'products' },
+   'a direct home #products link scrolls to the product section'
+ )
+ 
+ assert.deepEqual(
+   decideHashNavigation({ previousHash: '#products', nextHash: '#product=sf1413', savedHomeScroll: 684 }),
+   { type: 'top' },
+   'detail and category routes start at the top'
+ )
+ 
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision',
++    nextHash: '#category=one-way-vision&series=Cast%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'preserve' },
++  'selecting a series within the current category preserves the scroll position'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision&series=Cast%20PVC',
++    nextHash: '#category=one-way-vision&series=Polymeric%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'preserve' },
++  'switching series within the current category preserves the scroll position'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision',
++    nextHash: '#category=self-adhesive-vinyl&series=Polymeric%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'top' },
++  'switching categories starts at the top'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '',
++    nextHash: '#category=one-way-vision&series=Cast%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'top' },
++  'opening a series URL directly starts at the top'
++)
++
+ console.log('Validated hash navigation decisions.')
+diff --git a/src/scroll-navigation.js b/src/scroll-navigation.js
+index 6dd6993..eadc854 100644
+--- a/src/scroll-navigation.js
++++ b/src/scroll-navigation.js
+@@ -1,19 +1,28 @@
+ const HOME_ANCHORS = new Set(['#products', '#technology', '#company', '#contact'])
+ 
+ const isDetailRoute = hash => hash.startsWith('#product=') || hash.startsWith('#category=')
+ 
++const getCategory = hash => {
++  if (!hash.startsWith('#category=')) return ''
++  return new URLSearchParams(hash.slice(1)).get('category') || ''
++}
++
+ export function decideHashNavigation({ previousHash = '', nextHash = '', savedHomeScroll = 0 }) {
+   if (nextHash === '#top' || !nextHash) return { type: 'top' }
+ 
+   if (nextHash === '#products' && isDetailRoute(previousHash)) {
+     return { type: 'restore', top: Math.max(0, Number(savedHomeScroll) || 0) }
+   }
+ 
+   if (HOME_ANCHORS.has(nextHash)) return { type: 'anchor', id: nextHash.slice(1) }
+ 
++  const previousCategory = getCategory(previousHash)
++  const nextCategory = getCategory(nextHash)
++  if (previousCategory && previousCategory === nextCategory) return { type: 'preserve' }
++
+   return { type: 'top' }
+ }
+ 
+ export function isHomeRoute(hash = '') {
+   return !isDetailRoute(hash) && hash !== '#admin'
+ }

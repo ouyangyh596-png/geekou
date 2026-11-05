@@ -1,0 +1,290 @@
+# Review package: 331ff42..HEAD
+
+## Commits
+ae4a8d6 refactor: handle preserved scroll explicitly
+cb9d704 fix: preserve position when switching product series
+0866281 docs: add series table scroll implementation plan
+aed6e33 docs: define series table scroll behavior
+
+## Files changed
+ .../plans/2026-09-08-series-table-scroll.md        | 88 ++++++++++++++++++++++
+ .../specs/2026-09-08-series-table-scroll-design.md | 29 +++++++
+ scripts/test-scroll-navigation.mjs                 | 49 ++++++++++++
+ src/main.jsx                                       |  1 +
+ src/scroll-navigation.js                           |  9 +++
+ 5 files changed, 176 insertions(+)
+
+## Diff
+diff --git a/docs/superpowers/plans/2026-09-08-series-table-scroll.md b/docs/superpowers/plans/2026-09-08-series-table-scroll.md
+new file mode 100644
+index 0000000..42b83c4
+--- /dev/null
++++ b/docs/superpowers/plans/2026-09-08-series-table-scroll.md
+@@ -0,0 +1,88 @@
++# Series Table Scroll Fix Implementation Plan
++
++> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
++
++**Goal:** Keep the user's current position while switching product series and update the corresponding table below the series cards.
++
++**Architecture:** Extend the pure hash-navigation policy to distinguish same-category series changes from true route changes. The React category page continues deriving the selected series and table records from the URL; the application simply performs no scroll command for the new `preserve` action.
++
++**Tech Stack:** React, Vite, JavaScript ES modules, Node assertion tests, hash routing.
++
++## Global Constraints
++
++- Same-category series selection preserves the current scroll position.
++- The selected card and matching table continue updating from the URL hash.
++- Different-category navigation and direct category/series entry continue starting at the top.
++- Existing home scroll restoration remains unchanged.
++- Empty series continue rendering no empty product table.
++- Desktop and mobile behavior must match.
++
++---
++
++### Task 1: Same-category navigation policy
++
++**Files:**
++- Modify: `scripts/test-scroll-navigation.mjs`
++- Modify: `src/scroll-navigation.js`
++
++**Interfaces:**
++- Consumes: `decideHashNavigation({ previousHash, nextHash, savedHomeScroll })`.
++- Produces: `{ type: 'preserve' }` when both hashes resolve to the same non-empty `category` value.
++
++- [ ] **Step 1: Add failing policy tests**
++
++Add assertions that `#category=one-way-vision` → `#category=one-way-vision&series=Cast%20PVC` and one series → another return `{ type: 'preserve' }`. Add assertions that one category → another and an empty previous hash → a series URL still return `{ type: 'top' }`.
++
++- [ ] **Step 2: Run the focused test and observe the intended failure**
++
++Run: `pnpm test-scroll`
++
++Expected: FAIL because same-category transitions currently return `{ type: 'top' }`.
++
++- [ ] **Step 3: Implement the minimal route comparison**
++
++Add a helper that parses hashes beginning with `#category=` using `URLSearchParams` and returns the decoded category. Before the existing default-top result, return `{ type: 'preserve' }` only when both parsed category values are equal and non-empty.
++
++- [ ] **Step 4: Run focused and release tests**
++
++Run: `pnpm test-scroll && pnpm test-release`
++
++Expected: all assertions pass with no regressions.
++
++- [ ] **Step 5: Commit the policy fix**
++
++Run: `git add scripts/test-scroll-navigation.mjs src/scroll-navigation.js && git commit -m "fix: preserve position when switching product series"`
++
++### Task 2: Browser interaction and release verification
++
++**Files:**
++- Verify: `src/main.jsx`
++- Verify: `src/scroll-navigation.js`
++
++**Interfaces:**
++- Consumes: the `preserve` navigation action; existing `applyNavigation` performs no scroll for unhandled action types.
++- Produces: verified desktop/mobile series switching without top jumps.
++
++- [ ] **Step 1: Build the production site**
++
++Run: `pnpm build`
++
++Expected: Vite exits 0; the existing chunk-size warning may remain.
++
++- [ ] **Step 2: Verify desktop interaction**
++
++Open `#category=one-way-vision`, scroll to the series cards, select Cast PVC and then Polymeric PVC. Record `window.scrollY` before and after each click; it must remain unchanged while the selected card and product table rows update.
++
++- [ ] **Step 3: Verify mobile interaction**
++
++Repeat at 390 × 844. Confirm retained scroll position, correct table rows, no horizontal page overflow and no console errors.
++
++- [ ] **Step 4: Verify direct navigation semantics**
++
++Open a series URL in a fresh tab and confirm it starts at the top with the requested series selected. Navigate to a different category and confirm that page starts at the top.
++
++- [ ] **Step 5: Run final checks and push**
++
++Run: `pnpm test-release && pnpm build && git diff --check && git push origin main`
++
++Expected: tests/build/check pass and remote `main` advances to the verified commit.
+diff --git a/docs/superpowers/specs/2026-09-08-series-table-scroll-design.md b/docs/superpowers/specs/2026-09-08-series-table-scroll-design.md
+new file mode 100644
+index 0000000..96777cc
+--- /dev/null
++++ b/docs/superpowers/specs/2026-09-08-series-table-scroll-design.md
+@@ -0,0 +1,29 @@
++# Series Table Scroll Behavior
++
++## Problem
++
++Selecting `View models` changes the category hash by adding or replacing the `series` parameter. The current hash-navigation policy treats every category hash change as a new detail route and scrolls the window to the top, even when the user remains inside the same category.
++
++## Approved behavior
++
++- When switching series inside the same category, preserve the current scroll position.
++- Update the selected card and render the matching product table directly below the series grid.
++- Keep the selected series in the URL so refreshes and shared links retain the selection.
++- When navigating to a different category, continue scrolling to the top.
++- When directly opening a category or series URL, continue starting at the top.
++- Apply the same behavior on desktop and mobile.
++- If a series has no matching product records, render no empty product table.
++
++## Implementation
++
++- Extend the centralized hash-navigation decision function with a `preserve` action for transitions where both hashes are category routes with the same decoded `category` value.
++- Do not perform any scroll command for the `preserve` action.
++- Leave category rendering and URL links intact; React will continue deriving the selected series and matching products from the hash.
++- Add regression tests covering same-category series changes, different-category changes, direct series links and existing home-route restoration behavior.
++
++## Verification
++
++- Observe the new same-category navigation test fail before implementation and pass afterward.
++- Run the complete release test and production build.
++- In a local browser, scroll to the series grid, select multiple series and verify that the scroll position is retained while the table content changes.
++- Repeat at a mobile viewport and check for overflow or console errors.
+diff --git a/scripts/test-scroll-navigation.mjs b/scripts/test-scroll-navigation.mjs
+index cb622f8..220b97d 100644
+--- a/scripts/test-scroll-navigation.mjs
++++ b/scripts/test-scroll-navigation.mjs
+@@ -1,19 +1,28 @@
+ import assert from 'node:assert/strict'
++import { readFile } from 'node:fs/promises'
+ import { decideHashNavigation } from '../src/scroll-navigation.js'
+ 
++const mainSource = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8')
++
+ assert.deepEqual(
+   decideHashNavigation({ previousHash: '#category=one-way-vision', nextHash: '#products', savedHomeScroll: 684 }),
+   { type: 'restore', top: 684 },
+   'returning from a category to #products restores the exact saved home position'
+ )
+ 
++assert.match(
++  mainSource,
++  /if \(action\.type === 'preserve'\) return;/,
++  'the preserve action must be an explicit scroll no-op'
++)
++
+ assert.deepEqual(
+   decideHashNavigation({ previousHash: '#product=sf1413', nextHash: '#products', savedHomeScroll: 421 }),
+   { type: 'restore', top: 421 },
+   'returning from a product to #products restores the exact saved home position'
+ )
+ 
+ assert.deepEqual(
+   decideHashNavigation({ previousHash: '#products', nextHash: '#top', savedHomeScroll: 684 }),
+   { type: 'top' },
+   'the logo route always scrolls to the top'
+@@ -30,11 +39,51 @@ assert.deepEqual(
+   { type: 'anchor', id: 'products' },
+   'a direct home #products link scrolls to the product section'
+ )
+ 
+ assert.deepEqual(
+   decideHashNavigation({ previousHash: '#products', nextHash: '#product=sf1413', savedHomeScroll: 684 }),
+   { type: 'top' },
+   'detail and category routes start at the top'
+ )
+ 
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision',
++    nextHash: '#category=one-way-vision&series=Cast%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'preserve' },
++  'selecting a series within the current category preserves the scroll position'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision&series=Cast%20PVC',
++    nextHash: '#category=one-way-vision&series=Polymeric%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'preserve' },
++  'switching series within the current category preserves the scroll position'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '#category=one-way-vision',
++    nextHash: '#category=self-adhesive-vinyl&series=Polymeric%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'top' },
++  'switching categories starts at the top'
++)
++
++assert.deepEqual(
++  decideHashNavigation({
++    previousHash: '',
++    nextHash: '#category=one-way-vision&series=Cast%20PVC',
++    savedHomeScroll: 684
++  }),
++  { type: 'top' },
++  'opening a series URL directly starts at the top'
++)
++
+ console.log('Validated hash navigation decisions.')
+diff --git a/src/main.jsx b/src/main.jsx
+index e6b5763..c0cd6bc 100644
+--- a/src/main.jsx
++++ b/src/main.jsx
+@@ -257,20 +257,21 @@ function Detail({ product }) {
+   return <main className="detail"><Header /><div className="detail-hero"><div><p className="kicker">{product.family} / {t('productDetail')}</p><div className="detail-model">{product.model}</div><h1><Lines text={product.title} /></h1><p>{product.description}</p></div><div className="detail-gallery">{(product.gallery || [product.image]).map((image, index) => <div className="detail-hero-image" key={image}><img src={image} alt={productImageAlt(product, image, index)} /><span>{product.model}</span></div>)}</div></div><div className="spec-area"><div><p className="kicker">{t('specs')}</p><h2>{t('made')}<br /><em>{t('perform')}</em></h2></div><div className="spec-table">{product.specs.map(([label, value], index) => <div key={label + '-' + index}><span>{label}</span><b>{value}</b></div>)}</div></div><div className="detail-next"><a href="#products">← {t('back')}</a><a href="#contact">{t('request')} <ArrowUpRight size={16} /></a></div></main>;
+ }
+ 
+ function App() {
+   const [hash, setHash] = useState(window.location.hash);
+   const previousHash = useRef(window.location.hash);
+   useEffect(() => {
+     const savedScroll = () => Number(sessionStorage.getItem('sofine-home-scroll') || 0);
+     const saveHomeScroll = () => sessionStorage.setItem('sofine-home-scroll', String(window.scrollY));
+     const applyNavigation = action => window.setTimeout(() => {
++      if (action.type === 'preserve') return;
+       if (action.type === 'restore' || action.type === 'top') {
+         window.scrollTo({ top: action.type === 'restore' ? action.top : 0, behavior: 'auto' });
+       } else {
+         document.getElementById(action.id)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+       }
+     }, 0);
+     const onHashChange = () => {
+       const nextHash = window.location.hash;
+       const previous = previousHash.current;
+       if (isHomeRoute(previous) && !isHomeRoute(nextHash)) saveHomeScroll();
+diff --git a/src/scroll-navigation.js b/src/scroll-navigation.js
+index 6dd6993..eadc854 100644
+--- a/src/scroll-navigation.js
++++ b/src/scroll-navigation.js
+@@ -1,19 +1,28 @@
+ const HOME_ANCHORS = new Set(['#products', '#technology', '#company', '#contact'])
+ 
+ const isDetailRoute = hash => hash.startsWith('#product=') || hash.startsWith('#category=')
+ 
++const getCategory = hash => {
++  if (!hash.startsWith('#category=')) return ''
++  return new URLSearchParams(hash.slice(1)).get('category') || ''
++}
++
+ export function decideHashNavigation({ previousHash = '', nextHash = '', savedHomeScroll = 0 }) {
+   if (nextHash === '#top' || !nextHash) return { type: 'top' }
+ 
+   if (nextHash === '#products' && isDetailRoute(previousHash)) {
+     return { type: 'restore', top: Math.max(0, Number(savedHomeScroll) || 0) }
+   }
+ 
+   if (HOME_ANCHORS.has(nextHash)) return { type: 'anchor', id: nextHash.slice(1) }
+ 
++  const previousCategory = getCategory(previousHash)
++  const nextCategory = getCategory(nextHash)
++  if (previousCategory && previousCategory === nextCategory) return { type: 'preserve' }
++
+   return { type: 'top' }
+ }
+ 
+ export function isHomeRoute(hash = '') {
+   return !isDetailRoute(hash) && hash !== '#admin'
+ }

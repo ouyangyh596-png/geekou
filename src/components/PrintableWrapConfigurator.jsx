@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { englishSiteContent } from '../content/site-content.js'
+import { useLanguage } from '../language.js'
 import {
   DEFAULT_PRINT_PLACEMENT,
   inspectArtworkFile,
@@ -8,9 +8,10 @@ import {
 } from '../printable-wrap-state.js'
 import PrintableWrapViewer from './PrintableWrapViewer.jsx'
 
-const copy = englishSiteContent.cybertruck.printableWrap
+
 
 export default function PrintableWrapConfigurator() {
+  const copy = useLanguage().content.cybertruck.printableWrap
   const [artworkUrl, setArtworkUrl] = useState('')
   const [placement, setPlacement] = useState(() => ({ ...DEFAULT_PRINT_PLACEMENT }))
   const [finish, setFinish] = useState('glossy')
@@ -46,7 +47,7 @@ export default function PrintableWrapConfigurator() {
     const requestId = uploadRequestRef.current + 1
     uploadRequestRef.current = requestId
     uploadPendingRef.current = true
-    const validation = validateArtworkFile(file)
+    const validation = validateArtworkFile(file, copy.validation)
     if (!validation.valid) {
       setArtworkStatus('error')
       setError(validation.message)
@@ -56,7 +57,7 @@ export default function PrintableWrapConfigurator() {
 
     setArtworkStatus('loading')
     setError('')
-    const inspection = await inspectArtworkFile(file)
+    const inspection = await inspectArtworkFile(file, undefined, copy.validation)
     if (requestId !== uploadRequestRef.current) return
     if (!inspection.valid) {
       setArtworkStatus('error')
@@ -93,10 +94,10 @@ export default function PrintableWrapConfigurator() {
       URL.revokeObjectURL(failedUrl)
       setArtworkUrl('')
       setArtworkStatus('error')
-      setError(message || copy.artworkLoadError)
+      setError(copy.artworkLoadError)
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
-  }, [])
+  }, [copy.artworkLoadError])
 
   const handleRemove = () => {
     uploadRequestRef.current += 1

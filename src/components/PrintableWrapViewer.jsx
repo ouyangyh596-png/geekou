@@ -3,6 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { Environment, Html, OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+import { useLanguage } from '../language.js'
 import { CYBERTRUCK_MODEL_PATH } from '../cybertruck-colours.js'
 import { createPrintableWrapInstance } from '../printable-wrap-scene.js'
 
@@ -140,11 +141,13 @@ class ViewerBoundary extends Component {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
   render() {
-    return this.state.failed ? <div className="viewer-error" role="status"><p>The 3D preview could not load.</p><button type="button" onClick={() => { useGLTF.clear(CYBERTRUCK_MODEL_PATH); this.setState({ failed: false }) }}>Try again</button><p>You can still configure your artwork while the preview reloads.</p></div> : this.props.children
+    return this.state.failed ? <div className="viewer-error" role="status"><p>{this.props.copy.error}</p><button type="button" onClick={() => { useGLTF.clear(CYBERTRUCK_MODEL_PATH); this.setState({ failed: false }) }}>{this.props.copy.retry}</button><p>{this.props.copy.printableWrap.errorHelp}</p></div> : this.props.children
   }
 }
 
 export default function PrintableWrapViewer({ artworkUrl, placement, finish, editMode, onPlacementChange, onArtworkStatusChange }) {
+  const { content } = useLanguage()
+  const copy = content.cybertruck
   const host = useRef()
   const activePointer = useRef(null)
   const [entered, setEntered] = useState(false)
@@ -202,12 +205,12 @@ export default function PrintableWrapViewer({ artworkUrl, placement, finish, edi
   }
 
   return <div ref={host} className="cybertruck-viewer printable-wrap-viewer"
-    role="region" aria-label="Interactive printable Cybertruck wrap preview"
+    role="region" aria-label={copy.printableWrap.viewerLabel}
     onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
     onPointerUp={clearPointer} onPointerCancel={clearPointer}
     style={{ touchAction: editMode === 'positionArtwork' ? 'none' : 'auto' }}>
-    <ViewerBoundary>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, .9], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={<Html center><span className="viewer-loading" role="status">Loading 3D preview…</span></Html>}>
+    <ViewerBoundary copy={copy}>{entered && <Canvas frameloop="demand" camera={{ position: [5, 2.2, .9], fov: 35 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
+      <Suspense fallback={<Html center><span className="viewer-loading" role="status">{copy.loading}</span></Html>}>
         <hemisphereLight intensity={1.2} color="#eef7ff" groundColor="#64716a" />
         <directionalLight position={[4, 6, 4]} intensity={2.4} color="#fff7eb" />
         <directionalLight position={[-4, 3, -3]} intensity={1.6} color="#c7deff" />

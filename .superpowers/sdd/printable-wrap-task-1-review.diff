@@ -1,0 +1,101 @@
+# Review package: 2886d18..f8a4a67
+
+## Commits
+f8a4a67 test: define printable wrap state
+
+## Files changed
+ package.json                          |  3 ++-
+ scripts/test-printable-wrap-state.mjs | 18 ++++++++++++++++++
+ src/printable-wrap-state.js           | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 1 deletion(-)
+
+## Diff
+diff --git a/package.json b/package.json
+index 4564213..6a57667 100644
+--- a/package.json
++++ b/package.json
+@@ -15,24 +15,25 @@
+     "test-scroll": "node scripts/test-scroll-navigation.mjs",
+     "test-header-directory": "node scripts/test-header-product-directory.mjs",
+     "test-request-validation": "node scripts/test-request-validation.mjs",
+     "test-api": "node scripts/test-api.mjs",
+     "test-media": "node scripts/test-media-manifest.mjs",
+     "test-product-media": "node scripts/test-product-media-semantics.mjs",
+     "test-home-media": "node scripts/test-home-media.mjs",
+     "test-product-wheel": "node scripts/test-product-wheel-navigation.mjs",
+     "test-category-media": "node scripts/test-category-media.mjs",
+     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",
++    "test-printable-wrap": "node scripts/test-printable-wrap-state.mjs",
+     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
+     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
+     "test-polish": "node scripts/test-site-polish.mjs",
+-    "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets"
++    "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-home-media && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets && pnpm test-printable-wrap"
+   },
+   "dependencies": {
+     "@react-three/drei": "^10.7.8",
+     "@react-three/fiber": "^9.7.0",
+     "@vitejs/plugin-react": "latest",
+     "lucide-react": "latest",
+     "react": "latest",
+     "react-dom": "latest",
+     "three": "^0.185.1",
+     "vite": "latest"
+diff --git a/scripts/test-printable-wrap-state.mjs b/scripts/test-printable-wrap-state.mjs
+new file mode 100644
+index 0000000..341c389
+--- /dev/null
++++ b/scripts/test-printable-wrap-state.mjs
+@@ -0,0 +1,18 @@
++import assert from 'node:assert/strict'
++import {
++  DEFAULT_PRINT_PLACEMENT,
++  finishMaterialSettings,
++  updatePrintPlacement,
++  validateArtworkFile,
++} from '../src/printable-wrap-state.js'
++
++assert.deepEqual(validateArtworkFile({ type: 'image/png', size: 2_000_000 }), { valid: true })
++assert.equal(validateArtworkFile({ type: 'image/svg+xml', size: 2_000 }).valid, false)
++assert.equal(validateArtworkFile({ type: 'image/jpeg', size: 16_000_000 }).valid, false)
++assert.deepEqual(DEFAULT_PRINT_PLACEMENT, { x: 0, y: 0, scale: 1, rotation: 0 })
++assert.equal(updatePrintPlacement(DEFAULT_PRINT_PLACEMENT, { scale: 8 }).scale, 2.5)
++assert.equal(updatePrintPlacement(DEFAULT_PRINT_PLACEMENT, { x: -8 }).x, -1)
++assert.equal(finishMaterialSettings('glossy').useGrain, false)
++assert.equal(finishMaterialSettings('matte').useGrain, true)
++
++console.log('Printable wrap state tests passed')
+diff --git a/src/printable-wrap-state.js b/src/printable-wrap-state.js
+new file mode 100644
+index 0000000..8bacec3
+--- /dev/null
++++ b/src/printable-wrap-state.js
+@@ -0,0 +1,28 @@
++export const DEFAULT_PRINT_PLACEMENT = Object.freeze({ x: 0, y: 0, scale: 1, rotation: 0 })
++
++const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value)))
++
++export function validateArtworkFile(file) {
++  if (!['image/png', 'image/jpeg', 'image/webp'].includes(file?.type)) {
++    return { valid: false, message: 'Choose a PNG, JPEG or WebP image.' }
++  }
++  if (!file.size || file.size > 12_000_000) {
++    return { valid: false, message: 'Choose an image smaller than 12 MB.' }
++  }
++  return { valid: true }
++}
++
++export function updatePrintPlacement(current, patch) {
++  return {
++    x: clamp(patch.x ?? current.x, -1, 1),
++    y: clamp(patch.y ?? current.y, -1, 1),
++    scale: clamp(patch.scale ?? current.scale, 0.35, 2.5),
++    rotation: clamp(patch.rotation ?? current.rotation, -180, 180),
++  }
++}
++
++export function finishMaterialSettings(finish) {
++  return finish === 'matte'
++    ? { roughness: 0.48, clearcoat: 0.12, clearcoatRoughness: 0.5, useGrain: true }
++    : { roughness: 0.12, clearcoat: 0.75, clearcoatRoughness: 0.08, useGrain: false }
++}

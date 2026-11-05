@@ -159,6 +159,7 @@ export const catalogProducts = [
     ['Application', 'Illuminated graphics; dry or wet application']
   ]),
 
+  // TODO: Supply verified differences between AF1810 and AF1850; source specs are currently identical.
   product('ppf', 'High-Clarity TPU Protection', 'AF1810', [
     ['Material', 'High-clarity TPU protection film'],
     ['Application', 'Paint protection with scratch resistance, self-healing, corrosion resistance, easy cleaning and gloss enhancement']

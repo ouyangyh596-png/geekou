@@ -7,37 +7,37 @@ const ARTWORK_DIMENSION_ERROR = 'Choose an image no larger than 8192 px per side
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value)))
 
-export function validateArtworkFile(file) {
+export function validateArtworkFile(file, messages = {}) {
   if (!['image/png', 'image/jpeg', 'image/webp'].includes(file?.type)) {
-    return { valid: false, message: 'Choose a PNG, JPEG or WebP image.' }
+    return { valid: false, message: messages.fileType || 'Choose a PNG, JPEG or WebP image.' }
   }
   if (!file.size || file.size > 12_000_000) {
-    return { valid: false, message: 'Choose an image smaller than 12 MB.' }
+    return { valid: false, message: messages.fileSize || 'Choose an image smaller than 12 MB.' }
   }
   return { valid: true }
 }
 
-export function validateArtworkDimensions(image) {
+export function validateArtworkDimensions(image, messages = {}) {
   const width = Number(image?.width)
   const height = Number(image?.height)
   if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || height <= 0) {
-    return { valid: false, message: ARTWORK_DECODE_ERROR }
+    return { valid: false, message: messages.decode || ARTWORK_DECODE_ERROR }
   }
   if (width > ARTWORK_MAX_EDGE || height > ARTWORK_MAX_EDGE || width * height > ARTWORK_MAX_PIXELS) {
-    return { valid: false, message: ARTWORK_DIMENSION_ERROR }
+    return { valid: false, message: messages.dimensionsError || ARTWORK_DIMENSION_ERROR }
   }
   return { valid: true }
 }
 
-export async function inspectArtworkFile(file, decodeImage = globalThis.createImageBitmap) {
-  if (typeof decodeImage !== 'function') return { valid: false, message: ARTWORK_DECODE_ERROR }
+export async function inspectArtworkFile(file, decodeImage = globalThis.createImageBitmap, messages = {}) {
+  if (typeof decodeImage !== 'function') return { valid: false, message: messages.decode || ARTWORK_DECODE_ERROR }
 
   let decodedImage
   try {
     decodedImage = await decodeImage(file)
-    return validateArtworkDimensions(decodedImage)
+    return validateArtworkDimensions(decodedImage, messages)
   } catch {
-    return { valid: false, message: ARTWORK_DECODE_ERROR }
+    return { valid: false, message: messages.decode || ARTWORK_DECODE_ERROR }
   } finally {
     decodedImage?.close?.()
   }

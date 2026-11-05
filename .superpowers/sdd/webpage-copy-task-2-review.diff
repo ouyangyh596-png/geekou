@@ -1,0 +1,236 @@
+# Review package: 813aae5..cf38bc1
+
+## Commits
+cf38bc1 feat: add decorative film category
+
+## Files changed
+ scripts/test-category-media.mjs | 14 ++++++++++++++
+ scripts/test-site-content.mjs   | 24 +++++++++++++++++++++++-
+ src/catalog.js                  |  9 ++++++---
+ src/content/site-content.js     |  8 ++++++++
+ src/media-manifest.js           |  5 +++++
+ 5 files changed, 56 insertions(+), 4 deletions(-)
+
+## Diff
+diff --git a/scripts/test-category-media.mjs b/scripts/test-category-media.mjs
+index c75c948..129594a 100644
+--- a/scripts/test-category-media.mjs
++++ b/scripts/test-category-media.mjs
+@@ -1,15 +1,29 @@
+ import assert from 'node:assert/strict';
+ import { readFile } from 'node:fs/promises';
++import { catalogProducts } from '../src/catalog.js';
++import { familyMedia } from '../src/media-manifest.js';
+ 
+ const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
+ const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
++const catalog = await readFile(new URL('../src/catalog.js', import.meta.url), 'utf8');
++
++assert.match(catalog, /'decorative-film': '\/media\/families\/interior-wall-decals\.webp'/, 'catalog includes Decorative Film family image metadata');
++assert.match(catalog, /'decorative-film': 'Decorative Film'/, 'catalog includes Decorative Film family title metadata');
++assert.match(catalog, /'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications\.'/,
++  'catalog includes the approved Decorative Film family description');
++assert.deepEqual(familyMedia['decorative-film'], {
++  hero: '/media/families/interior-wall-decals.webp',
++  preview: '/media/families/interior-wall-decals.webp',
++  alt: 'Interior bedroom with an installed botanical wall decal mural'
++});
++assert.equal(catalogProducts.some(product => product.category === 'decorative-film'), false, 'Decorative Film has no fabricated product record');
+ 
+ assert.match(
+   main,
+   /const media = familyMedia\[category\.slug\];/,
+   'CategoryPage reads its approved family media mapping'
+ );
+ assert.match(
+   main,
+   /className=\{'category-page-media category-page-media-' \+ category\.slug\}[\s\S]*?<img src=\{media\.hero\} alt=\{media\.alt\}/,
+   'CategoryPage renders the mapped hero image with family alt text'
+diff --git a/scripts/test-site-content.mjs b/scripts/test-site-content.mjs
+index 425e495..56a6a2c 100644
+--- a/scripts/test-site-content.mjs
++++ b/scripts/test-site-content.mjs
+@@ -37,21 +37,21 @@ function assertEditorSafeContent(value, location = 'englishSiteContent') {
+   }
+ }
+ 
+ const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck']
+ assert.deepEqual(Object.keys(englishSiteContent), sections)
+ for (const section of sections) assert.ok(englishSiteContent[section], `Missing ${section}`)
+ for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
+   assert.equal(typeof englishSiteContent.navigation[key], 'string')
+   assert.ok(englishSiteContent.navigation[key].trim())
+ }
+-for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals']) {
++for (const slug of ['one-way-vision', 'self-adhesive-vinyl', 'translucent-film', 'ppf', 'car-wrapping', 'overlaminate', 'cold-lamination', 'wall-decals', 'decorative-film']) {
+   assert.ok(englishSiteContent.categories[slug], `Missing category copy: ${slug}`)
+ }
+ assert.ok(englishSiteContent.home.heroTitle)
+ assert.ok(englishSiteContent.products.productLibrary)
+ assert.ok(englishSiteContent.cybertruck.title)
+ assert.equal(copy.en.products, englishSiteContent.navigation.products)
+ assert.equal(companyProfile.title, englishSiteContent.company.title)
+ assert.deepEqual(englishSiteContent.technology, {
+   kicker: 'THE SO-FINE DIFFERENCE',
+   title: 'Precision is\nthe foundation.',
+@@ -126,20 +126,42 @@ assert.equal(
+   englishSiteContent.categories['wall-decals'].intro,
+   'Decorative self-adhesive wall-covering materials that conform around 90\u00b0 corners without lifting, provide a customized and unique touch to any space.'
+ )
+ assert.deepEqual(
+   englishSiteContent.categories['wall-decals'].series,
+   [
+     { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
+     { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
+   ]
+ )
++assert.equal(
++  englishSiteContent.categories['decorative-film'].intro,
++  'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++)
++assert.deepEqual(englishSiteContent.categories['decorative-film'].series, [
++  {
++    name: 'Decorative Film',
++    description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++  }
++])
++assert.deepEqual(
++  brochureSeries['decorative-film'],
++  {
++    displayName: 'Decorative Film',
++    eyebrow: 'SO-FINE / DECORATIVE FILM',
++    intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
++    series: [[
++      'Decorative Film',
++      'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
++    ]]
++  }
++)
+ 
+ for (const modulePath of ['../src/language.js', '../src/content/company.js', '../src/brochure-data.js']) {
+   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
+   assert.match(source, /import\s*{\s*englishSiteContent\s*}/, `${modulePath} must import centralized English copy`)
+ }
+ for (const [modulePath, inlineCopy] of [
+   ['../src/main.jsx', ['SUPER CHROME FILM', 'Every layer is considered', 'Preview the finish across a Cybertruck surface']],
+   ['../src/components/PPFScrollSequence.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
+ ]) {
+   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
+diff --git a/src/catalog.js b/src/catalog.js
+index 869aeb4..666a277 100644
+--- a/src/catalog.js
++++ b/src/catalog.js
+@@ -1,19 +1,20 @@
+ const images = {
+   'one-way-vision': '/products/sf1413-1.jpg',
+   'self-adhesive-vinyl': '/products/sf2410-1.jpg',
+   'translucent-film': '/products/translucent-film-family.svg',
+   ppf: '/products/ppf-family.svg',
+   'car-wrapping': '/products/polymeric car wrapping film-1.jpg',
+   overlaminate: '/products/overlaminate-family.svg',
+   'cold-lamination': '/products/sf3180-1.jpg',
+-  'wall-decals': '/products/sf4001-1.jpg'
++  'wall-decals': '/products/sf4001-1.jpg',
++  'decorative-film': '/media/families/interior-wall-decals.webp'
+ }
+ 
+ const modelImages = {
+   SF1413: '/products/sf1413-1.jpg',
+   SF1865: '/products/sf1865-1.jpg',
+   SF1913: '/products/sf1913-1.jpg',
+   SF1914: '/products/sf1914-1.jpg',
+   SF2410: '/products/sf2410-1.jpg',
+   SF2610: '/products/sf2610-1.jpg',
+   SF3180: '/products/sf3180-1.jpg',
+@@ -25,32 +26,34 @@ const modelImages = {
+ }
+ 
+ const familyTitles = {
+   'one-way-vision': 'One Way Vision Film',
+   'self-adhesive-vinyl': 'Self-Adhesive Vinyl',
+   'translucent-film': 'Translucent Film',
+   ppf: 'Paint Protection Film',
+   'car-wrapping': 'Car Wrap Film',
+   overlaminate: 'Overlaminate Film',
+   'cold-lamination': 'Cold Lamination Film',
+-  'wall-decals': 'Wall Decals Self-Adhesive Material'
++  'wall-decals': 'Wall Decals Self-Adhesive Material',
++  'decorative-film': 'Decorative Film'
+ }
+ 
+ const familyDescriptions = {
+   'one-way-vision': 'Perforated printable film for vehicle, retail and building-glass graphics.',
+   'self-adhesive-vinyl': 'Self-adhesive vinyl for large-format digital printing applications.',
+   'translucent-film': 'Translucent polymeric PVC film for illuminated graphics.',
+   ppf: 'Automotive protection and finish film.',
+   'car-wrapping': 'High-conformability vehicle wrap film.',
+   overlaminate: 'Protective PVC overlaminate film for printed graphics.',
+   'cold-lamination': 'Cold lamination film for graphic protection.',
+-  'wall-decals': 'Decorative self-adhesive material for interior surfaces.'
++  'wall-decals': 'Decorative self-adhesive material for interior surfaces.',
++  'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+ }
+ 
+ const compatible = 'SOL / ESOL / UV / Latex'
+ const solventCompatible = 'SOL / ESOL / UV'
+ 
+ function product(category, group, model, specs, options = {}) {
+   const image = options.image ?? modelImages[model] ?? images[category]
+   return {
+     family: familyTitles[category], category, group, model,
+     title: options.title ?? familyTitles[category],
+diff --git a/src/content/site-content.js b/src/content/site-content.js
+index 57b0a79..16c9ae7 100644
+--- a/src/content/site-content.js
++++ b/src/content/site-content.js
+@@ -140,20 +140,28 @@ export const englishSiteContent = {
+       ]
+     },
+     'wall-decals': {
+       displayName: 'Wall Decals Self-Adhesive Material',
+       eyebrow: 'SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL',
+       intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting, provide a customized and unique touch to any space.',
+       series: [
+         { name: 'PVC-Coated Polyester Fabric', description: 'Universal ink compatible, 250gsm PVC-coated polyester fabric with textureed surface finish suitable for wall, floor and carpet application.' },
+         { name: '100% Polyester', description: '115gsm printable polyester fabric with textile structure, high-tack removable adhesive, alternative to traditional paint, wall paper renovation.' }
+       ]
++    },
++    'decorative-film': {
++      displayName: 'Decorative Film',
++      eyebrow: 'SO-FINE / DECORATIVE FILM',
++      intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
++      series: [
++        { name: 'Decorative Film', description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.' }
++      ]
+     }
+   },
+   products: {
+     choose: 'Choose a',
+     surface: 'surface.',
+     productLibrary: 'PRODUCT LIBRARY',
+     start: 'Start with a material family, then explore the exact models, specifications and images inside.',
+     productDetail: 'PRODUCT DETAIL',
+     specs: 'TECHNICAL SPECIFICATIONS',
+     made: 'Made to',
+diff --git a/src/media-manifest.js b/src/media-manifest.js
+index ddde2b7..7eb1b0d 100644
+--- a/src/media-manifest.js
++++ b/src/media-manifest.js
+@@ -39,12 +39,17 @@ export const familyMedia = {
+   },
+   'cold-lamination': {
+     hero: '/media/families/cold-lamination-film-roll.webp',
+     preview: '/media/families/cold-lamination-film-roll.webp',
+     alt: 'Film with release liner, representative cold-lamination material detail'
+   },
+   'wall-decals': {
+     hero: '/media/families/interior-wall-decals.webp',
+     preview: '/media/families/interior-wall-decals.webp',
+     alt: 'Interior bedroom with an installed botanical wall decal mural'
++  },
++  'decorative-film': {
++    hero: '/media/families/interior-wall-decals.webp',
++    preview: '/media/families/interior-wall-decals.webp',
++    alt: 'Interior bedroom with an installed botanical wall decal mural'
+   }
+ };

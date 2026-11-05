@@ -57,7 +57,7 @@ assert.match(source, /onPlacementChange\(\{\s*x:\s*nextX,\s*y:\s*nextY\s*\}\)/,
   'pointer movement must callback position only, preserving slider-owned scale and rotation')
 assert.match(source, /Math\.min\(1, Math\.max\(-1,/,
   'pointer placement must stay within the Task 1 bounds')
-assert.match(source, /aria-label="Interactive printable Cybertruck wrap preview"/,
+assert.match(source, /aria-label=\{copy.printableWrap.viewerLabel\}/,
   'the Three.js stage needs an accessible name')
 assert.match(source, /role="region"/,
   'the stage label must be exposed through a nameable landmark role')

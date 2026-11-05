@@ -24,11 +24,11 @@ assert.ok(component, 'the printable configurator component must exist')
 assert.match(component, /type="file"/)
 assert.match(component, /accept="image\/png,image\/jpeg,image\/webp"/,
   'the local chooser must advertise only the supported artwork formats')
-assert.match(component, /validateArtworkFile\(file\)/,
+assert.match(component, /validateArtworkFile\(file, copy.validation\)/,
   'selected artwork must pass through the Task 1 validator')
-assert.match(component, /await inspectArtworkFile\(file\)/,
+assert.match(component, /await inspectArtworkFile\(file, undefined, copy.validation\)/,
   'accepted file metadata must be decoded before an object URL is created')
-assert.ok(component.indexOf('await inspectArtworkFile(file)') < component.indexOf('URL.createObjectURL(file)'),
+assert.ok(component.indexOf('await inspectArtworkFile(file, undefined, copy.validation)') < component.indexOf('URL.createObjectURL(file)'),
   'dimension preflight must complete before TextureLoader can receive an object URL')
 assert.match(component, /URL\.createObjectURL\(file\)/,
   'accepted artwork must use a local object URL')

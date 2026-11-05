@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { brochureSeries } from '../src/brochure-data.js';
 import { catalogProducts } from '../src/catalog.js';
 import { familyMedia } from '../src/media-manifest.js';
+import { specificationValue, numericSpecificationColumns } from '../src/product-specs.js';
 
 const main = await readFile(new URL('../src/main.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
@@ -38,11 +39,10 @@ assert.match(
   /const media = familyMedia\[category\.slug\];/,
   'CategoryPage reads its approved family media mapping'
 );
-assert.match(
-  main,
-  /className=\{'category-page-media category-page-media-' \+ category\.slug\}[\s\S]*?<img src=\{media\.hero\} alt=\{media\.alt\}/,
-  'CategoryPage renders the mapped hero image with family alt text'
-);
+const mediaComponent = await readFile(new URL('../src/components/CategoryMedia.jsx', import.meta.url), 'utf8');
+assert.match(main, /<CategoryMedia key=\{category.slug\}/, 'media resets when category changes');
+assert.match(mediaComponent, /if \(!source \|\| failed\) return null/, 'missing and failed media render no container');
+assert.match(mediaComponent, /onError=\{\(\) => setFailed\(true\)\}/);
 assert.match(
   main,
   /\{items\.length > 0 && <ProductTable items=\{items\} \/>\}/,
@@ -53,7 +53,7 @@ assert.doesNotMatch(
   /href=\{'#product=' \+ item\.slug\}/,
   'product codes must not link to model detail pages'
 );
-assert.match(main, /<strong>\{item\.model\}<\/strong>/, 'product codes render as plain table text');
+assert.match(main, /<th scope="row">\{item\.model\}<\/th>/, 'product codes render as plain table text');
 assert.doesNotMatch(main, /function Detail\(/, 'model detail content must be removed');
 assert.doesNotMatch(main, /hash\.startsWith\('#product='\)/, 'model detail hash routes must be removed');
 assert.match(main, /href="#products"/, 'the all-families hash link remains available');
@@ -74,4 +74,15 @@ assert.match(
   'mobile category hero media uses a responsive aspect ratio'
 );
 
-console.log('PASS: validated category hero and product media semantics');
+const measurementRows = [
+  { specs: [['Thickness', '50 µm'], ['Weight', '120 g/m²'], ['Temperature', '-40 to +90 °C'], ['Strength', '>22 MPa (ISO 527)'], ['Finish', 'Glossy']] },
+  { specs: [['Thickness', '–'], ['Weight', '150 g/m²'], ['Temperature', '10 °C'], ['Strength', '24 MPa'], ['Finish', 'Matte']] }
+];
+assert.equal(specificationValue(measurementRows[1], 'Thickness'), 'N/A');
+assert.equal(specificationValue(measurementRows[1], 'Missing'), 'N/A');
+assert.equal(specificationValue({ specs: [['Empty', '  ']] }, 'Empty'), 'N/A');
+assert.deepEqual([...numericSpecificationColumns(measurementRows, ['Thickness', 'Weight', 'Temperature', 'Strength', 'Finish', 'Missing'])], ['Thickness', 'Weight', 'Temperature', 'Strength']);
+assert.match(catalog, /TODO:.*AF1810.*AF1850/, 'identical source specs remain marked for verified differences');
+assert.deepEqual(catalogProducts.find(item => item.model === 'AF1810').specs, catalogProducts.find(item => item.model === 'AF1850').specs, 'no model differences are invented');
+
+console.log('PASS: validated category media, source specs and numeric column formatting');

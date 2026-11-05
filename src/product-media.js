@@ -9,9 +9,17 @@ export function productImageAlt(product, image, viewIndex) {
     return `${product.family} family illustration, representative image for ${product.model}`;
   }
 
+  if (image === '/products/polymeric car wrapping film-1.jpg') return `${product.family} family photograph, representative image for ${product.model}`;
+
   if (viewIndex === undefined) {
     return `${product.model} — ${product.family} product image`;
   }
 
   return `${product.model} product view ${viewIndex + 1}`;
+}
+
+// Empty, placeholder-only and missing media never reserve a visual panel.
+export function categoryHero(media) {
+  const source = media?.hero;
+  return typeof source === 'string' && source.trim() && !familyFallbackImages.has(source) ? source : null;
 }

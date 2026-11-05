@@ -65,7 +65,7 @@ assert.deepEqual(englishSiteContent.technology, {
 })
 assert.deepEqual(englishSiteContent.company.paragraphs, [
   'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
-  'Our state-of-the-art production facilities with latest tchnology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with entensive coating expertise to gurantee superior output for customers.',
+  'Our state-of-the-art production facilities with latest technology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with extensive coating expertise to guarantee superior output for customers.',
   'Recognized as an Innovative Technology Enterprise, our teams remain committed to consistent quality and responsive service for signage and automotive-detailing industry.'
 ])
 assert.equal(capabilities[2][1], englishSiteContent.technology.capabilities[2].name)
@@ -119,7 +119,7 @@ assert.equal(englishSiteContent.categories['cast-wrap-vinyl'].displayName, 'Cast
 assert.deepEqual(englishSiteContent.categories['cast-wrap-vinyl'].series, [
   {
     name: 'White Printable Film',
-    description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and revets.'
+    description: 'Excellent dimensional stability, flexible 50mic thin cast PVC and air-release repositionable adhesive provides super conformability, perfectly fits compound curves, deep grooves and rivets.'
   },
   {
     name: 'Ultra Clear Printable Film',
@@ -204,7 +204,7 @@ for (const [modulePath, inlineCopy] of [
   ['../src/components/PPFScrollSequence.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
 ]) {
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
-  assert.match(source, /import\s*{\s*englishSiteContent\s*}/, `${modulePath} must import centralized English copy`)
+  assert.match(source, /useLanguage/, `${modulePath} must read reactive centralized content`)
   for (const copyValue of inlineCopy) {
     assert.ok(!source.includes(copyValue), `${modulePath} must not contain inline English copy: ${copyValue}`)
   }
