@@ -18,19 +18,42 @@ export function decideProductSwipe({ deltaX, deltaY }) {
   return { type: 'select', offset: deltaX < 0 ? 1 : -1 }
 }
 
-// One selection per wheel gesture, including long trackpad inertia tails.
-// Normal page scrolling is never cancelled by the caller.
+// A released gesture belongs to the page for its entire inertia tail.
+// A selected gesture stays captured, even if it has just reached an edge.
 export function createWheelGesture(idleMs = 240) {
-  let lastTime = -Infinity;
-  let consumed = false;
-  let accumulated = 0;
+  let lastTime = -Infinity
+  let state = 'pending'
+  let accumulated = 0
   return ({ index, count, deltaY, time }) => {
-    if (time - lastTime >= idleMs) { consumed = false; accumulated = 0; }
-    lastTime = time;
-    if (consumed || !Number.isFinite(deltaY)) return { type: 'ignore' };
-    accumulated += deltaY;
-    const action = decideProductWheel({ index, count, deltaY: accumulated });
-    if (action.type !== 'ignore') consumed = true;
-    return action;
-  };
+    if (time - lastTime >= idleMs) { state = 'pending'; accumulated = 0 }
+    lastTime = time
+    if (state === 'release') return { type: 'release' }
+    if (state === 'selected' || !Number.isFinite(deltaY) || deltaY === 0) return { type: 'ignore' }
+    if ((index === 0 && deltaY < 0) || (index === count - 1 && deltaY > 0)) {
+      state = 'release'
+      return { type: 'release' }
+    }
+    accumulated += deltaY
+    const action = decideProductWheel({ index, count, deltaY: accumulated })
+    if (action.type === 'select') state = 'selected'
+    return action
+  }
+}
+
+// Touch offsets are measured from contact start, so each contact selects once.
+export function createTouchGesture() {
+  let state = 'pending'
+  return ({ index, count, deltaX, deltaY }) => {
+    if (state === 'release') return { type: 'release' }
+    if (state === 'selected' || !Number.isFinite(deltaX) || !Number.isFinite(deltaY)) return { type: 'ignore' }
+    const delta = Math.abs(deltaX) > Math.abs(deltaY) ? -deltaX : -deltaY
+    if (!delta) return { type: 'ignore' }
+    if ((index === 0 && delta < 0) || (index === count - 1 && delta > 0)) {
+      state = 'release'
+      return { type: 'release' }
+    }
+    if (Math.abs(delta) < 48) return { type: 'ignore' }
+    state = 'selected'
+    return { type: 'select', index: index + Math.sign(delta) }
+  }
 }

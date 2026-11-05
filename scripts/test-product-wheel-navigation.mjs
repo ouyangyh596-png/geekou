@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { decideProductSwipe, decideProductWheel, createWheelGesture } from '../src/product-wheel-navigation.js'
+import { decideProductSwipe, decideProductWheel, createWheelGesture, createTouchGesture } from '../src/product-wheel-navigation.js'
 
 const mainSource = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
 
@@ -10,7 +10,7 @@ assert.match(mainSource, /<article ref=\{activeCardRef\} className="stack-card s
   'the interactive active-card branch uses the wheel target ref')
 assert.match(mainSource, /<a ref=\{activeCardRef\} href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active"/,
   'the linked active-card branch uses the wheel target ref')
-assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: true \}\)/,
+assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: false \}\)/,
   'wheel navigation listens on the active card')
 assert.match(mainSource, /wheelTarget\.removeEventListener\('wheel', handleWheel\)/,
   'wheel navigation cleans up the active-card listener')
@@ -63,5 +63,18 @@ const gesture = createWheelGesture();
 assert.deepEqual(gesture({index:3,count:11,deltaY:80,time:0}),{type:'select',index:4});
 for(let time=10;time<1800;time+=10) assert.equal(gesture({index:4,count:11,deltaY:80,time}).type,'ignore','inertia cannot select another card');
 assert.deepEqual(gesture({index:4,count:11,deltaY:80,time:2200}),{type:'select',index:5});
-const wheelHandler=mainSource.slice(mainSource.indexOf('const handleWheel'),mainSource.indexOf('const selectOffset'));
-assert.doesNotMatch(wheelHandler,/preventDefault/,'wheel never blocks page scrolling');
+assert.match(mainSource,/if \(event.cancelable\) event.preventDefault\(\)/,'carousel captures wheel input');
+
+const boundary = createWheelGesture();
+assert.deepEqual(boundary({index:9,count:11,deltaY:80,time:0}), {type:'select',index:10});
+assert.equal(boundary({index:10,count:11,deltaY:40,time:80}).type,'ignore','inertia remains captured after arriving at last card');
+assert.equal(boundary({index:10,count:11,deltaY:2,time:400}).type,'release','new outward gesture releases immediately at edge');
+assert.equal(boundary({index:10,count:11,deltaY:20,time:420}).type,'release','released gesture stays released');
+const touch = createTouchGesture();
+assert.equal(touch({index:3,count:11,deltaX:0,deltaY:-10}).type,'ignore');
+assert.deepEqual(touch({index:3,count:11,deltaX:0,deltaY:-70}),{type:'select',index:4});
+assert.equal(touch({index:4,count:11,deltaX:0,deltaY:-140}).type,'ignore','one selection per contact');
+assert.equal(createTouchGesture()({index:0,count:11,deltaX:0,deltaY:8}).type,'release');
+assert.equal(createTouchGesture()({index:10,count:11,deltaX:0,deltaY:-8}).type,'release');
+assert.deepEqual(createTouchGesture()({index:3,count:11,deltaX:-70,deltaY:10}),{type:'select',index:4});
+assert.match(mainSource,/addEventListener\('touchmove', handleTouchMove, \{ passive: false \}\)/);

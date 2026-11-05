@@ -104,6 +104,43 @@ async function checkCarousel(page) {
   await page.locator('.stack-selector').focus();
   await page.keyboard.press('ArrowLeft');
   await page.waitForFunction(before => document.querySelector('.stack-card-active .stack-index').textContent === before, initial);
+  // Real wheel input must change a card without moving the document.
+  await page.locator('.carousel-dots button').nth(4).click();
+  await page.locator('.stack-selector').scrollIntoViewIfNeeded();
+  await page.locator('.stack-card-active').hover();
+  await page.waitForTimeout(300);
+  const scrollBefore = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel(0, 80);
+  await page.waitForFunction(() => document.querySelectorAll('.carousel-dots button')[5].getAttribute('aria-pressed') === 'true');
+  for (let tick = 0; tick < 5; tick += 1) {
+    await page.mouse.wheel(0, 40);
+    await page.waitForTimeout(30);
+  }
+  assert.equal(await page.locator('.carousel-dots button').nth(5).getAttribute('aria-pressed'), 'true', 'inertia selects only one card');
+  assert.ok(Math.abs(await page.evaluate(() => window.scrollY) - scrollBefore) <= 1, 'captured wheel must not scroll the page');
+  await page.waitForTimeout(300);
+  await page.locator('.carousel-dots button').last().click();
+  await page.locator('.stack-card-active').hover();
+  const boundaryBefore = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel(0, 100);
+  await page.waitForFunction(before => window.scrollY > before, boundaryBefore);
+  // Native cancelable touchmove verifies the event wiring independently of wheel.
+  await page.locator('.carousel-dots button').nth(4).click();
+  const touchResult = await page.locator('.stack-card-active').evaluate(card => {
+    const fire = (type, y) => {
+      const contact = new Touch({ identifier: 1, target: card, clientX: 100, clientY: y });
+      const event = new TouchEvent(type, { bubbles: true, cancelable: true, touches: type === 'touchend' ? [] : [contact], changedTouches: [contact] });
+      card.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    fire('touchstart', 200);
+    const captured = fire('touchmove', 130);
+    fire('touchmove', 70);
+    fire('touchend', 70);
+    return captured;
+  });
+  assert.equal(touchResult, true, 'touchmove must be captured before document scrolling');
+  await page.waitForFunction(() => document.querySelectorAll('.carousel-dots button')[5].getAttribute('aria-pressed') === 'true');
   for (const side of await page.locator('.stack-card-prev, .stack-card-next').all()) {
     const transform = await side.evaluate(element => getComputedStyle(element).transform);
     // Rotation/skew appears in off-diagonal entries; pure scale/translation stays axis aligned.
