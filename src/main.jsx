@@ -228,7 +228,6 @@ function ProductShowcase() {
   const activeCardRef = useRef(null);
   const carouselRef = useRef(null);
   const selectedIndexRef = useRef(0);
-  const shuffleBlockedRef = useRef(false);
   const wheelGesture = useRef(createWheelGesture());
   useEffect(() => {
     // Keep the listeners on a stable ancestor when the active card changes tag.
@@ -239,13 +238,12 @@ function ProductShowcase() {
       if (action.type === 'release') return;
       if (event.cancelable) event.preventDefault();
       if (action.type !== 'select') return;
-      selectedIndexRef.current = action.index;
-      setSelectedIndex(action.index);
+      selectIndex(action.index);
       setGestureHintDismissed(true);
     };
     const handleWheel = event => {
       // Preserve browser pinch-to-zoom.
-      if (event.ctrlKey) return;
+      if (event.ctrlKey || !activeCardRef.current?.contains(event.target)) return;
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
       const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
       const action = wheelGesture.current({ index: selectedIndexRef.current, count: categories.length, deltaY: delta * unit, time: performance.now() });
@@ -266,32 +264,31 @@ function ProductShowcase() {
       applyGesture(event, action);
     };
     const handleTouchEnd = () => { touch = null; };
-    wheelTarget.addEventListener('wheel', handleWheel, { passive: false });
+    wheelTarget.addEventListener('wheel', handleWheel, { passive: false, capture: true });
     wheelTarget.addEventListener('touchstart', handleTouchStart, { passive: true });
-    wheelTarget.addEventListener('touchmove', handleTouchMove, { passive: false });
+    wheelTarget.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
     wheelTarget.addEventListener('touchend', handleTouchEnd);
     wheelTarget.addEventListener('touchcancel', handleTouchEnd);
     return () => {
-      wheelTarget.removeEventListener('wheel', handleWheel);
+      wheelTarget.removeEventListener('wheel', handleWheel, true);
       wheelTarget.removeEventListener('touchstart', handleTouchStart);
-      wheelTarget.removeEventListener('touchmove', handleTouchMove);
+      wheelTarget.removeEventListener('touchmove', handleTouchMove, true);
       wheelTarget.removeEventListener('touchend', handleTouchEnd);
       wheelTarget.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [categories.length]);
   useEffect(() => () => window.clearTimeout(shuffleTimer.current), []);
-  const selectOffset = offset => {
+  const selectIndex = nextIndex => {
+    if (nextIndex === selectedIndexRef.current) return;
     window.clearTimeout(shuffleTimer.current);
-    shuffleBlockedRef.current = true;
     setIsShuffling(true);
-    const nextIndex = (selectedIndexRef.current + offset + categories.length) % categories.length;
     selectedIndexRef.current = nextIndex;
     setSelectedIndex(nextIndex);
     shuffleTimer.current = window.setTimeout(() => {
-      shuffleBlockedRef.current = false;
       setIsShuffling(false);
     }, 650);
   };
+  const selectOffset = offset => selectIndex((selectedIndexRef.current + offset + categories.length) % categories.length);
   const handleKeyDown = event => {
     if (event.target.closest('input, select, textarea, .cybertruck-viewer')) return;
     if (event.key === 'ArrowLeft') {
@@ -310,10 +307,10 @@ function ProductShowcase() {
   };
 
   const activeCard = <div className={'stack-card-content' + (isClassicColours ? ' stack-card-content-interactive' : '')} key={selectedCategory.slug}>
-    {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="lazy" decoding="async" />}
+    {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="eager" decoding="async" />}
     <div className="stack-card-copy"><strong>{selectedCategory.name.split(' ').slice(0, -1).join(' ')} <em>{selectedCategory.name.split(' ').at(-1)}</em></strong><small>{selectedCategory.description}</small>{isClassicColours && <div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-pressed={selectedColour === colour.hex} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}{isClassicColours ? <a className="stack-cta" href={'#category=' + selectedCategory.slug}>{content.products.exploreProducts} <ArrowUpRight size={20} /></a> : <span className="stack-cta">{content.products.exploreProducts} <ArrowUpRight size={20} /></span>}</div>
   </div>;
-  return <section className="showcase category-showcase" id="products"><div className="showcase-head container"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div ref={carouselRef} className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article ref={activeCardRef} className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a ref={activeCardRef} href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>{content.products.wheelHint}</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>{content.products.swipeHint}</span></div></div><div className="carousel-controls container"><button type="button" aria-label={content.products.previousFamily} onClick={() => selectOffset(-1)}><ArrowLeft size={20} /></button><div className="carousel-dots">{categories.map((category,index) => <button key={category.slug} type="button" aria-label={`${content.products.selectPrefix} ${category.name}`} aria-pressed={index === selectedIndex} onClick={() => selectOffset(index - selectedIndexRef.current)}><span /></button>)}</div><button type="button" aria-label={content.products.nextFamily} onClick={() => selectOffset(1)}><ArrowRight size={20} /></button></div></section>;
+  return <section className="showcase category-showcase" id="products"><div className="showcase-head container"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div ref={carouselRef} className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article ref={activeCardRef} key={selectedCategory.slug} className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a ref={activeCardRef} href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" key={selectedCategory.slug} onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>{content.products.wheelHint}</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>{content.products.swipeHint}</span></div></div><div className="carousel-controls container"><button type="button" aria-label={content.products.previousFamily} onClick={() => selectOffset(-1)}><ArrowLeft size={20} /></button><div className="carousel-dots">{categories.map((category,index) => <button key={category.slug} type="button" aria-label={`${content.products.selectPrefix} ${category.name}`} aria-pressed={index === selectedIndex} onClick={() => selectOffset(index - selectedIndexRef.current)}><span /></button>)}</div><button type="button" aria-label={content.products.nextFamily} onClick={() => selectOffset(1)}><ArrowRight size={20} /></button></div></section>;
 }
 
 function ProductTable({ items }) {

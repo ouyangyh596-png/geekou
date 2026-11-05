@@ -6,13 +6,17 @@ const mainSource = readFileSync(new URL('../src/main.jsx', import.meta.url), 'ut
 
 assert.match(mainSource, /const activeCardRef = useRef\(null\)/,
   'the active product card owns a dedicated wheel target ref')
-assert.match(mainSource, /<article ref=\{activeCardRef\} className="stack-card stack-card-active stack-card-interactive">/,
-  'the interactive active-card branch uses the wheel target ref')
+const showcase = mainSource.slice(mainSource.indexOf('function ProductShowcase'), mainSource.indexOf('function ProductTable'));
+assert.match(showcase, /<CybertruckViewer/, 'Chrome retains its interactive viewer');
+assert.match(showcase, /isShuffling.*is-shuffling/s, 'shuffle state drives the class');
+assert.match(showcase, /selectIndex\(action.index\)/, 'gestures use the same animated selection as controls');
+assert.match(showcase, /cybertruck-swatches/, 'classic colour controls remain');
+
 assert.match(mainSource, /<a ref=\{activeCardRef\} href=\{'#category=' \+ selectedCategory\.slug\} className="stack-card stack-card-active"/,
   'the linked active-card branch uses the wheel target ref')
-assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: false \}\)/,
+assert.match(mainSource, /wheelTarget\.addEventListener\('wheel', handleWheel, \{ passive: false, capture: true \}\)/,
   'wheel navigation listens on the active card')
-assert.match(mainSource, /wheelTarget\.removeEventListener\('wheel', handleWheel\)/,
+assert.match(mainSource, /wheelTarget\.removeEventListener\('wheel', handleWheel, true\)/,
   'wheel navigation cleans up the active-card listener')
 assert.doesNotMatch(mainSource, /showcase\.addEventListener\('wheel'/,
   'the full product selector does not capture wheel navigation')
@@ -77,4 +81,17 @@ assert.equal(touch({index:4,count:11,deltaX:0,deltaY:-140}).type,'ignore','one s
 assert.equal(createTouchGesture()({index:0,count:11,deltaX:0,deltaY:8}).type,'release');
 assert.equal(createTouchGesture()({index:10,count:11,deltaX:0,deltaY:-8}).type,'release');
 assert.deepEqual(createTouchGesture()({index:3,count:11,deltaX:-70,deltaY:10}),{type:'select',index:4});
-assert.match(mainSource,/addEventListener\('touchmove', handleTouchMove, \{ passive: false \}\)/);
+assert.match(mainSource,/addEventListener\('touchmove', handleTouchMove, \{ passive: false, capture: true \}\)/);
+
+for (const direction of [1, -1]) {
+  const wheel = createWheelGesture();
+  let index = direction === 1 ? 0 : 10;
+  for(let step=0;step<10;step++) {
+    const action = wheel({index,count:11,deltaY:direction*80,time:step*500});
+    assert.deepEqual(action,{type:'select',index:index+direction});
+    index=action.index;
+    assert.equal(wheel({index,count:11,deltaY:direction*20,time:step*500+50}).type,'ignore');
+  }
+  assert.equal(wheel({index,count:11,deltaY:direction*80,time:5500}).type,'release');
+}
+console.log('All 11 families forward/backward and edge inertia passed');
