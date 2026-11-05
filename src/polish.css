@@ -411,3 +411,82 @@ p { line-height:1.6; }
   .stack-selector { padding-block:0; }
   .stack-card-active,.stack-card-content { min-height:480px; }
 }
+
+/* PPF call to action: a tactile pill with a contained fill sweep. */
+.ppf-explore-button { position:relative; isolation:isolate; overflow:hidden; display:inline-flex; align-items:center; justify-content:center; gap:12px; min-height:46px; margin-top:12px; padding:12px 24px; border:1px solid #8dc8ef; border-radius:999px; color:#fff; font-size:14px; font-weight:600; text-decoration:none; transition:color .25s,box-shadow .25s,transform .15s; }
+.ppf-explore-button::before { content:''; position:absolute; z-index:-1; inset:0; background:#c6eaff; transform:translateX(-102%); transition:transform .3s ease; }
+.ppf-explore-button svg { transition:transform .3s ease; }
+.ppf-explore-button:hover { color:#071626; box-shadow:0 0 28px #82c9fa40; }
+.ppf-explore-button:hover::before { transform:translateX(0); }
+.ppf-explore-button:hover svg { transform:translate(2px,-2px); }
+.ppf-explore-button:focus-visible { outline:3px solid #fff; outline-offset:5px; box-shadow:0 0 24px #82c9fa60; }
+.ppf-explore-button:active { transform:scale(.97); box-shadow:inset 0 2px 8px #07162640; }
+.ppf-sequence-canvas { max-width:100%; max-height:100%; aspect-ratio:auto; }
+@media(prefers-reduced-motion:reduce) {
+  .ppf-explore-button,.ppf-explore-button::before,.ppf-explore-button svg { transition:none; }
+}
+
+/* Carousel refresh: one opaque clipping box and one caption scrim. */
+.stack-selector { padding-block:32px 20px; }
+.stack-card { border-radius:28px; }
+.stack-card-active { display:block; isolation:isolate; overflow:hidden; background:#0b1f3a; }
+.stack-card-active::after { content:none; }
+.stack-card-prev,.stack-card-next { visibility:visible; opacity:1; }
+.stack-card-prev > span,.stack-card-next > span { display:none; }
+.stack-card-content { min-height:560px; padding:32px; animation:none; }
+.stack-card-content > img { z-index:0; transform:none; filter:none; }
+.stack-card-content::after { z-index:1; background:linear-gradient(180deg,transparent 20%,rgba(5,20,36,.35) 45%,rgba(5,20,36,.96) 100%); }
+.stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { padding:0; background:none; border-radius:0; }
+.stack-card-content .stack-card-copy { z-index:2; }
+.stack-card-content small { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+.stack-card-content .stack-cta { align-self:flex-start; padding:10px 16px; border:1px solid #ffffff70; border-radius:999px; background:#ffffff12; }
+.product-gesture-hint { position:relative; inset:auto; transform:none; display:flex; justify-content:center; margin:24px auto 0; min-height:28px; }
+.product-gesture-hint.is-hidden { transform:none; }
+@media(max-width:800px) {
+  .stack-selector { margin-block:24px 12px; padding-block:0; }
+  .stack-card { border-radius:20px; }
+  .stack-card-active,.stack-card-content { min-height:480px; }
+  .stack-card-content { padding:24px; }
+  .stack-card-content:not(.stack-card-content-interactive) .stack-card-copy { padding:0; }
+  .product-gesture-hint { margin-top:20px; letter-spacing:.08em; }
+}
+
+@keyframes carousel-image-in { from { opacity:.65; } to { opacity:1; } }
+@media(prefers-reduced-motion:no-preference) {
+  .stack-card-content > img { animation:carousel-image-in 220ms ease-out; }
+}
+
+/* Round 2: a fixed studio stage above a separate, readable caption. */
+.stack-card-active,.stack-card-content { min-height:620px; }
+.stack-card-content-interactive {
+  display:grid; grid-template-rows:280px 1fr; gap:0; padding:0;
+  background:radial-gradient(ellipse at 50% 12%,#7793ac70,transparent 55%),
+    linear-gradient(165deg,transparent 26%,#b5d6ef18 27%,transparent 37%),
+    linear-gradient(180deg,#20384e 0%,#496174 36%,#243d52 45%,#0b1f3a 68%);
+}
+.stack-card-content-interactive .cybertruck-viewer {
+  position:relative; inset:auto; height:280px; min-height:280px; border-radius:0;
+  background:radial-gradient(ellipse at 50% 86%,#a3cee52b,transparent 58%);
+}
+.stack-card-content-interactive .stack-card-copy { padding:24px 32px 32px; align-self:end; min-width:0; }
+.stack-card-content-interactive .cybertruck-swatches { flex-wrap:wrap; overflow:visible; gap:8px; }
+.stack-card-content-interactive .cybertruck-swatches button { width:28px; height:28px; border:3px solid transparent; }
+.stack-card-content-interactive .cybertruck-swatches button.is-selected { outline:2px solid #b9e1ff; outline-offset:2px; }
+.stack-card-content-interactive .viewer-gesture-hint { color:#16324a; }
+@keyframes carousel-shuffle { 0%,100% { transform:none; } 30% { transform:translateX(-12px) rotate(-1deg) scale(.985); } 65% { transform:translateX(9px) rotate(.7deg); } }
+@keyframes carousel-stack-left { 0%,100% { transform:translateY(-50%) scale(.9); } 40% { transform:translate(-16px,-50%) rotate(-3deg) scale(.9); } }
+@keyframes carousel-stack-right { 0%,100% { transform:translateY(-50%) scale(.9); } 40% { transform:translate(16px,-50%) rotate(3deg) scale(.9); } }
+@media(prefers-reduced-motion:no-preference) {
+  .stack-selector.is-shuffling .stack-card-active { animation:carousel-shuffle 650ms var(--motion-ease); }
+  .stack-selector.is-shuffling .stack-card-prev { animation:carousel-stack-left 650ms var(--motion-ease); }
+  .stack-selector.is-shuffling .stack-card-next { animation:carousel-stack-right 650ms var(--motion-ease); }
+}
+@media(max-width:800px) {
+  .stack-card-active,.stack-card-content { min-height:700px; }
+  .stack-card-content-interactive { grid-template-rows:260px 1fr; padding:0; }
+  .stack-card-content-interactive .cybertruck-viewer { height:260px; min-height:260px; }
+  .stack-card-content-interactive .stack-card-copy { padding:20px 24px 24px; }
+}
+@media(prefers-reduced-motion:reduce) { .stack-selector.is-shuffling .stack-card { animation:none; } }
+
+.stack-card-content-interactive .viewer-placeholder { padding:0; }
