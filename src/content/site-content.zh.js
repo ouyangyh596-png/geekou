@@ -4,7 +4,7 @@ export const chineseSiteContent = {
   tvc:{kicker:'SO-FINE / 品牌广告',title:'每一面，都出色。', subtitle:'汽车、店面、标识与室内薄膜：保护、改色与焕新。',watch:'观看完整广告',filmTitle:'SO-FINE — 完整广告',close:'关闭广告',unsupported:'您的浏览器不支持视频播放。'},
   heroTitle:'超级电镀膜',heroAction:'探索产品',heroSubtitle:'精密制造的薄膜材料，服务于印刷、车身改色与表面防护。',heroVideoLabel:'SO-FINE 制造工厂',companyVideoLabel:'SO-FINE 工厂航拍',companyVideoCaption:'SO-FINE 工厂 / 航拍',
   materialKicker:'材料应用',materialTitle:'多种空间，\n同样出色。',materialItems:[{name:'01 / 材料细节',description:'红色自粘材料卷细节'},{name:'02 / 发光标识',description:'夜间商店灯箱与背光窗贴'},{name:'03 / 汽车饰面',description:'户外哑光红色贴膜跑车'}],
-  ppfSequence:{presentationLabel:'漆面保护膜动态展示',kicker:'SO-FINE / 漆面保护膜',titleLead:'精密防护',titleEmphasis:'随形而动。',description:'兼顾清晰度、韧性与精密贴合，让每一处车身曲面得到保护。',action:'探索漆面保护膜',canvasLabelPrefix:'漆面保护膜渲染帧',progressLabelPrefix:'第',progressLabelInfix:'帧，共'}
+  ppfSequence:{presentationLabel:'漆面保护膜动态展示',kicker:'SO-FINE / 漆面保护膜',titleLead:'AUTOFACE',titleEmphasis:'PPF',description:'兼顾清晰度、韧性与精密贴合，让每一处车身曲面得到保护。',action:'探索漆面保护膜',canvasLabelPrefix:'漆面保护膜渲染帧',progressLabelPrefix:'第',progressLabelInfix:'帧，共'}
  },
  technology:{kicker:'SO-FINE 的优势',title:'精密，\n是一切的基础。',introduction:'从原材料选择到最终检验，每一层都经过认真考量。',capabilities:[{name:'成立于 2005 年',description:'深耕自粘材料领域二十年'},{name:'研发与质量控制',description:'专门的实验室检测与严格管控的生产流程'},{name:'一体化运营',description:'覆盖原料处理、涂布工艺、制造与服务'},{name:'应用经验',description:'为数码印刷、标识及汽车美容提供材料方案'}]},
  company:{eyebrow:'SO-FINE / 成立于 2005 年',title:'20 年工业制造经验。',titleLead:'20 年工业制造',titleEmphasis:'经验。',metricLabels:['成立年份','工厂面积','年产能','出口国家数'],metricPending:'待确认',paragraphs:['SO-FINE 成立于 2005 年，现已发展成为集自粘材料加工、制造、科研、销售与服务于一体的企业集团。','我们将先进的生产设施、完善的研发实验室和质量控制体系，与精选的国内外原材料及丰富的涂布经验相结合，为客户提供稳定的产品品质。','作为创新型科技企业，我们的团队持续为标识和汽车美容行业提供稳定的质量与及时的服务。']},

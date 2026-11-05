@@ -21,7 +21,7 @@
     "test-home-media": "node scripts/test-home-media.mjs",
     "test-tvc": "node scripts/test-tvc.mjs",
     "test-factory-refresh": "node scripts/test-factory-refresh.mjs",
-    "test-ppf": "node scripts/test-ppf-sequence.mjs && node scripts/test-ppf-scroll-sequence.mjs",
+    "test-ppf": "node scripts/test-ppf-playback.mjs && node scripts/test-ppf-sequence.mjs && node scripts/test-ppf-scroll-sequence.mjs",
     "test-product-wheel": "node scripts/test-product-wheel-navigation.mjs",
     "test-category-media": "node scripts/test-category-media.mjs",
     "test-accessibility-assets": "node scripts/test-accessibility-assets.mjs",

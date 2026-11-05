@@ -212,8 +212,8 @@ for (const [modulePath, inlineCopy] of [
 assert.deepEqual(englishSiteContent.home.ppfSequence, {
   presentationLabel: 'PPF product motion presentation',
   kicker: 'SO-FINE / PPF SYSTEM',
-  titleLead: 'Protection',
-  titleEmphasis: 'in motion.',
+  titleLead: 'AUTOFACE',
+  titleEmphasis: 'PPF',
   description: 'Paint protection film engineered for clarity, resilience and a precise finish across every curve.',
   action: 'Explore PPF',
   canvasLabelPrefix: 'SO-FINE paint protection film rendering frame',

@@ -15,7 +15,7 @@ assert.match(styles, /\.ppf-sequence[^}]*background:#0b3154/)
 assert.match(styles, /\.ppf-sequence-stage[^}]*width:100%/)
 assert.match(styles, /\.ppf-sequence-inner[^}]*position:relative/)
 assert.match(styles, /\.ppf-sequence-sticky\{[^}]*position:sticky/)
-assert.match(component, /PPF_SEQUENCE\.forEach/)
+assert.match(component, /activeLoads < 4/)
 assert.match(component, /ppf-sequence-copy--top/)
 assert.match(styles, /\.ppf-sequence-copy--top[^}]*position:relative/)
 assert.match(styles, /\.ppf-sequence-canvas[^}]*mix-blend-mode:screen/)
@@ -26,47 +26,83 @@ assert.match(polish, /\.ppf-sequence-copy--top h2[^}]*color:white/)
 assert.match(polish, /@media\(max-width:800px\)[\s\S]*?\.ppf-sequence-inner[^}]*grid-template-columns:1fr/)
 assert.match(polish, /@media\(prefers-reduced-motion:reduce\)[^}]*\.ppf-sequence-track[^}]*height:auto/)
 
-// Late loading frames must not replace the current still in reduced motion.
-const images = []
-const drawn = []
-const MockImage = class { constructor() { images.push(this) } }
-const preloadSource = component.slice(component.indexOf('function preloadFrame('), component.indexOf('export default'))
-const preload = new Function('Image', 'PPF_SEQUENCE', 'drawFrame', `${preloadSource}; return preloadFrame`)(
-  MockImage, Array.from({ length: 115 }, (_, index) => `frame-${index}`), (_, image) => drawn.push(image),
-)
-const frames = new Map()
-const ready = { current: 70, callback() {} }
-preload(0, frames, {}, ready)
-preload(70, frames, {}, ready)
-images[1].onload()
-images[0].onload()
-assert.deepEqual(drawn, [images[1]], 'late first frame must not overwrite static frame 70')
-assert.equal(preload(70, frames, {}, ready), images[1], 'reuse cached images')
-console.log('PPF scroll sequence structure PASS')
-
-// Exercise the component's actual scroll update in both directions, including section boundaries.
-const updateSource = component.slice(component.indexOf('    const update = () => {'), component.indexOf('    const onScroll ='))
-let top = 900
-let selectedFrame
-let presence
-const section = {
-  offsetHeight: 2340,
-  getBoundingClientRect: () => ({ top, bottom: top + 2340 }),
-  style: { setProperty: (_, value) => { presence = value } },
+// Run the actual effect with deterministic browser timing/loading boundaries.
+const { PPF_SEQUENCE, introFrameAt, scrubFrameAt } = await import('../src/ppf-sequence.js')
+const effect = component.slice(component.indexOf('    const canvas = canvasRef.current'), component.indexOf('\n  }, [])'))
+function harness(reduced = false) {
+  let now = 0, nextId = 0, shown = -1, intersection
+  const callbacks = new Map(), images = [], events = new Map(), draws = []
+  const motion = { matches: reduced, addEventListener() {}, removeEventListener() {} }
+  const viewport = { innerHeight:1000, scrollY:0, devicePixelRatio:2,
+    matchMedia: () => motion,
+    addEventListener: (name, fn) => events.set(name, fn),
+    removeEventListener: name => events.delete(name),
+  }
+  const canvas = { width:0, height:0,
+    getBoundingClientRect: () => ({width:800,height:450}),
+    getContext: () => ({clearRect() {}, drawImage: image => draws.push(image.src)}),
+  }
+  const section = { offsetHeight:2600, getBoundingClientRect: () => ({top:-viewport.scrollY}) }
+  class Image {
+    constructor() { images.push(this); this.complete = false; this.naturalWidth = 0 }
+  }
+  class IntersectionObserver {
+    constructor(callback) { intersection = callback }
+    observe() {} disconnect() {}
+  }
+  class ResizeObserver { observe() {} disconnect() {} }
+  const cleanup = new Function('canvasRef','sectionRef','window','Image','IntersectionObserver','ResizeObserver',
+    'requestAnimationFrame','cancelAnimationFrame','setFrameIndex','setProgress','PPF_SEQUENCE','introFrameAt','scrubFrameAt', effect)(
+    {current:canvas},{current:section},viewport,Image,IntersectionObserver,ResizeObserver,
+    fn => { callbacks.set(++nextId, fn); return nextId }, id => callbacks.delete(id),
+    value => { shown = value }, () => {}, PPF_SEQUENCE,introFrameAt,scrubFrameAt)
+  const loadAll = () => {
+    for (let index = 0; index < images.length; index++) {
+      const image = images[index]
+      if (image.complete) continue
+      image.complete = true; image.naturalWidth = 1920; image.naturalHeight = 1080
+      image.onload?.()
+    }
+  }
+  const advance = duration => {
+    for (let elapsed = 0; elapsed < duration; elapsed += 10) {
+      now += 10
+      const pending = [...callbacks.values()]; callbacks.clear()
+      pending.forEach(callback => callback(now))
+    }
+  }
+  return {canvas,images,draws,callbacks,cleanup,loadAll,advance,
+    frame: () => shown,
+    enter: () => intersection([{isIntersecting:true}]),
+    scroll: progress => { viewport.scrollY = progress * 1600; events.get('scroll')?.() },
+  }
 }
-const viewport = { innerHeight: 900, scrollY: 0 }
-const update = new Function('sectionRef', 'window', 'PPF_SEQUENCE', 'setFrameIndex', `
-  const rafRef = {}, readyRef = { current: {} }, frameRef = { current: 0 }, frames = new Map(), canvas = {};
-  const preloadFrame = () => {}, drawFrame = () => {}, setProgress = () => {};
-  ${updateSource}; return update;
-`)({ current: section }, viewport, Array(115), frame => { selectedFrame = frame })
-for (const [position, expectedFrame, expectedPresence] of [
-  [900, 0, 0], [450, 0, .5], [0, 0, 1], [-720, 57, 1],
-  [-1440, 114, 1], [-1890, 114, .5], [-2340, 114, 0], [0, 0, 1],
-]) {
-  top = position
-  update()
-  assert.equal(selectedFrame, expectedFrame, `frame at section top ${top}`)
-  assert.equal(presence, expectedPresence, `transition at section top ${top}`)
+const playback = harness()
+assert.equal(playback.images.length,4,'bounded progressive loading')
+playback.enter(); playback.advance(1000)
+assert.equal(playback.frame(),-1,'buffering does not advance over undecoded frames')
+playback.loadAll(); playback.advance(1000)
+assert.ok(playback.frame() >= 29 && playback.frame() <= 30)
+playback.advance(1600)
+assert.equal(playback.frame(),73)
+assert.equal(playback.callbacks.size,0,'idle intro endpoint does not spin RAF')
+for (const [position,frame] of [[.5,94],[1,114],[.5,94],[0,73]]) {
+  playback.scroll(position); playback.advance(1500); assert.equal(playback.frame(),frame)
 }
-console.log('PPF scroll frames, entry, exit and reverse traversal PASS')
+assert.equal(playback.canvas.width,1600)
+assert.equal(playback.canvas.height,900)
+playback.cleanup(); assert.equal(playback.callbacks.size,0)
+const late = harness()
+late.loadAll(); late.enter(); late.scroll(1); late.advance(4000)
+assert.equal(late.frame(),73,'late intro completion cannot autoplay the tail')
+late.scroll(.5); late.advance(100)
+late.scroll(1); late.advance(1500)
+assert.equal(late.frame(),114,'scrolling back and forward re-arms the endpoint')
+late.cleanup()
+const reduced = harness(true)
+assert.deepEqual(reduced.images.map(image => image.src),[PPF_SEQUENCE[114]])
+reduced.loadAll(); reduced.advance(100)
+assert.equal(reduced.frame(),114)
+assert.equal(reduced.callbacks.size,0)
+reduced.cleanup()
+console.log('PPF component buffering, intro, handoff, reverse, DPR, reduced motion and cleanup PASS')
