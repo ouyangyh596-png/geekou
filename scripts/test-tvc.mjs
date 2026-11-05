@@ -28,3 +28,10 @@ assert.ok(main.indexOf('<TvcShowcase') < main.indexOf('<section className="landi
 assert.match(main, /<PPFScrollSequence/);
 assert.match(main, /<ProductShowcase/);
 console.log('TVC assets, playback policy, native modal and preserved section contracts passed');
+
+const { englishSiteContent } = await import('../src/content/site-content.js');
+assert.equal(englishSiteContent.home.tvc.title, 'Fine on Every Surface.');
+assert.equal(englishSiteContent.home.tvc.subtitle, 'Films for cars, storefronts, signs and interiors: protect, restyle and refresh.');
+assert.match(component, /className="tvc-brand"[^\n]*alt="SO-FINE"/);
+assert.match(main, /<main className="home-page">\s*<Header \/>\s*<TvcShowcase/);
+assert.equal(englishSiteContent.home.heroTitle, 'SUPER CHROME FILM');

@@ -20,7 +20,7 @@ assert.match(component, /ppf-sequence-copy--top/)
 assert.match(styles, /\.ppf-sequence-copy--top[^}]*position:relative/)
 assert.match(styles, /\.ppf-sequence-canvas[^}]*mix-blend-mode:screen/)
 const polish = readFileSync(new URL('../src/polish.css', import.meta.url), 'utf8')
-assert.match(polish, /\.ppf-sequence-inner[^}]*grid-template-columns:minmax\(0,5fr\) minmax\(0,7fr\)/)
+assert.match(polish, /\.ppf-sequence-inner[^}]*grid-template-columns:1fr/)
 assert.match(polish, /\.ppf-sequence-copy\.ppf-sequence-copy--top[^}]*position:relative; inset:auto[^}]*opacity:1; transform:none/)
 assert.match(polish, /\.ppf-sequence-copy--top h2[^}]*color:white/)
 assert.match(polish, /@media\(max-width:800px\)[\s\S]*?\.ppf-sequence-inner[^}]*grid-template-columns:1fr/)
@@ -43,3 +43,30 @@ images[0].onload()
 assert.deepEqual(drawn, [images[1]], 'late first frame must not overwrite static frame 70')
 assert.equal(preload(70, frames, {}, ready), images[1], 'reuse cached images')
 console.log('PPF scroll sequence structure PASS')
+
+// Exercise the component's actual scroll update in both directions, including section boundaries.
+const updateSource = component.slice(component.indexOf('    const update = () => {'), component.indexOf('    const onScroll ='))
+let top = 900
+let selectedFrame
+let presence
+const section = {
+  offsetHeight: 2340,
+  getBoundingClientRect: () => ({ top, bottom: top + 2340 }),
+  style: { setProperty: (_, value) => { presence = value } },
+}
+const viewport = { innerHeight: 900, scrollY: 0 }
+const update = new Function('sectionRef', 'window', 'PPF_SEQUENCE', 'setFrameIndex', `
+  const rafRef = {}, readyRef = { current: {} }, frameRef = { current: 0 }, frames = new Map(), canvas = {};
+  const preloadFrame = () => {}, drawFrame = () => {}, setProgress = () => {};
+  ${updateSource}; return update;
+`)({ current: section }, viewport, Array(115), frame => { selectedFrame = frame })
+for (const [position, expectedFrame, expectedPresence] of [
+  [900, 0, 0], [450, 0, .5], [0, 0, 1], [-720, 57, 1],
+  [-1440, 114, 1], [-1890, 114, .5], [-2340, 114, 0], [0, 0, 1],
+]) {
+  top = position
+  update()
+  assert.equal(selectedFrame, expectedFrame, `frame at section top ${top}`)
+  assert.equal(presence, expectedPresence, `transition at section top ${top}`)
+}
+console.log('PPF scroll frames, entry, exit and reverse traversal PASS')

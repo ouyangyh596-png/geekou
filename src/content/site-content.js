@@ -12,7 +12,7 @@ export const englishSiteContent = {
     closeLabel: 'Close navigation'
   },
   home: {
-    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'A surface. A possibility.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
+    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'Fine on Every Surface.', subtitle: 'Films for cars, storefronts, signs and interiors: protect, restyle and refresh.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
     heroTitle: 'SUPER CHROME FILM',
     heroAction: 'Explore products',
     heroSubtitle: 'Precision-engineered films for print, wrap and protection.',

@@ -1,7 +1,7 @@
 export const chineseSiteContent = {
  navigation: { products:'产品',technology:'技术',company:'公司',contact:'联系',talk:'联系我们',languageLabel:'语言',openLabel:'打开导航',closeLabel:'关闭导航',families:'产品系列' },
  home: {
-  tvc:{kicker:'SO-FINE / 品牌广告',title:'一面材料，无限可能。',watch:'观看完整广告',filmTitle:'SO-FINE — 完整广告',close:'关闭广告',unsupported:'您的浏览器不支持视频播放。'},
+  tvc:{kicker:'SO-FINE / 品牌广告',title:'每一面，都出色。', subtitle:'汽车、店面、标识与室内薄膜：保护、改色与焕新。',watch:'观看完整广告',filmTitle:'SO-FINE — 完整广告',close:'关闭广告',unsupported:'您的浏览器不支持视频播放。'},
   heroTitle:'超级电镀膜',heroAction:'探索产品',heroSubtitle:'精密制造的薄膜材料，服务于印刷、车身改色与表面防护。',heroVideoLabel:'SO-FINE 制造工厂',companyVideoLabel:'SO-FINE 工厂航拍',companyVideoCaption:'SO-FINE 工厂 / 航拍',
   materialKicker:'材料应用',materialTitle:'多种空间，\n同样出色。',materialItems:[{name:'01 / 材料细节',description:'红色自粘材料卷细节'},{name:'02 / 发光标识',description:'夜间商店灯箱与背光窗贴'},{name:'03 / 汽车饰面',description:'户外哑光红色贴膜跑车'}],
   ppfSequence:{presentationLabel:'漆面保护膜动态展示',kicker:'SO-FINE / 漆面保护膜',titleLead:'精密防护',titleEmphasis:'随形而动。',description:'兼顾清晰度、韧性与精密贴合，让每一处车身曲面得到保护。',action:'探索漆面保护膜',canvasLabelPrefix:'漆面保护膜渲染帧',progressLabelPrefix:'第',progressLabelInfix:'帧，共'}

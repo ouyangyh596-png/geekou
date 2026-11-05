@@ -95,15 +95,28 @@ async function checkContrastPanels(page) {
 }
 
 async function checkCarousel(page) {
-  const active = page.locator('.stack-card-active .stack-index');
+  for (let index = 0; index < categoryOrder.length; index += 1) {
+    await page.locator('.carousel-dots button').nth(index).click();
+    const layout = await page.locator('.stack-card-active').evaluate(card => {
+      const title = card.querySelector('strong').getBoundingClientRect();
+      const description = card.querySelector('small').getBoundingClientRect();
+      const copy = card.querySelector('.stack-card-copy').getBoundingClientRect();
+      const bounds = card.getBoundingClientRect();
+      return { separate: title.bottom <= description.top, contained: copy.bottom <= bounds.bottom + 1, visible: description.height > 0 };
+    });
+    assert.deepEqual(layout, { separate: true, contained: true, visible: true }, categoryOrder[index]);
+  }
+  await page.locator('.carousel-dots button').first().click();
+  const active = page.locator('.stack-card-active strong');
   const initial = await active.textContent();
-  assert.match(initial, /^\d{2} \/ 11$/);
+  assert.ok(initial.trim());
+  assert.equal(await page.locator('.stack-index').count(), 0);
   assert.equal(await page.locator('.carousel-dots button').count(), 11);
   await page.locator('.carousel-controls > button').last().click();
-  await page.waitForFunction(before => document.querySelector('.stack-card-active .stack-index').textContent !== before, initial);
+  await page.waitForFunction(before => document.querySelector('.stack-card-active strong').textContent !== before, initial);
   await page.locator('.stack-selector').focus();
   await page.keyboard.press('ArrowLeft');
-  await page.waitForFunction(before => document.querySelector('.stack-card-active .stack-index').textContent === before, initial);
+  await page.waitForFunction(before => document.querySelector('.stack-card-active strong').textContent === before, initial);
   // Real wheel input must change a card without moving the document.
   await page.locator('.carousel-dots button').nth(4).click();
   await page.locator('.stack-selector').scrollIntoViewIfNeeded();
@@ -188,6 +201,10 @@ try {
     });
     await page.goto(origin, { waitUntil: 'networkidle' });
     await page.getByRole('heading', { level: 1, name: englishSiteContent.home.heroTitle, exact: true }).waitFor();
+    assert.equal(await page.locator('.home-page > .header').evaluate(el => Math.round(el.getBoundingClientRect().top + window.scrollY)), 0);
+    assert.equal(await page.locator('#tvc-title').textContent(), englishSiteContent.home.tvc.title);
+    assert.equal(await page.locator('.tvc-subtitle').textContent(), englishSiteContent.home.tvc.subtitle);
+    assert.equal(await page.locator('.tvc-brand img').getAttribute('alt'), 'SO-FINE');
     const headerX = await page.locator('.header-inner').evaluate(element => element.getBoundingClientRect().x);
     if (width === 390) {
       const menu = page.getByRole('button', { name: 'Open navigation' });

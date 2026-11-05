@@ -15,3 +15,9 @@
 .tvc-player video { display:block; width:100%; max-height:calc(100svh - 112px); background:#000; }
 @media(max-width:800px) { .tvc-copy { bottom:48px; } .home-page .tvc-copy h2 { font-size:var(--type-hero); } }
 @media(max-width:800px),(prefers-reduced-motion:reduce) { .tvc-loop { display:none; } }
+
+.tvc-copy { inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding-block:48px; }
+.tvc-brand { position:relative; width:clamp(180px,24vw,320px); aspect-ratio:2.5; overflow:hidden; flex-shrink:0; }
+.tvc-brand img { position:absolute; width:100%; height:auto; left:0; top:50%; transform:translateY(-50%); filter:brightness(0) invert(1); }
+.home-page .tvc-copy h2 { max-width:20ch; margin:24px 0 16px; font-size:clamp(36px,5vw,72px); line-height:1.1; }
+.tvc-subtitle { max-width:55ch; margin:0 0 28px; font-size:clamp(16px,1.5vw,20px); color:white; }

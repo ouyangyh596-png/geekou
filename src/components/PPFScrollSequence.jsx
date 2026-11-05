@@ -36,7 +36,6 @@ export default function PPFScrollSequence() {
   const frameRef = useRef(initialFrame)
   const readyRef = useRef({ current: initialFrame, callback: () => {} })
   const rafRef = useRef(0)
-  const introRef = useRef(true)
   const [frameIndex, setFrameIndex] = useState(initialFrame)
   const [progress, setProgress] = useState(0)
   const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -57,11 +56,14 @@ export default function PPFScrollSequence() {
       rafRef.current = 0
       const section = sectionRef.current
       if (!section) return
-      if (introRef.current) return
       const sectionTop = section.getBoundingClientRect().top + window.scrollY
       const travel = Math.max(section.offsetHeight - window.innerHeight, 1)
       const nextProgress = Math.min(Math.max((window.scrollY - sectionTop) / travel, 0), 1)
-      const nextFrame = initialFrame + Math.round(nextProgress * (PPF_SEQUENCE.length - 1 - initialFrame))
+      const rect = section.getBoundingClientRect()
+      const entrance = Math.min(Math.max((window.innerHeight - rect.top) / window.innerHeight, 0), 1)
+      const exit = Math.min(Math.max(rect.bottom / window.innerHeight, 0), 1)
+      section.style.setProperty('--sequence-presence', Math.min(entrance, exit))
+      const nextFrame = Math.round(nextProgress * (PPF_SEQUENCE.length - 1))
       readyRef.current.current = nextFrame
       preloadFrame(nextFrame, frames, canvas, readyRef.current)
       const direction = nextFrame >= frameRef.current ? 1 : -1
@@ -74,37 +76,15 @@ export default function PPFScrollSequence() {
       setFrameIndex(nextFrame)
       setProgress(nextProgress)
     }
-    const playIntro = startedAt => {
-      const elapsed = performance.now() - startedAt
-      const introProgress = Math.min(elapsed / 1800, 1)
-      const nextFrame = Math.round(introProgress * initialFrame)
-      frameRef.current = nextFrame
-      readyRef.current.current = nextFrame
-      preloadFrame(nextFrame, frames, canvas, readyRef.current)
-      drawFrame(canvas, frames.get(nextFrame))
-      setFrameIndex(nextFrame)
-      setProgress(0)
-      if (introProgress < 1) rafRef.current = window.requestAnimationFrame(() => playIntro(startedAt))
-      else { introRef.current = false; update() }
-    }
     const onScroll = () => {
       if (!rafRef.current) rafRef.current = window.requestAnimationFrame(update)
     }
-    introRef.current = true
-    let introStarted = false
-    const introObserver = new IntersectionObserver(entries => {
-      if (introStarted || !entries[0]?.isIntersecting) return
-      introStarted = true
-      rafRef.current = window.requestAnimationFrame(() => playIntro(performance.now()))
-      introObserver.disconnect()
-    }, { threshold: 0.35 })
-    introObserver.observe(sectionRef.current)
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
-      introObserver.disconnect()
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
     }
   }, [reducedMotion])

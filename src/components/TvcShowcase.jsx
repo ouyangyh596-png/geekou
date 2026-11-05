@@ -60,15 +60,16 @@ export default function TvcShowcase() {
     film.current.play().catch(() => {});
   };
 
-  return <section className="tvc-showcase" ref={section} aria-labelledby="tvc-title">
+  return <section className="tvc-showcase" id="top" ref={section} aria-labelledby="tvc-title">
     <img className="tvc-poster" src="/media/tvc/sofine-tvc-loop-poster.jpg" alt="" fetchPriority="high" />
     {allowMotion && <video ref={loop} className="tvc-loop" autoPlay muted loop playsInline preload="metadata" poster="/media/tvc/sofine-tvc-loop-poster.jpg" aria-hidden="true">
       <source src="/media/tvc/sofine-tvc-loop.webm" type="video/webm" />
       <source src="/media/tvc/sofine-tvc-loop.mp4" type="video/mp4" />
     </video>}
     <div className="tvc-copy container">
-      <p className="kicker">{copy.kicker}</p>
+      <div className="tvc-brand"><img src="/so-fine-logo.svg" alt="SO-FINE" /></div>
       <h2 id="tvc-title">{copy.title}</h2>
+      <p className="tvc-subtitle">{copy.subtitle}</p>
       <button ref={trigger} className="tvc-watch" onClick={open} type="button" aria-haspopup="dialog"><Play size={20} aria-hidden="true" />{copy.watch}</button>
     </div>
     <dialog className="tvc-dialog" ref={dialog} aria-labelledby="tvc-dialog-title" onCancel={event => { event.preventDefault(); close(); }} onClose={close} onClick={event => { if (event.target === dialog.current) close(); }}>
