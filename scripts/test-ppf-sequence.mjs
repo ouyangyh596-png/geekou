@@ -21,7 +21,6 @@ const logo = readFileSync(new URL('../public/media/home/autoface-logo-light.svg'
 assert.match(source, /alt="AUTOFACE"/)
 assert.match(source, /autoface-logo-light\.svg/)
 assert.doesNotMatch(logo, /#11366E|#084A95|841\.89 595\.28/)
-assert.match(logo, /#9CD2ED/)
-assert.match(logo, /#2CADB2/)
+assert.doesNotMatch(logo, /#9CD2ED|#2CADB2/)
 console.log('Desktop layer legend and accessible cropped light vector logo PASS')
 assert.match(logo, /<svg fill="#FFFFFF"/, 'uncoloured wordmark paths inherit white')
