@@ -1,132 +1,55 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
-import { PPF_SEQUENCE, introFrameAt, scrubFrameAt } from '../ppf-sequence.js'
 import { useLanguage } from '../language.js'
+
+function expansionAt(progress) {
+  const t = Math.max(0, Math.min(1, progress < 0.85 ? (progress - 0.15) / 0.45 : (1 - progress) / 0.15))
+  return t * t * (3 - 2 * t)
+}
 
 export default function MobilePPFScrollSequence() {
   const { content: siteContent, lang } = useLanguage()
   const content = siteContent.home.ppfSequence
-  const labels = lang === 'zh' ? ['自修复涂层', '高透 TPU', '胶粘层', 'PET 底膜'] : ['Self-healing top coat', 'High-clarity TPU', 'Adhesive', 'PET liner']
+  const labels = lang === 'zh' ? ['自修复涂层', '高透 TPU', '胶粘层', 'PET 底膜'] : ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']
   const sectionRef = useRef(null)
-  const canvasRef = useRef(null)
-  const [frameIndex, setFrameIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
+  const layersRef = useRef([])
+  const sheenRef = useRef(null)
+  const id = useId().replace(/:/g, '')
+  // Shared S-curve keeps the four sheets aligned when the stack closes.
+  const sheet = 'M126 286 C170 280 197 291 229 301 C265 313 291 296 322 277 C350 260 375 247 392 246 L386 264 C363 265 341 280 313 296 C279 317 256 333 221 321 C185 309 157 304 110 303 Z'
+  const frontEdge = 'M110 303 C157 304 185 309 221 321 C256 333 279 317 313 296 C341 280 363 265 386 264'
+  const fill = name => `url(#${id}-${name})`
 
   useEffect(() => {
-    const canvas = canvasRef.current
     const section = sectionRef.current
-    const context = canvas.getContext('2d')
-    if (!context) return undefined
+    const track = section.querySelector('.ppf-sequence-track')
+    const sticky = section.querySelector('.ppf-sequence-sticky')
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const frames = new Map()
-    const failed = new Set()
-    let disposed = false, visible = false, started = false, finished = false
-    let raf = 0, lastTime = 0, introTime = 0, anchor = 0, current = 0, drawn = -1
-    let nextLoad = 0, activeLoads = 0
-
-    const scrollProgress = () => {
-      const top = section.getBoundingClientRect().top + window.scrollY
-      return Math.max(0, Math.min(1, (window.scrollY - top) / Math.max(1, section.offsetHeight - section.querySelector('.ppf-sequence-sticky').offsetHeight)))
-    }
-    const draw = index => {
-      const image = frames.get(index)
-      if (!image?.complete || !image.naturalWidth) return
-      const rect = canvas.getBoundingClientRect()
-      const dpr = window.devicePixelRatio || 1
-      const width = Math.max(1, Math.round(rect.width * dpr))
-      const height = Math.max(1, Math.round(rect.height * dpr))
-      if (drawn === index && canvas.width === width && canvas.height === height) return
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width
-        canvas.height = height
-      }
-      // Crop only empty margins (bounds checked across all 115 frames); readable labels live below.
-      const crop = { x: 120, y: 140, width: 1540, height: 680 }
-      const scale = Math.min(width / crop.width, height / crop.height)
-      const w = crop.width * scale, h = crop.height * scale
-      context.clearRect(0, 0, width, height)
-      context.drawImage(image, crop.x, crop.y, crop.width, crop.height, (width - w) / 2, (height - h) / 2, w, h)
-      drawn = index
-      setFrameIndex(index)
-    }
-    const wake = () => {
-      if (!disposed && !raf) raf = requestAnimationFrame(tick)
-    }
-    const load = index => {
-      if (frames.has(index)) return
-      const image = new Image()
-      frames.set(index, image)
-      activeLoads += 1
-      image.decoding = 'async'
-      const settle = () => {
-        activeLoads -= 1
-        if (disposed) return
-        wake()
-        pump()
-      }
-      image.onload = settle
-      image.onerror = () => { failed.add(index); settle() }
-      image.src = PPF_SEQUENCE[index]
-    }
-    // Bound concurrent decoding and request the intro before the scrub tail.
-    const pump = () => {
-      if (motion.matches) { load(114); return }
-      while (activeLoads < 4 && nextLoad < PPF_SEQUENCE.length) load(nextLoad++)
-    }
-    function tick(now) {
+    let raf = 0
+    function update() {
       raf = 0
-      if (disposed) return
-      if (motion.matches) { draw(114); lastTime = 0; return }
-      const delta = lastTime ? Math.min(now - lastTime, 50) : 0
-      lastTime = now
-      if (visible && !finished) {
-        started = true
-        const candidate = introFrameAt(introTime + delta)
-        const image = frames.get(candidate)
-        // Buffer rather than skipping undecoded frames on slower connections.
-        if (image?.naturalWidth || failed.has(candidate)) introTime += delta
-        current = introFrameAt(introTime)
-        if (current === 73) {
-          finished = true
-          anchor = scrollProgress()
-        }
-      } else if (finished) {
-        const position = scrollProgress()
-        // At the very end there is no scroll travel left: re-arm on reverse.
-        if (anchor === 1 && position < 1) anchor = position
-        const target = scrubFrameAt(position, anchor)
-        current += (target - current) * (1 - Math.exp(-delta / 90))
-        if (Math.abs(target - current) < .05) current = target
-      }
-      draw(Math.round(current))
-      setProgress(Math.max(0, (current - 73) / 41))
-      if (visible && (started && !finished || finished && current !== scrubFrameAt(scrollProgress(), anchor))) wake()
-      else lastTime = 0
+      const progress = Math.max(0, Math.min(1, -track.getBoundingClientRect().top / Math.max(1, track.offsetHeight - sticky.offsetHeight)))
+      const expansion = motion.matches ? 1 : expansionAt(progress)
+      layersRef.current.forEach((layer, index) => {
+        layer.style.transform = `translateY(${-((4 - index) * 7 + (4 - index) * 44 * expansion)}px)`
+        layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 2)
+      })
+      sheenRef.current.style.transform = `translateX(${motion.matches ? 0 : -220 + progress * 440}px)`
     }
-    const observer = new IntersectionObserver(entries => {
-      visible = entries[0].isIntersecting
-      lastTime = 0
-      wake()
-    }, { threshold: 0.15 })
-    observer.observe(section.querySelector('.ppf-sequence-sticky'))
-    const resize = new ResizeObserver(() => { drawn = -1; wake() })
-    resize.observe(canvas)
-    const onMotion = () => { lastTime = 0; pump(); wake() }
-    motion.addEventListener('change', onMotion)
-    window.addEventListener('scroll', wake, { passive: true })
-    window.addEventListener('resize', wake, { passive: true })
-    pump()
-    wake()
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(update) }
+    const resize = new ResizeObserver(schedule)
+    resize.observe(track)
+    resize.observe(sticky)
+    motion.addEventListener('change', schedule)
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule, { passive: true })
+    schedule()
     return () => {
-      disposed = true
       cancelAnimationFrame(raf)
-      observer.disconnect()
       resize.disconnect()
-      motion.removeEventListener('change', onMotion)
-      window.removeEventListener('scroll', wake)
-      window.removeEventListener('resize', wake)
-      frames.forEach(image => { image.onload = null; image.onerror = null })
-      frames.clear()
+      motion.removeEventListener('change', schedule)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
     }
   }, [])
 
@@ -141,12 +64,38 @@ export default function MobilePPFScrollSequence() {
             <a className="ppf-explore-button" href="#category=ppf"><span>{content.action}</span> <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
           <div className="ppf-sequence-stage">
-            <canvas ref={canvasRef} className="ppf-sequence-canvas" aria-label={`${content.canvasLabelPrefix} ${frameIndex + 1}`} width="1920" height="1080" />
-            <ol className="ppf-mobile-labels">{labels.map(label => <li key={label}>{label}</li>)}</ol>
-            <div className="ppf-sequence-progress" aria-label={`${content.progressLabelPrefix} ${frameIndex + 1} ${content.progressLabelInfix} ${PPF_SEQUENCE.length}`}>
-              <span style={{ transform: `scaleX(${progress})` }} />
-              <b>{String(frameIndex + 1).padStart(3, '0')}</b><i>/</i><b>{String(PPF_SEQUENCE.length).padStart(3, '0')}</b>
-            </div>
+            <svg className="ppf-film-diagram" viewBox="0 0 400 380" role="img" aria-labelledby={`${id}-title ${id}-description`}>
+              <title id={`${id}-title`}>{content.presentationLabel}</title>
+              <desc id={`${id}-description`}>{labels.join(', ')} — {lang === 'zh' ? '四层曲面保护膜，随滚动展开与合拢。' : 'Four protective film layers with curved surfaces, separating and closing as you scroll.'}</desc>
+              <defs>
+                <linearGradient id={`${id}-top`} x1="0" y1="0" x2=".25" y2="1">
+                  <stop stopColor="#fff" /><stop offset=".35" stopColor="#dce2e4" stopOpacity=".85" /><stop offset=".7" stopColor="#adb8bc" stopOpacity=".72" /><stop offset="1" stopColor="#f9fbfc" />
+                </linearGradient>
+                <linearGradient id={`${id}-tpu`} x1="0" y1="0" x2=".2" y2="1">
+                  <stop stopColor="#fff" /><stop offset=".45" stopColor="#d0d3d4" stopOpacity=".8" /><stop offset=".8" stopColor="#f9fafb" /><stop offset="1" stopColor="#babfc2" />
+                </linearGradient>
+                <linearGradient id={`${id}-glue`} x2=".1" y2="1">
+                  <stop stopColor="#b8babb" /><stop offset=".55" stopColor="#737779" /><stop offset="1" stopColor="#a9acad" />
+                </linearGradient>
+                <linearGradient id={`${id}-pet`} x2=".15" y2="1">
+                  <stop stopColor="#fffffb" /><stop offset=".5" stopColor="#e4e3db" /><stop offset=".8" stopColor="#f7f6ef" /><stop offset="1" stopColor="#c9c9c2" />
+                </linearGradient>
+                <linearGradient id={`${id}-sheen`}>
+                  <stop stopColor="#fff" stopOpacity="0" /><stop offset=".5" stopColor="#fff" stopOpacity=".85" /><stop offset="1" stopColor="#fff" stopOpacity="0" />
+                </linearGradient>
+                <clipPath id={`${id}-plate`}><path d={sheet} /></clipPath>
+              </defs>
+              {[3, 2, 1, 0].map(index => <g key={index} ref={element => { layersRef.current[index] = element }} className={`ppf-film-layer ppf-film-layer--${index}`}>
+                <path d={sheet} transform={`translate(0 ${index === 3 ? 4 : 1.5})`} fill={index === 3 ? '#c5c5bd' : '#b5bdc0'} stroke={index === 3 ? '#c5c5bd' : '#b5bdc0'} strokeWidth=".8" />
+                <path d={sheet} fill={fill(['top', 'tpu', 'glue', 'pet'][index])} stroke={index === 2 ? '#c3c5c6' : '#e3e6e6'} strokeWidth=".8" />
+                <path d={frontEdge} fill="none" stroke={index === 2 ? '#d7d9da' : '#fff'} strokeWidth={index === 3 ? '1.8' : '1'} strokeOpacity=".9" />
+                {index === 0 && <g clipPath={fill('plate')}><path ref={sheenRef} className="ppf-film-sheen" d="M80 230h48l80 120h-48Z" fill={fill('sheen')} /></g>}
+                <g className="ppf-film-label">
+                  <path d="M88 290h26l23 8" fill="none" stroke="#b8bcbf" strokeWidth=".7" />
+                  <text x="84" y="286" textAnchor="end">{lang !== 'zh' && index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
+                </g>
+              </g>)}
+            </svg>
           </div>
         </div>
       </div>
