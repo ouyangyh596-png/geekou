@@ -201,10 +201,10 @@ for (const modulePath of ['../src/language.js', '../src/content/company.js', '..
 }
 for (const [modulePath, inlineCopy] of [
   ['../src/main.jsx', ['SUPER CHROME FILM', 'Every layer is considered', 'Preview the finish across a Cybertruck surface']],
-  ['../src/components/PPFScrollSequence.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
+  ['../src/components/PPFLayerAnimation.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
 ]) {
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
-  assert.match(source, /useLanguage/, `${modulePath} must read reactive centralized content`)
+  assert.match(source, modulePath.includes('PPFLayerAnimation') ? /englishSiteContent/ : /useLanguage/, `${modulePath} must read centralized content`)
   for (const copyValue of inlineCopy) {
     assert.ok(!source.includes(copyValue), `${modulePath} must not contain inline English copy: ${copyValue}`)
   }

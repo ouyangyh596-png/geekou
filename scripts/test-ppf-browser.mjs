@@ -7,7 +7,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dependencyRoot = resolve(dirname(process.execPath), '..');
-const playwrightModule = resolve(dependencyRoot, 'node_modules/playwright/index.mjs');
+const playwrightModule = process.env.PLAYWRIGHT_MODULE || resolve(dependencyRoot, 'node_modules/playwright/index.mjs');
+const { chromium } = await import(pathToFileURL(playwrightModule).href);
 const viteEntry = resolve(root, 'node_modules/vite/bin/vite.js');
 const origin = 'http://127.0.0.1:4178';
 const browserCache = resolve(homedir(), 'Library/Caches/ms-playwright');
@@ -39,7 +40,6 @@ async function waitForServer() {
 }
 
 
-const { chromium } = await import(pathToFileURL(playwrightModule).href);
 let browser;
 const output = '/tmp/sofine-ppf-review';
 mkdirSync(output, { recursive: true });
@@ -48,7 +48,8 @@ try {
   browser = await chromium.launch({ executablePath: browserExecutable, headless: true });
   for (const mobile of [false, true]) {
     const page = await browser.newPage({ viewport: mobile ? {width:390,height:844} : {width:1280,height:1000}, deviceScaleFactor:2 });
-    const errors = [];
+    const errors = [], pngRequests = [];
+    page.on('request', request => { if (request.url().includes('/assets/ppf-sequence/')) pngRequests.push(request.url()); });
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(origin);
     await page.locator('.ppf-sequence').waitFor();
@@ -64,27 +65,31 @@ try {
       const section = document.querySelector('.ppf-sequence');
       window.scrollTo({top: section.getBoundingClientRect().top + scrollY + progress * (section.offsetHeight - section.querySelector('.ppf-sequence-sticky').offsetHeight), behavior:'instant'});
     }, progress);
-    const frame = () => page.locator('.ppf-sequence-canvas').getAttribute('aria-label').then(label => Number(label.match(/(\d+)$/)[1]) - 1);
-    await go(0);
-    await page.waitForTimeout(800);
-    const during = await frame();
-    assert.ok(during > 0 && during < 73, `intro plays: ${during}`);
-    await page.waitForFunction(() => document.querySelector('.ppf-sequence-canvas').getAttribute('aria-label').endsWith(' 74'), null, {timeout:15000});
-    await page.screenshot({path:resolve(output, mobile ? 'mobile.png' : 'desktop.png')});
-    await go(.5); await page.waitForTimeout(900);
-    assert.equal(await frame(),94);
-    await go(1); await page.waitForTimeout(900);
-    assert.equal(await frame(),114);
-    await go(0); await page.waitForTimeout(900);
-    assert.equal(await frame(),73);
-    const metrics = await page.locator('.ppf-sequence-canvas').evaluate(canvas => ({
-      width: canvas.width, cssWidth:canvas.getBoundingClientRect().width,
-      overflow:document.documentElement.scrollWidth > innerWidth,
-      pixel:canvas.getContext('2d').getImageData(canvas.width/2,canvas.height/2,1,1).data[3]
+    const state = () => page.evaluate(() => ({
+      layers: [0,1,2,3].map(index => document.querySelector(`.ppf-film-layer--${index}`).style.transform),
+      background: document.querySelector('.ppf-sequence-background').style.transform,
+      backgroundImage: getComputedStyle(document.querySelector('.ppf-sequence-background')).backgroundImage,
+      stickyTop: document.querySelector('.ppf-sequence-sticky').getBoundingClientRect().top,
+      overflow: document.documentElement.scrollWidth > innerWidth
     }));
-    assert.equal(metrics.width,Math.round(metrics.cssWidth*2));
-    assert.equal(metrics.overflow,false);
-    assert.ok(metrics.pixel > 0, 'canvas is painted');
+    const move = async progress => { await go(progress); await page.waitForTimeout(100); return state(); };
+    const closed = await move(0);
+    assert.equal(closed.layers[0], 'translateY(-28px)');
+    const opening = await move(.375);
+    const open = await move(.7);
+    assert.equal(open.layers[0], 'translateY(-204px)');
+    assert.ok(Math.abs(open.stickyTop) < 1, 'section is pinned during scrub');
+    assert.notEqual(closed.background, open.background, 'background follows scroll');
+    assert.match(open.backgroundImage, /gradient/, 'dark background has visible texture');
+    assert.equal(open.overflow, false);
+    assert.deepEqual(await page.locator('.ppf-film-label text').allTextContents(), ['PET Liner','Glue','High-Clarity TPU','Self-Healing Top Coat']);
+    await page.screenshot({path:resolve(output, mobile ? 'mobile.png' : 'desktop.png')});
+    const reverse = await move(.375);
+    assert.deepEqual(reverse.layers, opening.layers, 'reverse retraces layer positions');
+    assert.equal(reverse.background, opening.background, 'reverse retraces background');
+    assert.deepEqual((await move(0)).layers, closed.layers);
+    assert.deepEqual((await move(1)).layers, closed.layers, 'stack closes at end');
+    assert.deepEqual(pngRequests, [], 'homepage does not request retired PNG frames');
     if (mobile) {
       await page.locator('#products').scrollIntoViewIfNeeded();
       const card = page.locator('.stack-card-active');
@@ -119,14 +124,23 @@ try {
     await page.waitForURL('**/#category=ppf');
     assert.deepEqual(errors,[]);
     await page.close();
-    console.log(`${mobile ? 'Mobile' : 'Desktop'} intro, scrub/reverse, DPR, canvas, focus, link PASS`);
+    console.log(`${mobile ? 'Mobile' : 'Desktop'} SVG scrub/reverse, parallax, no PNG loads, focus and link PASS`);
   }
-  const reduced = await browser.newPage({reducedMotion:'reduce',viewport:{width:390,height:844}});
-  await reduced.goto(origin);
-  await reduced.locator('.ppf-sequence').scrollIntoViewIfNeeded();
-  await reduced.waitForFunction(() => document.querySelector('.ppf-sequence-canvas').getAttribute('aria-label').endsWith(' 115'));
-  await reduced.screenshot({path:resolve(output,'reduced-motion.png')});
-  console.log('Reduced motion final frame PASS');
+  for (const viewport of [{width:390,height:844}, {width:1280,height:1000}]) {
+    const reduced = await browser.newPage({reducedMotion:'reduce',viewport});
+    await reduced.goto(origin);
+    await reduced.locator('.ppf-sequence').scrollIntoViewIfNeeded();
+    await reduced.waitForFunction(() => document.querySelector('.ppf-film-layer--0').style.transform === 'translateY(-204px)');
+    const before = await reduced.locator('.ppf-sequence-background').getAttribute('style');
+    await reduced.evaluate(() => scrollBy(0, 200));
+    await reduced.waitForTimeout(100);
+    assert.equal(await reduced.locator('.ppf-sequence-background').getAttribute('style'), before);
+    assert.equal(await reduced.locator('.ppf-sequence-sticky').evaluate(el=>getComputedStyle(el).position), 'relative');
+    assert.equal(await reduced.locator('.ppf-film-label').first().evaluate(el=>getComputedStyle(el).opacity), '1');
+    await reduced.screenshot({path:resolve(output, `reduced-motion-${viewport.width}.png`)});
+    await reduced.close();
+  }
+  console.log('Desktop and mobile reduced motion: static expanded layers and background PASS');
 } finally {
   await browser?.close();
   server.kill();

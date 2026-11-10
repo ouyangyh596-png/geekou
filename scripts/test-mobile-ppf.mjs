@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
-const source=readFileSync(process.cwd()+'/src/components/MobilePPFScrollSequence.jsx','utf8')
+const source=readFileSync(process.cwd()+'/src/components/PPFLayerAnimation.jsx','utf8')
 assert.ok(source.includes('function expansionAt('), 'code-drawn sequence exposes deterministic scroll phases')
 const fn=source.slice(source.indexOf('function expansionAt('),source.indexOf('\nexport default'))
 const expansionAt=new Function(`${fn}; return expansionAt`)()
@@ -15,17 +15,18 @@ const layers=Array.from({length:4},()=>({style:{},label:{style:{}},querySelector
 const track={offsetHeight:2400,getBoundingClientRect:()=>({top:-p*1600})}, sticky={offsetHeight:800}
 const section={querySelector:s=>s.endsWith('track')?track:sticky}
 const viewport={matchMedia:()=>motion,addEventListener:(k,f)=>events.set(k,f),removeEventListener:k=>events.delete(k)}
-const sheen={style:{}}
-const cleanup=new Function('sectionRef','layersRef','sheenRef','window','ResizeObserver','requestAnimationFrame','cancelAnimationFrame','expansionAt',effect)(
- {current:section},{current:layers},{current:sheen},viewport,class{observe(){} disconnect(){}},f=>{callbacks.set(++next,f);return next},id=>callbacks.delete(id),expansionAt)
+const sheen={style:{}}, background={style:{}}
+const cleanup=new Function('sectionRef','layersRef','sheenRef','backgroundRef','window','ResizeObserver','requestAnimationFrame','cancelAnimationFrame','expansionAt',effect)(
+ {current:section},{current:layers},{current:sheen},{current:background},viewport,class{observe(){} disconnect(){}},f=>{callbacks.set(++next,f);return next},id=>callbacks.delete(id),expansionAt)
 const flush=()=>{const pending=[...callbacks.values()];callbacks.clear();pending.forEach(f=>f())}
 flush();assert.equal(layers[0].style.transform,'translateY(-28px)')
 for(const value of [.15,.375,.6,.85,1,.6,0]){
  p=value;events.get('scroll')();events.get('scroll')();assert.equal(callbacks.size,1);flush()
  assert.equal(layers[0].style.transform,`translateY(${-(28+176*expansionAt(p))}px)`)
+ assert.equal(background.style.transform,`translate3d(0, ${-40+p*80}px, 0)` )
  assert.equal(callbacks.size,0)
 }
 motion.matches=true;events.get('motion')();flush();assert.equal(layers[0].style.transform,'translateY(-204px)');assert.equal(layers[0].label.style.opacity,1)
-p=1;events.get('scroll')();flush();assert.equal(layers[0].style.transform,'translateY(-204px)')
+p=1;events.get('scroll')();flush();assert.equal(layers[0].style.transform,'translateY(-204px)');assert.equal(background.style.transform,'translate3d(0, 0px, 0)')
 events.get('scroll')();cleanup();assert.equal(callbacks.size,0);assert.equal(events.size,0)
 console.log('Actual effect: forward/reverse, RAF coalescing/idle, reduced motion toggle and cleanup PASS')

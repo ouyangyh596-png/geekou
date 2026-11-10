@@ -25,7 +25,7 @@ assert.match(component, /document.body.style.overflow/);
 assert.match(css, /100svh/);
 assert.match(css, /linear-gradient/);
 assert.ok(main.indexOf('<TvcShowcase') < main.indexOf('<section className="landing"'));
-assert.match(main, /<PPFScrollSequence/);
+assert.match(main, /<PPFLayerAnimation/);
 assert.match(main, /<ProductShowcase/);
 console.log('TVC assets, playback policy, native modal and preserved section contracts passed');
 

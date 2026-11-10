@@ -1,9 +1,15 @@
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
-import { PPF_SEQUENCE } from '../src/ppf-sequence.js'
-
-assert.equal(PPF_SEQUENCE.length, 115)
-assert.equal(PPF_SEQUENCE[0], '/assets/ppf-sequence/frame-000.png')
-assert.equal(PPF_SEQUENCE.at(-1), '/assets/ppf-sequence/frame-114.png')
-for (const url of PPF_SEQUENCE) assert.equal(existsSync(`public${url}`), true, url)
-console.log('PPF sequence manifest PASS')
+import { readFileSync } from 'node:fs'
+const source = readFileSync(new URL('../src/components/PPFLayerAnimation.jsx', import.meta.url), 'utf8')
+const main = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
+for (const label of ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']) assert.ok(source.includes(label), label)
+assert.match(source, /\[3, 2, 1, 0\]\.map/)
+assert.match(source, /<svg[^>]*role="img"[^>]*aria-labelledby=/)
+assert.match(source, /<title /)
+assert.match(source, /<desc /)
+assert.match(source, /<linearGradient /)
+assert.match(source, /useId/)
+assert.match(main, /<PPFLayerAnimation mobile=\{isMobile\} \/>/)
+assert.doesNotMatch(source + main, /PPF_SEQUENCE|ppf-sequence\.js|new Image|drawImage|ppf-sequence-canvas|assets\/ppf-sequence|MobilePPFScrollSequence|import PPFScrollSequence/)
+assert.doesNotMatch(source, /<circle|ppf-film-number|[\u4e00-\u9fff]/, 'English layer labels without numbered markers')
+console.log('Shared accessible four-layer SVG and retired homepage PNG loading PASS')

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const main = read('src/main.jsx');
-assert.match(main, /isMobile \? <MobilePPFScrollSequence/);
+assert.match(main, /<PPFLayerAnimation mobile=\{isMobile\} \/>/);
 assert.match(main, /isMobile \? 'home-page is-mobile' : 'home-page'/);
 const hook = read('src/use-is-mobile.js');
 assert.match(hook, /max-width: 820px/);
@@ -31,7 +31,7 @@ for (const [width, coarse, expected] of [[390,false,true],[820,false,true],[821,
 }
 
 const { createHash } = await import('node:crypto');
-const desktopMarkup = main.slice(main.indexOf('  return <main className={isMobile'), main.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('{isMobile ? <MobilePPFScrollSequence /> : <PPFScrollSequence />}', '<PPFScrollSequence />');
+const desktopMarkup = main.slice(main.indexOf('  return <main className={isMobile'), main.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('<PPFLayerAnimation mobile={isMobile} />', '<PPFScrollSequence />');
 assert.equal(createHash('sha256').update(desktopMarkup).digest('hex'), '846cc04954adbca01287385ab0955c866151ae05fa993ac9c5eac38c76ea0847', 'desktop Home markup is byte-for-byte baseline');
 console.log('390/1280 device classification, resize cleanup and desktop markup baseline PASS');
 

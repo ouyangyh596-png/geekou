@@ -226,10 +226,12 @@ p { line-height:1.6; }
 .landing-product-button { background:var(--colour-blue); border:0; padding:16px 24px; font-size:14px; border-radius:8px; box-shadow:none; gap:8px; }
 @media(max-width:800px) { .home-page .landing { min-height:680px; } .home-page .landing-image,.home-page .landing::after { top:80px; } .home-page .landing-copy { bottom:48px; } }
 /* PPF: wide film study with scroll-linked arrival and departure. */
-.ppf-sequence { background-color:var(--colour-navy); background-image:radial-gradient(ellipse at 65% 45%,rgba(38,115,179,.38),transparent 65%),linear-gradient(135deg,#071626,#173e5d 55%,#0b1f3a); }
-.ppf-sequence::before { background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.035) 120px 121px); pointer-events:none; }
+.ppf-sequence { background:#0b1f3a; }
+.ppf-sequence-background { position:absolute; inset:-48px 0; pointer-events:none; will-change:transform; background-color:var(--colour-navy); background-image:radial-gradient(ellipse at 65% 45%,rgba(38,115,179,.38),transparent 65%),linear-gradient(135deg,#071626,#173e5d 55%,#0b1f3a); }
+.ppf-sequence::before { content:none; }
+.ppf-sequence-background::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.035) 120px 121px); pointer-events:none; }
 .ppf-sequence-track { height:260vh; }
-.ppf-sequence-sticky { position:sticky; top:0; min-height:0; height:100svh; padding:32px 0; }
+.ppf-sequence-sticky { position:sticky; overflow:hidden; isolation:isolate; top:0; min-height:0; height:100svh; padding:32px 0; }
 .ppf-sequence-inner { display:grid; grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); gap:16px; width:100%; max-width:1680px; height:100%; margin:auto; padding-inline:32px; }
 .ppf-sequence-copy.ppf-sequence-copy--top { position:relative; inset:auto; width:auto; padding:0; opacity:1; transform:none; text-align:center; text-shadow:none; }
 .ppf-sequence-copy--top h2,.ppf-sequence-copy--top h2 em { color:white; text-shadow:none; }
@@ -490,3 +492,22 @@ p { line-height:1.6; }
 @media(prefers-reduced-motion:reduce) { .stack-selector.is-shuffling .stack-card { animation:none; } }
 
 .stack-card-content-interactive .viewer-placeholder { padding:0; }
+
+/* Shared code-drawn film; dimensions fit the available sticky stage. */
+.ppf-film-diagram { display:block; width:100%; height:100%; max-width:900px; overflow:visible; }
+.ppf-film-layer,.ppf-film-sheen { will-change:transform; }
+.ppf-film-layer--0 { transform:translateY(-28px); }
+.ppf-film-layer--1 { transform:translateY(-21px); }
+.ppf-film-layer--2 { transform:translateY(-14px); }
+.ppf-film-layer--3 { transform:translateY(-7px); }
+.ppf-film-label { opacity:0; }
+.ppf-film-label text { fill:#d4dce3; font:12px var(--font-text); }
+@media(prefers-reduced-motion:reduce) {
+  .ppf-sequence-stage { height:min(70vh,680px); aspect-ratio:400 / 380; }
+  .ppf-film-layer--0 { transform:translateY(-204px); }
+  .ppf-film-layer--1 { transform:translateY(-153px); }
+  .ppf-film-layer--2 { transform:translateY(-102px); }
+  .ppf-film-layer--3 { transform:translateY(-51px); }
+  .ppf-film-label { opacity:1; }
+  .ppf-film-layer,.ppf-film-sheen,.ppf-sequence-background { will-change:auto; }
+}

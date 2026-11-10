@@ -5,7 +5,7 @@ import './styles.css';
 import './polish.css';
 import './mobile.css';
 import { useIsMobile } from './use-is-mobile.js';
-import MobilePPFScrollSequence from './components/MobilePPFScrollSequence.jsx';
+import PPFLayerAnimation from './components/PPFLayerAnimation.jsx';
 import { catalogProducts } from './catalog.js';
 import { brochureSeries } from './brochure-data.js';
 import { contactDetails as englishContactDetails } from './content/company.js';
@@ -19,7 +19,6 @@ import CategoryMedia from './components/CategoryMedia.jsx';
 import { specificationValue, numericSpecificationColumns } from './product-specs.js';
 import LanguagePicker from './components/LanguagePicker.jsx';
 import TvcShowcase from './components/TvcShowcase.jsx';
-import PPFScrollSequence from './components/PPFScrollSequence.jsx';
 import PreviewBoundary from './components/PreviewBoundary.jsx';
 import { classicColours, DEFAULT_CLASSIC_COLOUR } from './cybertruck-colours.js';
 const LazyCybertruckViewer = React.lazy(() => import('./components/CybertruckViewer.jsx'));
@@ -192,7 +191,7 @@ function Home() {
     <Header />
     <TvcShowcase />
     <section className="landing"><div className="landing-copy container"><div className="landing-brand-lockup"><h1 className="landing-title">{content.home.heroTitle}</h1><p className="landing-subtitle">{content.home.heroSubtitle}</p><a className="landing-product-button" href="#category=super-chrome-film">{content.home.heroAction} <ArrowUpRight size={16} /></a></div></div><div className="landing-image"><video className="landing-video" autoPlay muted loop playsInline preload="none" aria-label={content.home.heroVideoLabel}><source src="/media/home/hero-factory.mp4" type="video/mp4" /></video></div></section>
-    {isMobile ? <MobilePPFScrollSequence /> : <PPFScrollSequence />}
+    <PPFLayerAnimation mobile={isMobile} />
     <section className="statement" id="company"><figure className="company-evidence"><video className="company-evidence-video" autoPlay muted playsInline preload="metadata" aria-label={content.home.companyVideoLabel}><source src="/media/home/factory-aerial.mp4" type="video/mp4" /></video><figcaption>{content.home.companyVideoCaption}</figcaption></figure><div className="statement-inner container"><div className="factory-panel"><div className="statement-heading"><p className="kicker">{companyProfile.eyebrow}</p><h2 className="reveal">{content.company.titleLead}<br /><em>{content.company.titleEmphasis}</em></h2></div><div className="company-layout"><div className="statement-copy reveal">{companyProfile.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div></div><dl className="factory-metrics">{content.company.metricLabels.map(label => <div key={label}><dd aria-label={content.company.metricPending}>{lang === 'zh' ? '待确认' : 'TODO'}</dd><dt>{label}</dt></div>)}</dl></div></section>
     <ProductShowcase />
     <section className="technology" id="technology"><div className="wide-heading container"><p className="kicker">{content.technology.kicker}</p><h2 className="reveal">{technologyTitleLead}<br /><em>{technologyTitleEmphasis}</em></h2></div><div className="tech-grid reveal"><div className="tech-intro"><Layers size={32} strokeWidth={1.5} aria-hidden="true" /><span className="tech-intro-copy">{content.technology.introduction}</span></div>{capabilities.map(([number, title, description], index) => { const Icon = [Factory, FlaskConical, Workflow, ScanLine][index]; return <div className="tech-card" key={number}><Icon size={32} strokeWidth={1.5} aria-hidden="true" /><h3>{title}</h3><p>{description}</p></div>; })}</div></section>

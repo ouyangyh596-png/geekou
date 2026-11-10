@@ -1,15 +1,18 @@
 import assert from 'node:assert/strict'
-import { introFrameAt, scrubFrameAt } from '../src/ppf-sequence.js'
-assert.equal(introFrameAt(0), 0)
-assert.equal(introFrameAt(1000), 30)
-assert.equal(introFrameAt(2434), 73)
-assert.equal(introFrameAt(9000), 73)
-for (const [progress, expected] of [[0,73], [.5,94], [1,114], [.5,94], [0,73], [-1,73], [2,114]]) {
-  assert.equal(scrubFrameAt(progress, 0), expected)
+import { readFileSync } from 'node:fs'
+const source = readFileSync(new URL('../src/components/PPFLayerAnimation.jsx', import.meta.url), 'utf8')
+const fn = source.slice(source.indexOf('function expansionAt('), source.indexOf('\nexport default'))
+const expansionAt = new Function(`${fn}; return expansionAt`)()
+for (const [progress, expected] of [[-1,0],[0,0],[.15,0],[.375,.5],[.6,1],[.85,1],[.925,.5],[1,0],[2,0]]) {
+  assert.ok(Math.abs(expansionAt(progress) - expected) < 1e-8, `phase ${progress}`)
 }
-assert.equal(scrubFrameAt(.6, .6), 73, 'handoff keeps the intro endpoint')
-assert.equal(scrubFrameAt(1, .6), 114, 'remaining scroll reaches final frame')
-assert.equal(scrubFrameAt(.2, .6), 73, 'reverse never replays intro')
-assert.equal(scrubFrameAt(1, .95), 114)
-assert.equal(scrubFrameAt(1, 1), 73, 'no tail autoplay when intro ends at bottom')
-console.log('PPF intro timing and continuous scroll handoff PASS')
+let previous = 0
+for (let i=0; i<=600; i++) {
+  const progress=i/1000, expansion=expansionAt(progress)
+  assert.ok(expansion >= previous && expansion <= 1, 'opening is bounded and monotonic')
+  assert.ok(expansion - previous < .004, 'opening has no frame jumps')
+  previous = expansion
+}
+const forward = Array.from({length:101}, (_,i) => expansionAt(i/100))
+assert.deepEqual(Array.from({length:101}, (_,i) => expansionAt(1-i/100)).map(v=>Math.round(v*1e8)), forward.toReversed().map(v=>Math.round(v*1e8)), 'reverse retraces the same scroll positions')
+console.log('PPF layered scroll phases, smooth easing, bounds and deterministic reverse PASS')

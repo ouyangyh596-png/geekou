@@ -1,19 +1,19 @@
 import { useEffect, useId, useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
-import { useLanguage } from '../language.js'
+import { englishSiteContent } from '../content/site-content.js'
 
 function expansionAt(progress) {
   const t = Math.max(0, Math.min(1, progress < 0.85 ? (progress - 0.15) / 0.45 : (1 - progress) / 0.15))
   return t * t * (3 - 2 * t)
 }
 
-export default function MobilePPFScrollSequence() {
-  const { content: siteContent, lang } = useLanguage()
-  const content = siteContent.home.ppfSequence
-  const labels = lang === 'zh' ? ['自修复涂层', '高透 TPU', '胶粘层', 'PET 底膜'] : ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']
+export default function PPFLayerAnimation({ mobile = false }) {
+  const content = englishSiteContent.home.ppfSequence
+  const labels = ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']
   const sectionRef = useRef(null)
   const layersRef = useRef([])
   const sheenRef = useRef(null)
+  const backgroundRef = useRef(null)
   const id = useId().replace(/:/g, '')
   // Shared S-curve keeps the four sheets aligned when the stack closes.
   const sheet = 'M126 286 C170 280 197 291 229 301 C265 313 291 296 322 277 C350 260 375 247 392 246 L386 264 C363 265 341 280 313 296 C279 317 256 333 221 321 C185 309 157 304 110 303 Z'
@@ -34,6 +34,7 @@ export default function MobilePPFScrollSequence() {
         layer.style.transform = `translateY(${-((4 - index) * 7 + (4 - index) * 44 * expansion)}px)`
         layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 2)
       })
+      backgroundRef.current.style.transform = `translate3d(0, ${motion.matches ? 0 : -40 + progress * 80}px, 0)`
       sheenRef.current.style.transform = `translateX(${motion.matches ? 0 : -220 + progress * 440}px)`
     }
     const schedule = () => { if (!raf) raf = requestAnimationFrame(update) }
@@ -53,9 +54,10 @@ export default function MobilePPFScrollSequence() {
     }
   }, [])
 
-  return <section className="ppf-sequence ppf-sequence-mobile" ref={sectionRef} aria-label={content.presentationLabel}>
+  return <section className={mobile ? 'ppf-sequence ppf-sequence-mobile' : 'ppf-sequence'} ref={sectionRef} aria-label={content.presentationLabel}>
     <div className="ppf-sequence-track">
       <div className="ppf-sequence-sticky">
+        <div className="ppf-sequence-background" ref={backgroundRef} aria-hidden="true" />
         <div className="ppf-sequence-inner">
           <div className="ppf-sequence-copy ppf-sequence-copy--top">
             <p className="kicker">{content.kicker}</p>
@@ -66,7 +68,7 @@ export default function MobilePPFScrollSequence() {
           <div className="ppf-sequence-stage">
             <svg className="ppf-film-diagram" viewBox="0 0 400 380" role="img" aria-labelledby={`${id}-title ${id}-description`}>
               <title id={`${id}-title`}>{content.presentationLabel}</title>
-              <desc id={`${id}-description`}>{labels.join(', ')} — {lang === 'zh' ? '四层曲面保护膜，随滚动展开与合拢。' : 'Four protective film layers with curved surfaces, separating and closing as you scroll.'}</desc>
+              <desc id={`${id}-description`}>{labels.join(', ')} — Four protective film layers with curved surfaces, separating and closing as you scroll.</desc>
               <defs>
                 <linearGradient id={`${id}-top`} x1="0" y1="0" x2=".25" y2="1">
                   <stop stopColor="#fff" /><stop offset=".35" stopColor="#dce2e4" stopOpacity=".85" /><stop offset=".7" stopColor="#adb8bc" stopOpacity=".72" /><stop offset="1" stopColor="#f9fbfc" />
@@ -92,7 +94,7 @@ export default function MobilePPFScrollSequence() {
                 {index === 0 && <g clipPath={fill('plate')}><path ref={sheenRef} className="ppf-film-sheen" d="M80 230h48l80 120h-48Z" fill={fill('sheen')} /></g>}
                 <g className="ppf-film-label">
                   <path d="M88 290h26l23 8" fill="none" stroke="#b8bcbf" strokeWidth=".7" />
-                  <text x="84" y="286" textAnchor="end">{lang !== 'zh' && index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
+                  <text x="84" y="286" textAnchor="end">{index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
                 </g>
               </g>)}
             </svg>

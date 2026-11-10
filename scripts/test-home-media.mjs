@@ -5,7 +5,7 @@ import { familyMedia, homeMedia } from '../src/media-manifest.js';
 import { categoryOrder } from '../src/category-order.js';
 const main=readFileSync('src/main.jsx','utf8');
 const css=readFileSync('src/polish.css','utf8');
-const ppf=readFileSync('src/components/PPFScrollSequence.jsx','utf8');
+const ppf=readFileSync('src/components/PPFLayerAnimation.jsx','utf8');
 assert.equal(content.home.heroTitle,'SUPER CHROME FILM');
 assert.equal(content.home.heroAction,'Explore products');
 assert.ok(content.home.heroSubtitle);
