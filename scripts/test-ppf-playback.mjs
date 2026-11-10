@@ -25,7 +25,7 @@ for (const mapping of [ease, ...Array.from({length:4}, (_,index) => raw => layer
     previous=value
   }
 }
-close(ease(.5), .5, 'symmetric easing midpoint')
+assert.ok(ease(.5) > .8 && ease(.5) < 1, 'ease-out: fast peel, soft settle')
 assert.ok(ease(.25)<.25 && ease(.75)>.75, 'easing has a soft start and landing')
 close(cubicBezier(0,0,1,1)(.25), .25, 'linear Bezier control points')
 for (let i=0; i<=100; i++) {

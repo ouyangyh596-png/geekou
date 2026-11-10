@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { englishSiteContent } from '../content/site-content.js'
 
-// cubic-bezier(.65,0,.35,1): soft start and soft landing for each sheet.
+// cubic-bezier(.22,1,.36,1): sheets peel out quickly and settle softly.
 function cubicBezier(x1, y1, x2, y2) {
   const a = (p1, p2) => 1 - 3 * p2 + 3 * p1, b = (p1, p2) => 3 * p2 - 6 * p1, c = p1 => 3 * p1
   const at = (t, p1, p2) => ((a(p1, p2) * t + b(p1, p2)) * t + c(p1)) * t
@@ -14,7 +14,7 @@ function cubicBezier(x1, y1, x2, y2) {
     return at(Math.max(0, Math.min(1, t)), y1, y2)
   }
 }
-const ease = cubicBezier(0.65, 0, 0.35, 1)
+const ease = cubicBezier(0.22, 1, 0.36, 1)
 function rawExpansionAt(progress) {
   return Math.max(0, Math.min(1, progress < 0.85 ? (progress - 0.15) / 0.45 : (1 - progress) / 0.15))
 }
@@ -50,7 +50,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
       const dt = last ? Math.min(now - last, 64) : 16
       last = now
       if (current === null || motion.matches) current = target
-      else current += (target - current) * (1 - Math.exp(-dt / 140))
+      else current += (target - current) * (1 - Math.exp(-dt / (mobile ? 120 : 150)))
       if (Math.abs(target - current) < 0.0005) current = target
       const progress = current
       const raw = motion.matches ? 1 : rawExpansionAt(progress)
