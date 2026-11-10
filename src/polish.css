@@ -226,12 +226,15 @@ p { line-height:1.6; }
 .landing-product-button { background:var(--colour-blue); border:0; padding:16px 24px; font-size:14px; border-radius:8px; box-shadow:none; gap:8px; }
 @media(max-width:800px) { .home-page .landing { min-height:680px; } .home-page .landing-image,.home-page .landing::after { top:80px; } .home-page .landing-copy { bottom:48px; } }
 /* PPF: wide film study with scroll-linked arrival and departure. */
-.ppf-sequence { background:#0b1f3a; }
-.ppf-sequence-background { position:absolute; inset:-48px 0; pointer-events:none; will-change:transform; background-color:var(--colour-navy); background-image:radial-gradient(ellipse at 65% 45%,rgba(38,115,179,.38),transparent 65%),linear-gradient(135deg,#071626,#173e5d 55%,#0b1f3a); }
-.ppf-sequence::before { content:none; }
-.ppf-sequence-background::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.035) 120px 121px); pointer-events:none; }
+.ppf-sequence { background-color:var(--colour-navy); background-image:radial-gradient(ellipse at 65% 45%,rgba(38,115,179,.38),transparent 65%),linear-gradient(135deg,#071626,#173e5d 55%,#0b1f3a); }
+.ppf-sequence::before { background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.035) 120px 121px); pointer-events:none; }
 .ppf-sequence-track { height:260vh; }
-.ppf-sequence-sticky { position:sticky; overflow:hidden; isolation:isolate; top:0; min-height:0; height:100svh; padding:32px 0; }
+.ppf-sequence-sticky { position:sticky; top:0; min-height:0; height:100svh; padding:32px 0; }
+.ppf-sequence-desktop { background:#0b1f3a; }
+.ppf-sequence-background { position:absolute; inset:-48px 0; pointer-events:none; will-change:transform; background-color:var(--colour-navy); background-image:radial-gradient(ellipse at 65% 45%,rgba(38,115,179,.38),transparent 65%),linear-gradient(135deg,#071626,#173e5d 55%,#0b1f3a); }
+.ppf-sequence-desktop::before { content:none; }
+.ppf-sequence-background::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.035) 120px 121px); pointer-events:none; }
+.ppf-sequence-desktop .ppf-sequence-sticky { position:sticky; overflow:hidden; isolation:isolate; top:0; min-height:0; height:100svh; padding:32px 0; }
 .ppf-sequence-inner { display:grid; grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); gap:16px; width:100%; max-width:1680px; height:100%; margin:auto; padding-inline:32px; }
 .ppf-sequence-copy.ppf-sequence-copy--top { position:relative; inset:auto; width:auto; padding:0; opacity:1; transform:none; text-align:center; text-shadow:none; }
 .ppf-sequence-copy--top h2,.ppf-sequence-copy--top h2 em { color:white; text-shadow:none; }
@@ -503,7 +506,7 @@ p { line-height:1.6; }
 .ppf-film-label { opacity:0; }
 .ppf-film-label text { fill:#d4dce3; font:12px var(--font-text); }
 @media(prefers-reduced-motion:reduce) {
-  .ppf-sequence-stage { height:min(70vh,680px); aspect-ratio:400 / 380; }
+  .ppf-sequence-desktop .ppf-sequence-stage { height:min(70vh,680px); aspect-ratio:400 / 380; }
   .ppf-film-layer--0 { transform:translateY(-204px); }
   .ppf-film-layer--1 { transform:translateY(-153px); }
   .ppf-film-layer--2 { transform:translateY(-102px); }
@@ -518,23 +521,23 @@ p { line-height:1.6; }
 .ppf-sequence-copy--top .ppf-brand-title em::before { content:none; }
 
 /* Desktop editorial spread: copy and legend alongside the enlarged film. */
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-inner { position:relative; grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-rows:minmax(0,1fr); align-items:center; gap:24px; max-width:1344px; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-copy { min-width:0; text-align:left; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-brand-title { justify-content:flex-start; font-size:clamp(42px,3.9vw,56px); margin:16px 0 20px; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-copy > p { margin-inline:0; max-width:36ch; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:relative; inset:auto; height:100%; width:100%; display:grid; place-items:center; transform:none; opacity:1; pointer-events:none; min-width:0; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-film-diagram { width:100%; height:100%; max-width:none; margin:0; }
+.ppf-sequence-desktop .ppf-sequence-inner { position:relative; grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-rows:minmax(0,1fr); align-items:center; gap:24px; max-width:1344px; }
+.ppf-sequence-desktop .ppf-sequence-copy { min-width:0; text-align:left; }
+.ppf-sequence-desktop .ppf-brand-title { justify-content:flex-start; font-size:clamp(42px,3.9vw,56px); margin:16px 0 20px; }
+.ppf-sequence-desktop .ppf-sequence-copy > p { margin-inline:0; max-width:36ch; }
+.ppf-sequence-desktop .ppf-sequence-stage { position:relative; inset:auto; height:100%; width:100%; display:grid; place-items:center; transform:none; opacity:1; pointer-events:none; min-width:0; }
+.ppf-sequence-desktop .ppf-film-diagram { width:100%; height:100%; max-width:none; margin:0; }
 .ppf-layer-legend { list-style:none; margin:32px 0 0; padding:0; max-width:360px; }
 .ppf-layer-legend li { position:relative; border-top:1px solid #ffffff26; padding:13px 0 13px 18px; color:#ffffff80; font-size:14px; transition:color .2s; }
 .ppf-layer-legend li:last-child { border-bottom:1px solid #ffffff26; }
 .ppf-layer-legend li::before { content:''; position:absolute; left:0; top:50%; width:4px; height:4px; border-radius:50%; background:currentColor; transform:translateY(-50%); }
 .ppf-layer-legend li[aria-current="step"] { color:#bce9ff; }
 @media (max-height:700px) and (min-width:768px) {
-  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-brand-title { margin-block:8px; }
+  .ppf-sequence-desktop .ppf-brand-title { margin-block:8px; }
   .ppf-layer-legend { margin-top:16px; }
   .ppf-layer-legend li { padding-block:9px; }
 }
 @media(prefers-reduced-motion:reduce) {
-  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { height:760px; }
+  .ppf-sequence-desktop .ppf-sequence-stage { height:760px; }
   .ppf-layer-legend li { transition:none; }
 }

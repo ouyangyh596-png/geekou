@@ -67,7 +67,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
     }
   }, [mobile])
 
-  return <section className={mobile ? 'ppf-sequence ppf-sequence-mobile' : 'ppf-sequence'} ref={sectionRef} aria-label={content.presentationLabel}>
+  return <section className={mobile ? 'ppf-sequence ppf-sequence-mobile' : 'ppf-sequence ppf-sequence-desktop'} ref={sectionRef} aria-label={content.presentationLabel}>
     <div className="ppf-sequence-track">
       <div className="ppf-sequence-sticky">
         <div className="ppf-sequence-background" ref={backgroundRef} aria-hidden="true" />

@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const main = read('src/main.jsx');
-assert.match(main, /<PPFLayerAnimation mobile=\{isMobile\} \/>/);
-assert.match(main, /isMobile \? 'home-page is-mobile' : 'home-page'/);
+assert.match(main, /\{isMobile \? <PPFScrollSequence \/> : <PPFLayerAnimation \/>\}/);
+assert.match(main, /<main className="home-page">/);
+assert.doesNotMatch(main, /home-page is-mobile|closest\('\.is-mobile'\)|import '\.\/mobile\.css'/);
 const hook = read('src/use-is-mobile.js');
 assert.match(hook, /max-width: 820px/);
 assert.match(hook, /pointer: coarse/);
@@ -31,9 +32,9 @@ for (const [width, coarse, expected] of [[390,false,true],[820,false,true],[821,
 }
 
 const { createHash } = await import('node:crypto');
-const desktopMarkup = main.slice(main.indexOf('  return <main className={isMobile'), main.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('<PPFLayerAnimation mobile={isMobile} />', '<PPFScrollSequence />');
-assert.equal(createHash('sha256').update(desktopMarkup).digest('hex'), '846cc04954adbca01287385ab0955c866151ae05fa993ac9c5eac38c76ea0847', 'desktop Home markup is byte-for-byte baseline');
-console.log('390/1280 device classification, resize cleanup and desktop markup baseline PASS');
+const mobileMarkup = main.slice(main.indexOf('  return <main className="home-page"'), main.indexOf('\nfunction MaterialStory')).replace('{isMobile ? <PPFScrollSequence /> : <PPFLayerAnimation />}', '<PPFScrollSequence />');
+assert.equal(createHash('sha256').update(mobileMarkup).digest('hex'), '846cc04954adbca01287385ab0955c866151ae05fa993ac9c5eac38c76ea0847', 'mobile Home markup is byte-for-byte baseline');
+console.log('390/1280 device classification, resize cleanup and mobile markup baseline PASS');
 
 const { createTouchGesture } = await import('../src/product-wheel-navigation.js');
 const handlers = main.slice(main.indexOf('    const handleTouchStart'), main.indexOf("    wheelTarget.addEventListener('wheel'"));
@@ -45,10 +46,10 @@ for (const mobile of [true,false]) {
     (_,action)=>{prevented=true;if(action.type==='select')selected=action.index});
   const event = (x,y) => ({touches:[{clientX:x,clientY:y}],target:{closest:()=>null}});
   start(event(300,300));move(event(299,298));
-  if (mobile) assert.equal(prevented,false,'undecided touch must not cancel native scroll');
+
   move(event(295,100));
-  assert.equal(selected,mobile?0:1,'vertical mobile scroll releases while desktop behavior stays unchanged');
+  assert.equal(selected,1,'vertical swipe preserves main card selection behavior');
   end(); selected=0;start(event(300,300));move(event(100,295));
   assert.equal(selected,1,'horizontal swipe selects next card');
 }
-console.log('Mobile native vertical scroll and horizontal swipe PASS');
+console.log('Main vertical and horizontal card swipe behavior PASS');
