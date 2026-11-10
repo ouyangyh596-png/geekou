@@ -511,3 +511,11 @@ p { line-height:1.6; }
   .ppf-film-label { opacity:1; }
   .ppf-film-layer,.ppf-film-sheen,.ppf-sequence-background { will-change:auto; }
 }
+
+/* Desktop artwork is centered in the pinned viewport, independent of the copy row. */
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-inner { position:static; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:absolute; inset:0; height:100%; width:100%; display:grid; place-items:center; transform:none; opacity:1; pointer-events:none; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-film-diagram { width:min(900px,calc(100% - 64px)); height:min(62svh,600px); margin:auto; }
+@media(prefers-reduced-motion:reduce) {
+  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:relative; height:min(62svh,600px); }
+}

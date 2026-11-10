@@ -14,3 +14,8 @@
 - `pnpm test-release` (or the equivalent node scripts) and `node ./node_modules/vite/bin/vite.js build` must pass.
 - Commit on branch design-refresh with a clear message. Do NOT push and do not touch main.
 - Report: what changed, test results, commit hash.
+
+## UPDATE 13:10 — user feedback on desktop preview
+1. Desktop: the PPF layered animation is NOT centered. Center the whole layer stack (and its label block) horizontally and vertically in the pinned viewport at common widths (1280, 1440, 1920). Check the SVG viewBox / preserveAspectRatio, container widths, and any left offsets/grid columns that push it off-center.
+2. The layers have no transparent/translucent material feel. Make each film layer read as real clear film: semi-transparent fills (layers below visible through layers above), subtle gradients, a thin bright edge highlight/specular sheen, a soft glossy reflection streak that moves slightly with scroll, faint drop shadow between layers. Self-Healing Top Coat and High-Clarity TPU should look clearest/glassiest; Glue a faint milky translucent; PET Liner slightly more opaque. Keep it tasteful, premium, dark background. Apply the same material look on mobile too (shared component).
+Do not commit (the sandbox blocks git); just leave the changes in the working tree. Run the tests and build and report.

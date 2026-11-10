@@ -7,7 +7,7 @@ const expansionAt=new Function(`${fn}; return expansionAt`)()
 for (const [p,v] of [[0,0],[.15,0],[.375,.5],[.6,1],[.7,1],[.85,1],[.925,.5],[1,0]]) assert.ok(Math.abs(expansionAt(p)-v)<1e-8,`phase ${p}`)
 for(let i=0;i<=100;i++) assert.ok(expansionAt(i/100)>=0 && expansionAt(i/100)<=1)
 console.log('Scroll phase boundaries, easing and reverse-deterministic mapping PASS')
-const effect=source.slice(source.indexOf('    const section = sectionRef.current'),source.indexOf('\n  }, [])'))
+const effect=source.slice(source.indexOf('    const section = sectionRef.current'),source.indexOf('\n  }, [mobile])'))
 let p=0, next=0
 const callbacks=new Map(), events=new Map()
 const motion={matches:false,addEventListener:(k,f)=>events.set('motion',f),removeEventListener:()=>events.delete('motion')}
@@ -16,8 +16,9 @@ const track={offsetHeight:2400,getBoundingClientRect:()=>({top:-p*1600})}, stick
 const section={querySelector:s=>s.endsWith('track')?track:sticky}
 const viewport={matchMedia:()=>motion,addEventListener:(k,f)=>events.set(k,f),removeEventListener:k=>events.delete(k)}
 const sheen={style:{}}, background={style:{}}
-const cleanup=new Function('sectionRef','layersRef','sheenRef','backgroundRef','window','ResizeObserver','requestAnimationFrame','cancelAnimationFrame','expansionAt',effect)(
- {current:section},{current:layers},{current:sheen},{current:background},viewport,class{observe(){} disconnect(){}},f=>{callbacks.set(++next,f);return next},id=>callbacks.delete(id),expansionAt)
+const runEffect=new Function('mobile','stackRef','sectionRef','layersRef','sheenRef','backgroundRef','window','ResizeObserver','requestAnimationFrame','cancelAnimationFrame','expansionAt',effect)
+const cleanup=runEffect(
+ true,null,{current:section},{current:layers},{current:[sheen,sheen,sheen,sheen]},{current:background},viewport,class{observe(){} disconnect(){}},f=>{callbacks.set(++next,f);return next},id=>callbacks.delete(id),expansionAt)
 const flush=()=>{const pending=[...callbacks.values()];callbacks.clear();pending.forEach(f=>f())}
 flush();assert.equal(layers[0].style.transform,'translateY(-28px)')
 for(const value of [.15,.375,.6,.85,1,.6,0]){
@@ -30,3 +31,21 @@ motion.matches=true;events.get('motion')();flush();assert.equal(layers[0].style.
 p=1;events.get('scroll')();flush();assert.equal(layers[0].style.transform,'translateY(-204px)');assert.equal(background.style.transform,'translate3d(0, 0px, 0)')
 events.get('scroll')();cleanup();assert.equal(callbacks.size,0);assert.equal(events.size,0)
 console.log('Actual effect: forward/reverse, RAF coalescing/idle, reduced motion toggle and cleanup PASS')
+
+// Desktop centers measured artwork (including the labels) at every scroll phase.
+let translation = ''
+const stack = {
+ getBBox: () => ({x:12,y:42,width:380,height:232}),
+ setAttribute: (name,value) => { assert.equal(name,'transform'); translation=value }
+}
+const desktopCleanup=runEffect(false,{current:stack},{current:section},{current:layers},{current:[sheen,sheen,sheen,sheen]},{current:background},viewport,class{observe(){} disconnect(){}},f=>{callbacks.set(++next,f);return next},id=>callbacks.delete(id),expansionAt)
+flush()
+assert.equal(translation,'translate(-2 32)')
+assert.equal(sheen.style.transform,'translateX(0px)')
+motion.matches=false;p=.6;events.get('scroll')();flush()
+assert.equal(sheen.style.transform,'translateX(14px)')
+stack.getBBox=()=>({x:12,y:218,width:380,height:100})
+p=0;events.get('scroll')();flush()
+assert.equal(translation,'translate(-2 -78)')
+desktopCleanup()
+console.log('Desktop artwork centering and shared scroll reflection PASS')
