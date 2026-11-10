@@ -14,14 +14,14 @@
 .is-mobile .ppf-explore-button { display:inline-flex; align-items:center; gap:8px; margin-top:12px; }
 .is-mobile .ppf-sequence-stage { flex:0 1 420px; width:100%; max-width:460px; height:auto; min-height:0; display:flex; justify-content:center; overflow:visible; order:1; }
 .is-mobile .ppf-sequence-stage::before,.is-mobile .ppf-sequence-stage::after { content:none; }
-.ppf-sequence-mobile .ppf-film-diagram { display:block; width:100%; height:100%; overflow:visible; }
-.ppf-sequence-mobile .ppf-film-layer,.ppf-sequence-mobile .ppf-film-sheen { will-change:transform; }
-.ppf-sequence-mobile .ppf-film-layer--0 { transform:translateY(-28px); }
-.ppf-sequence-mobile .ppf-film-layer--1 { transform:translateY(-21px); }
-.ppf-sequence-mobile .ppf-film-layer--2 { transform:translateY(-14px); }
-.ppf-sequence-mobile .ppf-film-layer--3 { transform:translateY(-7px); }
-.ppf-sequence-mobile .ppf-film-label { opacity:0; }
-.ppf-sequence-mobile .ppf-film-label text { fill:#9a9fa3; font:12px var(--font-text); }
+.is-mobile .ppf-sequence-mobile .ppf-film-diagram { display:block; width:100%; height:100%; overflow:visible; }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer,.is-mobile .ppf-sequence-mobile .ppf-film-sheen { will-change:transform; }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--0 { transform:translateY(-28px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--1 { transform:translateY(-21px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--2 { transform:translateY(-14px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--3 { transform:translateY(-7px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-label { opacity:0; }
+.is-mobile .ppf-sequence-mobile .ppf-film-label text { fill:#9a9fa3; font:12px var(--font-text); }
 .is-mobile .stack-selector { height:auto; min-height:0; padding:0; touch-action:pan-y; }
 .is-mobile .stack-card-prev,.is-mobile .stack-card-next { display:none; }
 .is-mobile .stack-card-active { position:relative; inset:auto; width:100%; height:auto; min-height:0; aspect-ratio:4 / 5; transform:none; }
@@ -52,10 +52,10 @@
   .is-mobile .ppf-sequence-track { height:auto; }
   .is-mobile .ppf-sequence-sticky { position:relative; height:auto; padding:32px 0; }
   .is-mobile .ppf-sequence-stage { flex:none; height:auto; aspect-ratio:400 / 380; }
-  .ppf-sequence-mobile .ppf-film-layer--0 { transform:translateY(-204px); }
-  .ppf-sequence-mobile .ppf-film-layer--1 { transform:translateY(-153px); }
-  .ppf-sequence-mobile .ppf-film-layer--2 { transform:translateY(-102px); }
-  .ppf-sequence-mobile .ppf-film-layer--3 { transform:translateY(-51px); }
-  .ppf-sequence-mobile .ppf-film-label { opacity:1; }
-  .ppf-sequence-mobile .ppf-film-layer,.ppf-sequence-mobile .ppf-film-sheen { will-change:auto; }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--0 { transform:translateY(-204px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--1 { transform:translateY(-153px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--2 { transform:translateY(-102px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer--3 { transform:translateY(-51px); }
+.is-mobile .ppf-sequence-mobile .ppf-film-label { opacity:1; }
+.is-mobile .ppf-sequence-mobile .ppf-film-layer,.is-mobile .ppf-sequence-mobile .ppf-film-sheen { will-change:auto; }
 }
