@@ -26,7 +26,7 @@ for (const mapping of [ease, ...Array.from({length:4}, (_,index) => raw => layer
   }
 }
 assert.ok(ease(.5) > .8 && ease(.5) < 1, 'ease-out: fast peel, soft settle')
-assert.ok(ease(.25)<.25 && ease(.75)>.75, 'easing has a soft start and landing')
+assert.ok(ease(.25)>.25 && ease(.75)>.75 && ease(.98)<1, 'ease-out lands softly')
 close(cubicBezier(0,0,1,1)(.25), .25, 'linear Bezier control points')
 for (let i=0; i<=100; i++) {
   const raw=i/100
