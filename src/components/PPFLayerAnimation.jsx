@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
-import { englishSiteContent } from '../content/site-content.js'
+import { useLanguage } from '../language.js'
 
 // cubic-bezier(.22,1,.36,1): sheets peel out quickly and settle softly.
 function cubicBezier(x1, y1, x2, y2) {
@@ -24,8 +24,9 @@ function layerExpansion(raw, index) {
 }
 
 export default function PPFLayerAnimation({ mobile = false }) {
-  const content = englishSiteContent.home.ppfSequence
-  const labels = ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']
+  const { content: siteContent, lang } = useLanguage()
+  const content = siteContent.home.ppfSequence
+  const labels = content.layers
   const sectionRef = useRef(null)
   const layersRef = useRef([])
   const sheenRef = useRef([])
@@ -91,7 +92,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
-  }, [mobile])
+  }, [mobile, lang])
 
   return <section className={mobile ? 'ppf-sequence ppf-sequence-mobile' : 'ppf-sequence'} ref={sectionRef} aria-label={content.presentationLabel}>
     <div className="ppf-sequence-track">
@@ -103,14 +104,14 @@ export default function PPFLayerAnimation({ mobile = false }) {
             <h2 className="ppf-brand-title"><img src="/media/home/autoface-logo-light.svg" alt="AUTOFACE" className="ppf-brand-logo" /><em>{content.titleEmphasis}</em></h2>
             <p>{content.description}</p>
             <a className="ppf-explore-button" href="#category=ppf"><span>{content.action}</span> <ArrowUpRight size={16} aria-hidden="true" /></a>
-            {!mobile && <ol className="ppf-layer-legend" aria-label="Film layers">
+            {!mobile && <ol className="ppf-layer-legend" aria-label={content.layersLabel}>
               {labels.map((label, index) => <li key={label} aria-current={index === 0 ? 'step' : undefined}>{label}</li>)}
             </ol>}
           </div>
           <div className="ppf-sequence-stage">
             <svg className="ppf-film-diagram" viewBox={mobile ? "0 0 400 380" : "30 20 340 340"} preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby={`${id}-title ${id}-description`}>
               <title id={`${id}-title`}>{content.presentationLabel}</title>
-              <desc id={`${id}-description`}>{labels.join(', ')} — Four protective film layers with curved surfaces, separating and closing as you scroll.</desc>
+              <desc id={`${id}-description`}>{labels.join(', ')} — {content.diagramDescription}</desc>
               <defs>
                 <linearGradient id={`${id}-top`} x1="0" y1="0" x2=".25" y2="1">
                   <stop stopColor="#e9faff" stopOpacity=".24" /><stop offset=".35" stopColor="#dceef7" stopOpacity=".07" /><stop offset=".7" stopColor="#adcbdc" stopOpacity=".12" /><stop offset="1" stopColor="#f9fbfc" stopOpacity=".3" />
@@ -139,7 +140,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
                 <g clipPath={fill('plate')}><path ref={element => { sheenRef.current[index] = element }} className="ppf-film-sheen" d="M170 230h65l80 120h-65Z" fill={fill('sheen')} /></g>
                 <g className="ppf-film-label" transform={mobile ? undefined : 'translate(65 90) scale(.65)'}>
                   <path d="M88 290h26l23 8" fill="none" stroke="#b8bcbf" strokeWidth=".7" />
-                  <text x="84" y="286" textAnchor="end">{index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
+                  <text x="84" y="286" textAnchor="end">{lang === 'en' && index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
                 </g>
               </g>)}
               </g>

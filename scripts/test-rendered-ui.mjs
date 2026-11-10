@@ -11,7 +11,7 @@ import { chineseSiteContent } from '../src/content/site-content.zh.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dependencyRoot = resolve(dirname(process.execPath), '..');
-const playwrightModule = resolve(dependencyRoot, 'node_modules/playwright/index.mjs');
+const playwrightModule = [resolve(dependencyRoot, 'node_modules/playwright/index.mjs'), resolve(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs')].find(existsSync);
 const viteEntry = resolve(root, 'node_modules/vite/bin/vite.js');
 const origin = 'http://127.0.0.1:4178';
 const browserCache = resolve(homedir(), 'Library/Caches/ms-playwright');
@@ -227,9 +227,8 @@ try {
       await auditPage(page, `${width}-${slug}`);
     }
     await page.goto(origin, { waitUntil: 'networkidle' });
-    await page.locator('.language-picker summary').click();
     await page.locator('.language-picker button[lang="zh"]').click();
-    assert.equal(await page.locator('.language-picker summary span').textContent(), '中文');
+    assert.equal(await page.locator('.language-picker button[lang="zh"]').getAttribute('aria-pressed'), 'true');
     assert.equal(await page.locator('.landing-title').textContent(), chineseSiteContent.home.heroTitle);
     for (const selector of ['.landing-subtitle', '.factory-panel', '.contact-information', '.copyright']) {
       assert.match(await page.locator(selector).textContent(), /[\u3400-\u9fff]/, `${selector}: Chinese home content must be translated`);

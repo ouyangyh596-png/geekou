@@ -1,0 +1,12 @@
+html[lang="zh"] body { font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif!important; line-height:1.7; }
+html[lang="zh"] body :is(h1,h2,h3,h4,p,a,button,input,textarea,select,label,figcaption,div,span,small,strong,b,em,dt,dd,th,td,text,tspan) {
+  font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif!important;
+  font-style:normal!important; text-transform:none!important; letter-spacing:normal!important;
+}
+html[lang="zh"] :is(h1,h2,h3,p,button,a) { overflow-wrap:break-word; }
+html[lang="zh"] :is(.statement-copy,.tech-card p,.category-page-copy p,.series-card p,.inquiry-form) { line-height:1.7; }
+@media(max-width:600px) {
+  html[lang="zh"] .header-inner { gap:8px; }
+  html[lang="zh"] .header-actions { flex-shrink:0; }
+  html[lang="zh"] .stack-card-copy strong { font-size:clamp(24px,7vw,36px); }
+}

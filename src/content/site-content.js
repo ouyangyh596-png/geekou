@@ -256,3 +256,58 @@ export const englishSiteContent = {
     }
   }
 }
+
+Object.assign(englishSiteContent.home.ppfSequence, {
+  "layers": [
+    "Self-Healing Top Coat",
+    "High-Clarity TPU",
+    "Glue",
+    "PET Liner"
+  ],
+  "layersLabel": "Film layers",
+  "diagramDescription": "Four protective film layers with curved surfaces, separating and closing as you scroll."
+});
+englishSiteContent.mediaAlts = {
+  "one-way-vision": "Perforated film installed across a train window, viewed from inside",
+  "self-adhesive-vinyl": "Pink tour bus covered with printed self-adhesive advertising graphics",
+  "translucent-film": "Illuminated storefront light box and backlit window graphics at night",
+  "ppf": "Illustration of transparent paint-protection film layers over a blue car",
+  "cast-wrap-vinyl": "Vehicle-wrap film rolls representing cast vinyl for complex curves and protected graphics",
+  "polymeric-wrap-vinyl": "Protective film roll representing dimensionally stable polymeric wrap vinyl",
+  "super-chrome-film": "Metallic blue, green, purple, copper and silver super chrome vehicle-wrap film rolls",
+  "pvc-free-film": "Protective film roll representing PVC-free vehicle wrap material",
+  "cold-lamination": "Film with release liner, representative cold-lamination material detail",
+  "wall-decals": "Interior bedroom with an installed botanical wall decal mural",
+  "decorative-film": "Interior bedroom with an installed botanical wall decal mural"
+};
+englishSiteContent.pageTitle = "SO-FINE | Engineered Surface Films";
+
+englishSiteContent.specLabels = {
+  "Material": "Material",
+  "Thickness": "Thickness",
+  "Adhesive": "Adhesive",
+  "Liner": "Liner",
+  "Perforation ratio": "Perforation ratio",
+  "Hole size": "Hole size",
+  "Print compatibility": "Print compatibility",
+  "Finish": "Finish",
+  "Face thickness without adhesive": "Face thickness without adhesive",
+  "Face thickness with adhesive": "Face thickness with adhesive",
+  "Release liner": "Release liner",
+  "Tensile strength (machine direction)": "Tensile strength (machine direction)",
+  "Elongation at break (machine direction)": "Elongation at break (machine direction)",
+  "Shrinkage": "Shrinkage",
+  "Initial adhesion on steel (20 minutes)": "Initial adhesion on steel (20 minutes)",
+  "Adhesion on steel (24 hours)": "Adhesion on steel (24 hours)",
+  "Final adhesion on steel (72 hours)": "Final adhesion on steel (72 hours)",
+  "Minimum application temperature": "Minimum application temperature",
+  "Service temperature": "Service temperature",
+  "Humidity resistance": "Humidity resistance",
+  "Water resistance": "Water resistance",
+  "Detergent (1% solution)": "Detergent (1% solution)",
+  "Isopropyl alcohol/water (20/80)": "Isopropyl alcohol/water (20/80)",
+  "Features": "Features",
+  "Application": "Application",
+  "Color": "Color",
+  "Weight": "Weight"
+};

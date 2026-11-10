@@ -37,11 +37,8 @@ assert.match(header, /\.header nav \{[^}]*gap:32px!important[^}]*font-size:15px!
 assert.match(header, /\.header nav>\* \{[^}]*flex:0 0 auto/, 'legacy equal-width nav cells must not enlarge link spacing');
 assert.match(header, /\.header \.nav-link \{[^}]*gap:6px/, 'Products keeps six pixels before its arrow');
 assert.match(header, /\.header nav \{[^}]*height:auto/, 'navigation must fit inside the shared header height');
-assert.match(header, /\.language-picker summary \{[^}]*min-width:44px[^}]*min-height:48px/, 'language summary has a touch-sized target');
-assert.match(picker, /languageOptions.find\(\(\[,code\]\) => code === lang\)/, 'summary derives its label from current language');
-assert.match(picker, /dir="auto"/, 'language names support their natural writing direction');
-assert.match(picker, /event.key === 'Escape'/, 'Escape dismisses the picker');
-assert.match(picker, /document.addEventListener\('pointerdown', dismiss\)/, 'outside interaction dismisses the picker');
-assert.match(picker, /change\(code\)/, 'selecting a language updates the shared language state');
-assert.match(picker, /aria-current=\{code === lang/, 'the active language is exposed accessibly');
+assert.match(header, /\.language-picker button \{[^}]*min-width:44px[^}]*min-height:48px/, 'toggle has touch-sized buttons');
+assert.match(picker, /aria-pressed=\{code === lang\}/, 'active language is accessible');
+assert.match(picker, /change\(code\)/, 'toggle updates language');
+assert.doesNotMatch(picker, /<details|<summary/, 'no dropdown');
 console.log('PASS: header product directory and refreshed language control contracts are present');

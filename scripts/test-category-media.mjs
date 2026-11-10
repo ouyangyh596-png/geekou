@@ -36,7 +36,7 @@ assert.deepEqual(decorativeFilmItems, [], 'Decorative Film route has no product-
 
 assert.match(
   main,
-  /const media = familyMedia\[category\.slug\];/,
+  /const media = \{\.\.\.familyMedia\[category\.slug\], alt: content.mediaAlts\[category\.slug\]\};/,
   'CategoryPage reads its approved family media mapping'
 );
 const mediaComponent = await readFile(new URL('../src/components/CategoryMedia.jsx', import.meta.url), 'utf8');

@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs'
 const source=readFileSync(process.cwd()+'/src/components/PPFLayerAnimation.jsx','utf8')
 const fn=source.slice(source.indexOf('function cubicBezier('),source.indexOf('\nexport default'))
 const {rawExpansionAt,layerExpansion}=new Function(`${fn}; return {rawExpansionAt,layerExpansion}`)()
-const effect=source.slice(source.indexOf('    const section = sectionRef.current'),source.indexOf('\n  }, [mobile])'))
+const effect=source.slice(source.indexOf('    const section = sectionRef.current'),source.indexOf('\n  }, [mobile, lang])'))
 let p=0, next=0, now=0
 const callbacks=new Map(), events=new Map()
 const motion={matches:false,addEventListener:(k,f)=>events.set('motion',f),removeEventListener:()=>events.delete('motion')}

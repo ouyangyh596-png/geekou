@@ -9,7 +9,7 @@
     "start": "NODE_ENV=production node server/index.mjs",
     "build": "vite build",
     "preview": "vite preview",
-    "validate:content": "node scripts/validate-content.mjs && pnpm test-content",
+    "validate:content": "node scripts/validate-content.mjs && npm run test-content",
     "test-content": "node scripts/test-site-content.mjs",
     "test-language": "node scripts/test-language.mjs",
     "test-scroll": "node scripts/test-scroll-navigation.mjs",
@@ -34,7 +34,7 @@
     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
     "test-polish": "node scripts/test-site-polish.mjs",
     "test-typography": "node scripts/test-typography.mjs",
-    "test-release": "pnpm validate:content && pnpm test-polish && pnpm test-typography && pnpm test-cybertruck && pnpm test-scroll && pnpm test-language && pnpm test-header-directory && pnpm test-home-media && pnpm test-tvc && pnpm test-factory-refresh && pnpm test-ppf && pnpm test-mobile && pnpm test-product-wheel && pnpm test-category-media && pnpm test-accessibility-assets && pnpm test-printable-wrap"
+    "test-release": "npm run validate:content && npm run test-polish && npm run test-typography && npm run test-cybertruck && npm run test-scroll && npm run test-language && npm run test-header-directory && npm run test-home-media && npm run test-tvc && npm run test-factory-refresh && npm run test-ppf && npm run test-mobile && npm run test-product-wheel && npm run test-category-media && npm run test-accessibility-assets && npm run test-printable-wrap"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

@@ -37,7 +37,7 @@ function assertEditorSafeContent(value, location = 'englishSiteContent') {
   }
 }
 
-const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck']
+const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck', 'mediaAlts', 'pageTitle', 'specLabels']
 assert.deepEqual(Object.keys(englishSiteContent), sections)
 for (const section of sections) assert.ok(englishSiteContent[section], `Missing ${section}`)
 for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
@@ -204,12 +204,15 @@ for (const [modulePath, inlineCopy] of [
   ['../src/components/PPFLayerAnimation.jsx', ['PPF product motion presentation', 'Paint protection film engineered for clarity']]
 ]) {
   const source = await readFile(new URL(modulePath, import.meta.url), 'utf8')
-  assert.match(source, modulePath.includes('PPFLayerAnimation') ? /englishSiteContent/ : /useLanguage/, `${modulePath} must read centralized content`)
+  assert.match(source, /useLanguage/, `${modulePath} must read centralized content`)
   for (const copyValue of inlineCopy) {
     assert.ok(!source.includes(copyValue), `${modulePath} must not contain inline English copy: ${copyValue}`)
   }
 }
 assert.deepEqual(englishSiteContent.home.ppfSequence, {
+  layers: ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner'],
+  layersLabel: 'Film layers',
+  diagramDescription: 'Four protective film layers with curved surfaces, separating and closing as you scroll.',
   presentationLabel: 'PPF product motion presentation',
   kicker: 'SO-FINE / PPF SYSTEM',
   titleLead: 'AUTOFACE',

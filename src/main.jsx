@@ -4,14 +4,15 @@ import { Layers, Factory, FlaskConical, Workflow, ScanLine, ArrowUpRight, ArrowL
 import './styles.css';
 import './polish.css';
 import './mobile.css';
+import './chinese.css';
 import { useIsMobile } from './use-is-mobile.js';
 import PPFLayerAnimation from './components/PPFLayerAnimation.jsx';
 import { catalogProducts } from './catalog.js';
 import { brochureSeries } from './brochure-data.js';
 import { contactDetails as englishContactDetails } from './content/company.js';
-import { readInquiryError } from './inquiry-errors.js';
+import { readInquiryError, localizeInquiryError } from './inquiry-errors.js';
 import { decideHashNavigation, isHomeRoute } from './scroll-navigation.js';
-import { languageOptions, useLanguage } from './language.js';
+import { useLanguage } from './language.js';
 import { familyMedia, homeMedia } from './media-manifest.js';
 import { categoryOrder } from './category-order.js';
 import { createTouchGesture, createWheelGesture } from './product-wheel-navigation.js';
@@ -102,8 +103,10 @@ function Lines({ text }) {
 }
 
 function ContactForm() {
-  const { content } = useLanguage();
+  const { content, lang } = useLanguage();
   const contactDetails = englishContactDetails;
+  const formRef = useRef(null);
+  useEffect(() => { for (const field of formRef.current?.elements || []) field.setCustomValidity?.(''); }, [lang]);
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [state, setState] = useState('idle');
   const [error, setError] = useState('');
@@ -126,7 +129,9 @@ function ContactForm() {
       setState('error');
     }
   };
-  return <form className="inquiry-form" onSubmit={submit}>
+  return <form ref={formRef} className="inquiry-form" onSubmit={submit} onInvalid={event => {
+    if (lang === 'zh') event.target.setCustomValidity(event.target.validity.typeMismatch ? '请输入有效的电子邮箱地址。' : '请填写此项。');
+  }} onInput={event => event.target.setCustomValidity('')}>
     <div className="form-heading"><span className="kicker">{content.contact.formKicker}</span><p>{content.contact.formIntroduction}</p></div>
     <div className="form-grid">
       <label>{content.contact.nameLabel}<input required maxLength="120" value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} /></label>
@@ -135,36 +140,38 @@ function ContactForm() {
       <label>{content.contact.subjectLabel}<input required maxLength="200" value={form.subject} onChange={event => setForm({ ...form, subject: event.target.value })} /></label>
     </div>
     <label>{content.contact.messageLabel}<textarea required rows="4" maxLength="5000" value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></label>
-    <div className="form-actions"><button type="submit" disabled={state === 'sending'}>{state === 'sending' ? content.contact.sendingLabel : content.contact.sendLabel} <ArrowUpRight size={16} /></button>{state === 'sent' && <span className="form-success">{content.contact.successMessage}</span>}{state === 'error' && <span className="form-error">{error || fallbackError}</span>}</div>
+    <div className="form-actions"><button type="submit" disabled={state === 'sending'}>{state === 'sending' ? content.contact.sendingLabel : content.contact.sendLabel} <ArrowUpRight size={16} /></button>{state === 'sent' && <span className="form-success">{content.contact.successMessage}</span>}{state === 'error' && <span className="form-error">{localizeInquiryError(error || fallbackError, lang)}</span>}</div>
   </form>;
 }
 
 function AdminPage() {
+  const { lang } = useLanguage();
+  const label = (en, zh) => lang === 'zh' ? zh : en;
   const [token, setToken] = useState(() => localStorage.getItem('sofine-admin-token') ?? '');
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
   const load = async () => {
     if (!token.trim()) {
-      setError('Enter an admin token.');
+      setError(label('Enter an admin token.', '请输入管理员令牌。'));
       return;
     }
     localStorage.setItem('sofine-admin-token', token);
     const response = await fetch('/api/inquiries', { headers: { 'x-admin-token': token } });
     const data = await response.json();
-    if (!response.ok) return setError(data.error);
+    if (!response.ok) return setError(lang === 'zh' ? '无法读取咨询，请检查管理员令牌。' : data.error);
     setError('');
     setItems(data.inquiries);
   };
   const update = async (id, status) => {
-    if (!token.trim()) return setError('Enter an admin token.');
+    if (!token.trim()) return setError(label('Enter an admin token.', '请输入管理员令牌。'));
     await fetch('/api/inquiries/' + id, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-admin-token': token }, body: JSON.stringify({ status }) });
     load();
   };
   return <main className="admin-page"><Header /><div className="admin-inner">
-    <p className="kicker">INTERNAL CRM</p><h1>Inquiry <em>inbox.</em></h1>
-    <div className="admin-login"><input value={token} onChange={event => setToken(event.target.value)} placeholder="Admin token" /><button onClick={load}>Load inquiries</button></div>
+    <p className="kicker">{label('INTERNAL CRM', '内部客户管理')}</p><h1>{label('Inquiry ', '咨询')}<em>{label('inbox.', '收件箱。')}</em></h1>
+    <div className="admin-login"><input value={token} onChange={event => setToken(event.target.value)} placeholder={label('Admin token', '管理员令牌')} /><button onClick={load}>{label('Load inquiries', '加载咨询')}</button></div>
     {error && <p className="form-error">{error}</p>}
-    <div className="inquiry-list">{items.map(item => <article key={item.id}><div><small>{new Date(item.created_at).toLocaleString()}</small><h2>{item.subject}</h2><p>{item.message}</p></div><aside><b>{item.name}</b><a href={'mailto:' + item.email}>{item.email}</a><span>{item.phone}</span><select value={item.status} onChange={event => update(item.id, event.target.value)}><option>new</option><option>read</option><option>replied</option><option>archived</option></select></aside></article>)}{!items.length && !error && <p>No inquiries yet.</p>}</div>
+    <div className="inquiry-list">{items.map(item => <article key={item.id}><div><small>{new Date(item.created_at).toLocaleString()}</small><h2>{item.subject}</h2><p>{item.message}</p></div><aside><b>{item.name}</b><a href={'mailto:' + item.email}>{item.email}</a><span>{item.phone}</span><select value={item.status} onChange={event => update(item.id, event.target.value)}><option value="new">{label('new', '新咨询')}</option><option value="read">{label('read', '已读')}</option><option value="replied">{label('replied', '已回复')}</option><option value="archived">{label('archived', '已归档')}</option></select></aside></article>)}{!items.length && !error && <p>{label('No inquiries yet.', '暂无咨询。')}</p>}</div>
   </div></main>;
 }
 
@@ -318,17 +325,17 @@ function ProductShowcase() {
   };
 
   const activeCard = <div className={'stack-card-content' + (isClassicColours ? ' stack-card-content-interactive' : '')} key={selectedCategory.slug}>
-    {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={selectedMedia.alt} width="1200" height="800" loading="eager" decoding="async" />}
+    {isClassicColours ? <CybertruckViewer colour={selectedColour} /> : <img src={selectedMedia.preview} alt={content.mediaAlts[selectedCategory.slug]} width="1200" height="800" loading="eager" decoding="async" />}
     <div className="stack-card-copy"><strong>{selectedCategory.name.split(' ').slice(0, -1).join(' ')} <em>{selectedCategory.name.split(' ').at(-1)}</em></strong><small>{selectedCategory.description}</small>{isClassicColours && <div className="cybertruck-swatches" aria-label={content.cybertruck.colourChoicesLabel}>{classicColours.map(colour => <button key={colour.id} type="button" className={selectedColour === colour.hex ? 'is-selected' : ''} aria-pressed={selectedColour === colour.hex} aria-label={colour.name} title={colour.name} style={{ '--swatch': colour.hex }} onClick={() => setSelectedColour(colour.hex)} />)}</div>}{isClassicColours ? <a className="stack-cta" href={'#category=' + selectedCategory.slug}>{content.products.exploreProducts} <ArrowUpRight size={20} /></a> : <span className="stack-cta">{content.products.exploreProducts} <ArrowUpRight size={20} /></span>}</div>
   </div>;
-  return <section className="showcase category-showcase" id="products"><div className="showcase-head container"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div ref={carouselRef} className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={familyMedia[previousCategory.slug].alt} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article ref={activeCardRef} key={selectedCategory.slug} className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a ref={activeCardRef} href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" key={selectedCategory.slug} onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={familyMedia[nextCategory.slug].alt} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>{content.products.wheelHint}</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>{content.products.swipeHint}</span></div></div><div className="carousel-controls container"><button type="button" aria-label={content.products.previousFamily} onClick={() => selectOffset(-1)}><ArrowLeft size={20} /></button><div className="carousel-dots">{categories.map((category,index) => <button key={category.slug} type="button" aria-label={`${content.products.selectPrefix} ${category.name}`} aria-pressed={index === selectedIndex} onClick={() => selectOffset(index - selectedIndexRef.current)}><span /></button>)}</div><button type="button" aria-label={content.products.nextFamily} onClick={() => selectOffset(1)}><ArrowRight size={20} /></button></div></section>;
+  return <section className="showcase category-showcase" id="products"><div className="showcase-head container"><div><p className="kicker">{t('productLibrary')} / {categories.length} {content.products.familyCountLabel}</p><h2 className="reveal">{t('choose')}<br /><em>{t('surface')}</em></h2></div><p className="reveal">{t('start')}</p></div><div ref={carouselRef} className={'stack-selector' + (isShuffling ? ' is-shuffling' : '')} tabIndex="0" onKeyDown={handleKeyDown}><button className="stack-card stack-card-prev" type="button" aria-label={`${content.products.selectPrefix} ${previousCategory.name}`} onClick={() => selectOffset(-1)}><img src={familyMedia[previousCategory.slug].preview} alt={content.mediaAlts[previousCategory.slug]} /><span>{previousCategory.name}</span></button>{isClassicColours ? <article ref={activeCardRef} key={selectedCategory.slug} className="stack-card stack-card-active stack-card-interactive">{activeCard}</article> : <a ref={activeCardRef} href={'#category=' + selectedCategory.slug} className="stack-card stack-card-active" key={selectedCategory.slug} onClick={handleActiveClick}>{activeCard}</a>}<button className="stack-card stack-card-next" type="button" aria-label={`${content.products.selectPrefix} ${nextCategory.name}`} onClick={() => selectOffset(1)}><img src={familyMedia[nextCategory.slug].preview} alt={content.mediaAlts[nextCategory.slug]} /><span>{nextCategory.name}</span></button><div className={'product-gesture-hint' + (gestureHintDismissed ? ' is-hidden' : '')} aria-hidden="true"><span className="product-wheel-hint"><i className="product-wheel-icon"><i /></i>{content.products.wheelHint}</span><span className="product-swipe-hint"><i className="product-swipe-track"><i /></i>{content.products.swipeHint}</span></div></div><div className="carousel-controls container"><button type="button" aria-label={content.products.previousFamily} onClick={() => selectOffset(-1)}><ArrowLeft size={20} /></button><div className="carousel-dots">{categories.map((category,index) => <button key={category.slug} type="button" aria-label={`${content.products.selectPrefix} ${category.name}`} aria-pressed={index === selectedIndex} onClick={() => selectOffset(index - selectedIndexRef.current)}><span /></button>)}</div><button type="button" aria-label={content.products.nextFamily} onClick={() => selectOffset(1)}><ArrowRight size={20} /></button></div></section>;
 }
 
 function ProductTable({ items }) {
   const { content } = useLanguage();
   const columns = [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))];
   const numericColumns = numericSpecificationColumns(items, columns);
-  return <div className="product-spec-table container" role="region" aria-label={content.products.specs} tabIndex="0"><table><thead><tr><th scope="col">{content.products.productCode}</th>{columns.map(column => <th scope="col" className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{column}</th>)}</tr></thead><tbody>{items.map(item => <tr key={item.slug}><th scope="row">{item.model}</th>{columns.map(column => <td className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{specificationValue(item, column)}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="product-spec-table container" role="region" aria-label={content.products.specs} tabIndex="0"><table><thead><tr><th scope="col">{content.products.productCode}</th>{columns.map(column => <th scope="col" className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{content.specLabels[column]}</th>)}</tr></thead><tbody>{items.map(item => <tr key={item.slug}><th scope="row">{item.model}</th>{columns.map(column => <td className={numericColumns.has(column) ? 'numeric' : undefined} key={column}>{specificationValue(item, column)}</td>)}</tr>)}</tbody></table></div>;
 
 }
 
@@ -339,7 +346,7 @@ function CategoryPage({ category, series }) {
   const { info } = category;
   const activeSeries = series || (info.series.length === 1 ? info.series[0][0] : '');
   const items = products.filter(product => product.category === category.slug && (!activeSeries || product.group === activeSeries));
-  const media = familyMedia[category.slug];
+  const media = {...familyMedia[category.slug], alt: content.mediaAlts[category.slug]};
   const isClassicColours = activeSeries === 'Super Chrome Film classic colours';
   const isPrintableChrome = activeSeries === 'Printable Super Glossy Chrome Wrap Film';
   const selectedColourName = classicColours.find(colour => colour.hex === selectedColour)?.name || content.cybertruck.customColour;
@@ -348,6 +355,8 @@ function CategoryPage({ category, series }) {
 }
 
 function App() {
+  const { content } = useLanguage();
+  useEffect(() => { document.title = content.pageTitle; }, [content]);
   const categories = useCategories();
   const [hash, setHash] = useState(window.location.hash);
   const previousHash = useRef(window.location.hash);

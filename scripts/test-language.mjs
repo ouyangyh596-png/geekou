@@ -14,13 +14,13 @@ const verifiedCompany = {
 
 const resolve = (language, key) => copy[language]?.[key] ?? copy.en[key] ?? key
 
-assert.equal(languageOptions.length, 12)
+assert.deepEqual(languageOptions.map(([,code]) => code), ['en', 'zh'])
 for (const [, language] of languageOptions) {
   for (const key of componentKeys) {
     assert.ok(resolve(language, key).trim(), `${language}:${key} is blank`)
   }
-  assert.equal(resolve(language, 'companyKicker'), verifiedCompany.companyKicker)
-  assert.equal(resolve(language, 'companyTitle'), verifiedCompany.companyTitle)
+  if (language === 'en') assert.equal(resolve(language, 'companyKicker'), verifiedCompany.companyKicker)
+  if (language === 'en') assert.equal(resolve(language, 'companyTitle'), verifiedCompany.companyTitle)
 }
 
 console.log(`Validated ${languageOptions.length} language options and ${componentKeys.length} component keys.`)
@@ -29,7 +29,7 @@ const { resolveContent } = await import('../src/language.js');
 const { englishSiteContent } = await import('../src/content/site-content.js');
 const { chineseSiteContent } = await import('../src/content/site-content.zh.js');
 function verifyChinese(base, translated, path='content') {
-  if(typeof base === 'string') { assert.equal(typeof translated,'string',path); assert.ok(translated.trim(),path); return; }
+  if(typeof base === 'string') { assert.equal(typeof translated,'string',path); assert.ok(translated.trim(),path); assert.deepEqual(translated.match(/\b(?:SF|AF)[-A-Z0-9]*\d[A-Z0-9-]*\b/g) || [], base.match(/\b(?:SF|AF)[-A-Z0-9]*\d[A-Z0-9-]*\b/g) || [], `${path}: model numbers`); return; }
   for(const key of Object.keys(base)) verifyChinese(base[key],translated?.[key],`${path}.${key}`);
 }
 verifyChinese(englishSiteContent,chineseSiteContent);
@@ -41,7 +41,6 @@ for(const [,language] of languageOptions) {
 assert.equal(resolveContent('zh').products.familyCountLabel,'个系列');
 assert.equal(resolveContent('unknown').home.heroTitle,englishSiteContent.home.heroTitle);
 assert.equal(resolveContent('zh',{x:'Fallback'},{x:''}).x,'Fallback');
-assert.deepEqual(languageOptions.slice(8,11).map(([name])=>name),['Polski','Türkçe','Українська']);
 console.log('All Chinese content leaves and recursive English fallback passed');
 
 const { readFile } = await import('node:fs/promises');
@@ -58,3 +57,17 @@ assert.equal(validateArtworkFile({ type: 'image/png', size: 13_000_000 }, valida
 assert.equal((await inspectArtworkFile({}, async () => ({width: 9000, height: 1}), validation)).message, validation.dimensionsError);
 assert.equal((await inspectArtworkFile({}, async () => { throw new Error('decode') }, validation)).message, validation.decode);
 console.log('Localized preview boundaries, accessible labels and upload failures passed');
+
+const { normalizeLanguage } = await import('../src/language.js');
+assert.equal(normalizeLanguage('unsupported'), 'en');
+assert.equal(normalizeLanguage(null), 'en');
+assert.equal(normalizeLanguage('zh'), 'zh');
+assert.equal(resolveContent('en').home.ppfSequence.layers.length, 4);
+assert.equal(resolveContent('zh').home.ppfSequence.layers[0], '自修复面涂层');
+for (const [slug, category] of Object.entries(englishSiteContent.categories)) {
+  assert.equal(chineseSiteContent.categories[slug].displayName, category.displayName);
+}
+
+const { localizeInquiryError } = await import('../src/inquiry-errors.js');
+assert.equal(localizeInquiryError('Please provide a valid email address.', 'zh'), '请输入有效的电子邮箱地址。');
+assert.equal(localizeInquiryError('name must be 120 characters or fewer.', 'zh'), '姓名不得超过 120 个字符。');

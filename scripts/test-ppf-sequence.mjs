@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 const source = readFileSync(new URL('../src/components/PPFLayerAnimation.jsx', import.meta.url), 'utf8')
+const content = readFileSync(new URL('../src/content/site-content.js', import.meta.url), 'utf8')
 const main = readFileSync(new URL('../src/main.jsx', import.meta.url), 'utf8')
-for (const label of ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']) assert.ok(source.includes(label), label)
+for (const label of ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner']) assert.ok(content.includes(label), label)
 assert.match(source, /\[3, 2, 1, 0\]\.map/)
 assert.match(source, /<svg[^>]*role="img"[^>]*aria-labelledby=/)
 assert.match(source, /<title /)
