@@ -2,9 +2,25 @@ import { useEffect, useId, useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { englishSiteContent } from '../content/site-content.js'
 
-function expansionAt(progress) {
-  const t = Math.max(0, Math.min(1, progress < 0.85 ? (progress - 0.15) / 0.45 : (1 - progress) / 0.15))
-  return t * t * (3 - 2 * t)
+// cubic-bezier(.65,0,.35,1): soft start and soft landing for each sheet.
+function cubicBezier(x1, y1, x2, y2) {
+  const a = (p1, p2) => 1 - 3 * p2 + 3 * p1, b = (p1, p2) => 3 * p2 - 6 * p1, c = p1 => 3 * p1
+  const at = (t, p1, p2) => ((a(p1, p2) * t + b(p1, p2)) * t + c(p1)) * t
+  const slope = (t, p1, p2) => 3 * a(p1, p2) * t * t + 2 * b(p1, p2) * t + c(p1)
+  return x => {
+    if (x <= 0 || x >= 1) return Math.max(0, Math.min(1, x))
+    let t = x
+    for (let i = 0; i < 6; i++) { const d = slope(t, x1, x2); if (Math.abs(d) < 1e-6) break; t -= (at(t, x1, x2) - x) / d }
+    return at(Math.max(0, Math.min(1, t)), y1, y2)
+  }
+}
+const ease = cubicBezier(0.65, 0, 0.35, 1)
+function rawExpansionAt(progress) {
+  return Math.max(0, Math.min(1, progress < 0.85 ? (progress - 0.15) / 0.45 : (1 - progress) / 0.15))
+}
+// Top sheet lifts first; lower sheets follow with a short stagger.
+function layerExpansion(raw, index) {
+  return ease(Math.max(0, Math.min(1, (raw - index * 0.1) / 0.7)))
 }
 
 export default function PPFLayerAnimation({ mobile = false }) {
@@ -26,14 +42,22 @@ export default function PPFLayerAnimation({ mobile = false }) {
     const track = section.querySelector('.ppf-sequence-track')
     const sticky = section.querySelector('.ppf-sequence-sticky')
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    let raf = 0
-    function update() {
+    let raf = 0, current = null, last = 0
+    function update(now) {
       raf = 0
-      const progress = Math.max(0, Math.min(1, -track.getBoundingClientRect().top / Math.max(1, track.offsetHeight - sticky.offsetHeight)))
-      const expansion = motion.matches ? 1 : expansionAt(progress)
+      const target = Math.max(0, Math.min(1, -track.getBoundingClientRect().top / Math.max(1, track.offsetHeight - sticky.offsetHeight)))
+      // Ease toward the scroll position so wheel steps glide instead of jumping.
+      const dt = last ? Math.min(now - last, 64) : 16
+      last = now
+      if (current === null || motion.matches) current = target
+      else current += (target - current) * (1 - Math.exp(-dt / 140))
+      if (Math.abs(target - current) < 0.0005) current = target
+      const progress = current
+      const raw = motion.matches ? 1 : rawExpansionAt(progress)
       layersRef.current.forEach((layer, index) => {
-        layer.style.transform = `translateY(${-((4 - index) * 7 + (4 - index) * 44 * expansion)}px)`
-        layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 2)
+        const expansion = layerExpansion(raw, index)
+        layer.style.transform = `translate3d(0, ${-((4 - index) * 7 + (4 - index) * 44 * expansion)}px, 0)`
+        layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 1.6)
       })
       if (!mobile) {
         const activeLayer = Math.min(3, Math.floor(progress * 4))
@@ -49,6 +73,8 @@ export default function PPFLayerAnimation({ mobile = false }) {
       sheenRef.current.forEach(sheen => {
         sheen.style.transform = `translateX(${motion.matches ? 0 : -70 + progress * 140}px)`
       })
+      if (current !== target) schedule()
+      else last = 0
     }
     const schedule = () => { if (!raf) raf = requestAnimationFrame(update) }
     const resize = new ResizeObserver(schedule)
