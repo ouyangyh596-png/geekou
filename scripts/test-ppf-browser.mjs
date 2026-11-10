@@ -61,6 +61,10 @@ try {
       assert.equal(await page.locator('.ppf-sequence-inner > div').count(), 2);
       assert.equal(await page.locator('.ppf-mobile-labels').count(), 0);
     }
+    const logo = page.getByRole('img', { name: 'AUTOFACE', exact: true });
+    assert.equal(await logo.count(), 1);
+    assert.ok(await logo.evaluate(el => el.complete && el.naturalWidth > 0));
+    assert.match(await logo.getAttribute('src'), /autoface-logo-light\.svg$/);
     const go = async progress => page.evaluate(progress => {
       const section = document.querySelector('.ppf-sequence');
       window.scrollTo({top: section.getBoundingClientRect().top + scrollY + progress * (section.offsetHeight - section.querySelector('.ppf-sequence-sticky').offsetHeight), behavior:'instant'});
@@ -73,6 +77,36 @@ try {
       overflow: document.documentElement.scrollWidth > innerWidth
     }));
     const move = async progress => { await go(progress); await page.waitForTimeout(100); return state(); };
+    if (!mobile) {
+      assert.equal(await page.locator('.ppf-layer-legend li').count(), 4);
+      for (const width of [1280, 1440, 1920]) {
+        await page.setViewportSize({width, height:900});
+        await move(.7);
+        const copy = await page.locator('.ppf-sequence-copy').boundingBox();
+        const stage = await page.locator('.ppf-sequence-stage').boundingBox();
+        const stack = await page.locator('.ppf-film-layer--0 > path').first().boundingBox();
+        assert.ok(copy.x + copy.width <= stage.x, 'editorial columns do not overlap');
+        assert.ok(copy.y >= 0 && copy.y + copy.height <= 900, 'copy fits viewport');
+        assert.ok(stack.x >= stage.x && stack.x + stack.width <= width, 'film fits column');
+        assert.ok(stack.width >= (width === 1280 ? 550 : 600), 'film fills desktop column');
+        const logoBounds = await logo.boundingBox();
+        const emphasis = await page.locator('.ppf-brand-title em').boundingBox();
+        assert.ok(logoBounds.x >= copy.x && emphasis.x + emphasis.width <= copy.x + copy.width, 'brand title fits copy column');
+        for (const label of await page.locator('.ppf-film-label').all()) {
+          const bounds = await label.boundingBox();
+          assert.ok(bounds.x >= stage.x && bounds.x + bounds.width <= stage.x + stage.width, 'leader labels fit stage horizontally');
+          assert.ok(bounds.y >= 0 && bounds.y + bounds.height <= 900, 'leader labels fit pinned viewport');
+        }
+        assert.equal((await state()).overflow, false, 'desktop has no horizontal overflow');
+        await page.screenshot({path:resolve(output, `desktop-${width}.png`)});
+      }
+      for (const [progress, label] of [[0,'Self-Healing Top Coat'], [.3,'High-Clarity TPU'], [.55,'Glue'], [.8,'PET Liner'], [.3,'High-Clarity TPU']]) {
+        await move(progress);
+        assert.equal(await page.locator('.ppf-layer-legend [aria-current="step"]').textContent(), label);
+      }
+    } else {
+      assert.equal(await page.locator('.ppf-layer-legend').count(), 0);
+    }
     const closed = await move(0);
     assert.equal(closed.layers[0], 'translateY(-28px)');
     const opening = await move(.375);

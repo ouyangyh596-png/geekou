@@ -36,6 +36,11 @@ export default function PPFLayerAnimation({ mobile = false }) {
         layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 2)
       })
       if (!mobile) {
+        const activeLayer = Math.min(3, Math.floor(progress * 4))
+        section.querySelectorAll('.ppf-layer-legend li').forEach((item, index) => {
+          if (index === activeLayer) item.setAttribute('aria-current', 'step')
+          else item.removeAttribute('aria-current')
+        })
         // Measure the artwork, including labels, rather than centering empty SVG space.
         const bounds = stackRef.current.getBBox()
         stackRef.current.setAttribute('transform', `translate(${200 - bounds.x - bounds.width / 2} ${190 - bounds.y - bounds.height / 2})`)
@@ -69,12 +74,15 @@ export default function PPFLayerAnimation({ mobile = false }) {
         <div className="ppf-sequence-inner">
           <div className="ppf-sequence-copy ppf-sequence-copy--top">
             <p className="kicker">{content.kicker}</p>
-            <h2>{content.titleLead}<br /><em>{content.titleEmphasis}</em></h2>
+            <h2 className="ppf-brand-title"><img src="/media/home/autoface-logo-light.svg" alt="AUTOFACE" className="ppf-brand-logo" /><em>{content.titleEmphasis}</em></h2>
             <p>{content.description}</p>
             <a className="ppf-explore-button" href="#category=ppf"><span>{content.action}</span> <ArrowUpRight size={16} aria-hidden="true" /></a>
+            {!mobile && <ol className="ppf-layer-legend" aria-label="Film layers">
+              {labels.map((label, index) => <li key={label} aria-current={index === 0 ? 'step' : undefined}>{label}</li>)}
+            </ol>}
           </div>
           <div className="ppf-sequence-stage">
-            <svg className="ppf-film-diagram" viewBox="0 0 400 380" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby={`${id}-title ${id}-description`}>
+            <svg className="ppf-film-diagram" viewBox={mobile ? "0 0 400 380" : "30 20 340 340"} preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby={`${id}-title ${id}-description`}>
               <title id={`${id}-title`}>{content.presentationLabel}</title>
               <desc id={`${id}-description`}>{labels.join(', ')} — Four protective film layers with curved surfaces, separating and closing as you scroll.</desc>
               <defs>
@@ -103,7 +111,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
                 <path d={sheet} fill={fill(['top', 'tpu', 'glue', 'pet'][index])} filter={fill('shadow')} stroke="#e3f4ff" strokeOpacity={index < 2 ? '.55' : '.35'} strokeWidth=".65" />
                 <path d={frontEdge} fill="none" stroke={index === 2 ? '#d7d9da' : '#fff'} strokeWidth={index === 3 ? '1.8' : '1'} strokeOpacity=".9" />
                 <g clipPath={fill('plate')}><path ref={element => { sheenRef.current[index] = element }} className="ppf-film-sheen" d="M170 230h65l80 120h-65Z" fill={fill('sheen')} /></g>
-                <g className="ppf-film-label">
+                <g className="ppf-film-label" transform={mobile ? undefined : 'translate(65 90) scale(.65)'}>
                   <path d="M88 290h26l23 8" fill="none" stroke="#b8bcbf" strokeWidth=".7" />
                   <text x="84" y="286" textAnchor="end">{index < 2 ? <><tspan x="84" dy="-7">{index === 0 ? 'Self-Healing' : 'High-Clarity'}{' '}</tspan><tspan x="84" dy="14">{index === 0 ? 'Top Coat' : 'TPU'}</tspan></> : labels[index]}</text>
                 </g>

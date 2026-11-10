@@ -19,3 +19,15 @@
 1. Desktop: the PPF layered animation is NOT centered. Center the whole layer stack (and its label block) horizontally and vertically in the pinned viewport at common widths (1280, 1440, 1920). Check the SVG viewBox / preserveAspectRatio, container widths, and any left offsets/grid columns that push it off-center.
 2. The layers have no transparent/translucent material feel. Make each film layer read as real clear film: semi-transparent fills (layers below visible through layers above), subtle gradients, a thin bright edge highlight/specular sheen, a soft glossy reflection streak that moves slightly with scroll, faint drop shadow between layers. Self-Healing Top Coat and High-Clarity TPU should look clearest/glassiest; Glue a faint milky translucent; PET Liner slightly more opaque. Keep it tasteful, premium, dark background. Apply the same material look on mobile too (shared component).
 Do not commit (the sandbox blocks git); just leave the changes in the working tree. Run the tests and build and report.
+
+## UPDATE 13:35 — desktop layout too empty
+User screenshot at ~1440x900: header block (eyebrow, AUTOFACE PPF title, copy, Explore PPF button) centered on top, then a small layer stack (~330px wide) with labels, lots of empty space left/right and below. Redesign the DESKTOP layout only (mobile unchanged):
+- Two-column editorial layout inside the pinned viewport, max-width ~1280px, vertically centered:
+  - Left column (~38%): eyebrow, big AUTOFACE PPF title (larger than now), copy, Explore PPF button, then a vertical layer legend listing the 4 layers (Self-Healing Top Coat, High-Clarity TPU, Glue, PET Liner) with thin dividers; the legend item matching the current scroll stage highlights. Use only these names (no invented specs/numbers).
+  - Right column (~62%): the layered film animation scaled up so the stack fills most of the column (roughly 600–760px wide at 1440), with the labels connected by thin leader lines. Keep the translucent material look.
+- The section should fill the viewport height without big dead zones; subtle background depth (soft radial glow behind the stack) is fine.
+- Check 1280, 1440, 1920 widths: nothing clipped, balanced spacing.
+Do not commit. Run tests and build, update tests if needed.
+
+## UPDATE 13:40 — AUTOFACE vector logo in the PPF title (desktop + mobile)
+Replace the word "AUTOFACE" in the "AUTOFACE PPF" title with the official vector logo now at public/media/home/autoface-logo.svg (Illustrator export, viewBox 0 0 841.89 595.28 with lots of empty margin; fills #11366E, #084A95, #9CD2ED, #2CADB2). Crop the viewBox tightly to the artwork. The background is dark blue, so make the logo legible: render the dark fills (#11366E, #084A95) as white and keep the light accent colours (#9CD2ED, #2CADB2), or an all-white version if that looks cleaner — use inline SVG or a separate optimised file (e.g. autoface-logo-light.svg); keep an accessible label "AUTOFACE". Keep "PPF" in the current italic style next to it, baseline/optically aligned, logo height ≈ cap height of the title. Do this on both desktop and mobile.

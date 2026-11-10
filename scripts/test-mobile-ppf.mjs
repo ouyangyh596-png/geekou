@@ -13,7 +13,8 @@ const callbacks=new Map(), events=new Map()
 const motion={matches:false,addEventListener:(k,f)=>events.set('motion',f),removeEventListener:()=>events.delete('motion')}
 const layers=Array.from({length:4},()=>({style:{},label:{style:{}},querySelector(){return this.label}}))
 const track={offsetHeight:2400,getBoundingClientRect:()=>({top:-p*1600})}, sticky={offsetHeight:800}
-const section={querySelector:s=>s.endsWith('track')?track:sticky}
+const legend=Array.from({length:4},()=>({current:null,setAttribute(k,v){this.current=v},removeAttribute(){this.current=null}}))
+const section={querySelector:s=>s.endsWith('track')?track:sticky,querySelectorAll:()=>legend}
 const viewport={matchMedia:()=>motion,addEventListener:(k,f)=>events.set(k,f),removeEventListener:k=>events.delete(k)}
 const sheen={style:{}}, background={style:{}}
 const runEffect=new Function('mobile','stackRef','sectionRef','layersRef','sheenRef','backgroundRef','window','ResizeObserver','requestAnimationFrame','cancelAnimationFrame','expansionAt',effect)
@@ -47,5 +48,9 @@ assert.equal(sheen.style.transform,'translateX(14px)')
 stack.getBBox=()=>({x:12,y:218,width:380,height:100})
 p=0;events.get('scroll')();flush()
 assert.equal(translation,'translate(-2 -78)')
+for (const [progress,active] of [[0,0],[.3,1],[.55,2],[.8,3],[1,3],[.3,1]]) {
+ p=progress;events.get('scroll')();flush()
+ assert.deepEqual(legend.map(item=>item.current),legend.map((_,index)=>index===active?'step':null))
+}
 desktopCleanup()
 console.log('Desktop artwork centering and shared scroll reflection PASS')

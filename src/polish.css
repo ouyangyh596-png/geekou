@@ -512,10 +512,29 @@ p { line-height:1.6; }
   .ppf-film-layer,.ppf-film-sheen,.ppf-sequence-background { will-change:auto; }
 }
 
-/* Desktop artwork is centered in the pinned viewport, independent of the copy row. */
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-inner { position:static; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:absolute; inset:0; height:100%; width:100%; display:grid; place-items:center; transform:none; opacity:1; pointer-events:none; }
-.ppf-sequence:not(.ppf-sequence-mobile) .ppf-film-diagram { width:min(900px,calc(100% - 64px)); height:min(62svh,600px); margin:auto; }
+/* The logo shares the title cap height on both layouts. */
+.ppf-sequence-copy--top .ppf-brand-title { display:flex; align-items:center; justify-content:center; gap:.22em; white-space:nowrap; }
+.ppf-brand-logo { display:block; height:.74em; width:auto; max-width:76%; }
+.ppf-sequence-copy--top .ppf-brand-title em::before { content:none; }
+
+/* Desktop editorial spread: copy and legend alongside the enlarged film. */
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-inner { position:relative; grid-template-columns:minmax(0,38fr) minmax(0,62fr); grid-template-rows:minmax(0,1fr); align-items:center; gap:24px; max-width:1344px; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-copy { min-width:0; text-align:left; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-brand-title { justify-content:flex-start; font-size:clamp(42px,3.9vw,56px); margin:16px 0 20px; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-copy > p { margin-inline:0; max-width:36ch; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:relative; inset:auto; height:100%; width:100%; display:grid; place-items:center; transform:none; opacity:1; pointer-events:none; min-width:0; }
+.ppf-sequence:not(.ppf-sequence-mobile) .ppf-film-diagram { width:100%; height:100%; max-width:none; margin:0; }
+.ppf-layer-legend { list-style:none; margin:32px 0 0; padding:0; max-width:360px; }
+.ppf-layer-legend li { position:relative; border-top:1px solid #ffffff26; padding:13px 0 13px 18px; color:#ffffff80; font-size:14px; transition:color .2s; }
+.ppf-layer-legend li:last-child { border-bottom:1px solid #ffffff26; }
+.ppf-layer-legend li::before { content:''; position:absolute; left:0; top:50%; width:4px; height:4px; border-radius:50%; background:currentColor; transform:translateY(-50%); }
+.ppf-layer-legend li[aria-current="step"] { color:#bce9ff; }
+@media (max-height:700px) and (min-width:768px) {
+  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-brand-title { margin-block:8px; }
+  .ppf-layer-legend { margin-top:16px; }
+  .ppf-layer-legend li { padding-block:9px; }
+}
 @media(prefers-reduced-motion:reduce) {
-  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { position:relative; height:min(62svh,600px); }
+  .ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { height:760px; }
+  .ppf-layer-legend li { transition:none; }
 }
