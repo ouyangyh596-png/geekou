@@ -47,14 +47,22 @@ try {
   await waitForServer();
   browser = await chromium.launch({ executablePath: browserExecutable, headless: true });
   for (const mobile of [false, true]) {
-    const page = await browser.newPage({ viewport: mobile ? {width:390,height:844} : {width:1440,height:1000}, deviceScaleFactor:2 });
+    const page = await browser.newPage({ viewport: mobile ? {width:390,height:844} : {width:1280,height:1000}, deviceScaleFactor:2 });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(origin);
     await page.locator('.ppf-sequence').waitFor();
+    assert.equal(await page.locator('.home-page.is-mobile').count(), mobile ? 1 : 0);
+    assert.equal(await page.locator('.ppf-sequence-mobile').count(), mobile ? 1 : 0);
+    if (!mobile) {
+      assert.equal(await page.locator('main').getAttribute('class'), 'home-page');
+      assert.equal(await page.locator('.ppf-sequence').getAttribute('class'), 'ppf-sequence');
+      assert.equal(await page.locator('.ppf-sequence-inner > div').count(), 2);
+      assert.equal(await page.locator('.ppf-mobile-labels').count(), 0);
+    }
     const go = async progress => page.evaluate(progress => {
       const section = document.querySelector('.ppf-sequence');
-      window.scrollTo({top: section.getBoundingClientRect().top + scrollY + progress * (section.offsetHeight - innerHeight), behavior:'instant'});
+      window.scrollTo({top: section.getBoundingClientRect().top + scrollY + progress * (section.offsetHeight - section.querySelector('.ppf-sequence-sticky').offsetHeight), behavior:'instant'});
     }, progress);
     const frame = () => page.locator('.ppf-sequence-canvas').getAttribute('aria-label').then(label => Number(label.match(/(\d+)$/)[1]) - 1);
     await go(0);
@@ -77,6 +85,33 @@ try {
     assert.equal(metrics.width,Math.round(metrics.cssWidth*2));
     assert.equal(metrics.overflow,false);
     assert.ok(metrics.pixel > 0, 'canvas is painted');
+    if (mobile) {
+      await page.locator('#products').scrollIntoViewIfNeeded();
+      const card = page.locator('.stack-card-active');
+      const bounds = await card.boundingBox();
+      assert.ok(Math.abs(bounds.width / bounds.height - .8) < .02, 'mobile card is 4:5');
+      const selector = page.locator('.stack-selector');
+      const before = await card.innerText();
+      await selector.dispatchEvent('touchstart', {touches:[{clientX:200,clientY:400}]});
+      await selector.dispatchEvent('touchmove', {touches:[{clientX:205,clientY:200}],cancelable:true});
+      await selector.dispatchEvent('touchend', {touches:[]});
+      assert.equal(await card.innerText(),before,'vertical gesture leaves card unchanged');
+      await selector.dispatchEvent('touchstart', {touches:[{clientX:300,clientY:400}]});
+      await selector.dispatchEvent('touchmove', {touches:[{clientX:100,clientY:405}]});
+      assert.match(await selector.getAttribute('class'), /is-shuffling/);
+      await selector.dispatchEvent('touchend', {touches:[]});
+      await page.waitForTimeout(700);
+      assert.notEqual(await card.innerText(), before, 'horizontal swipe selects next card');
+      for (const section of await page.locator('.home-page > section').all()) {
+        await section.scrollIntoViewIfNeeded();
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'homepage section has no horizontal overflow');
+      }
+      await page.screenshot({path:resolve(output,'mobile-full.png'),fullPage:true});
+      await page.setViewportSize({width:1280,height:1000});
+      await page.waitForFunction(() => !document.querySelector('.is-mobile'));
+      await page.setViewportSize({width:390,height:844});
+      await page.waitForFunction(() => document.querySelector('.ppf-sequence-mobile'));
+    }
     const button = page.locator('.ppf-explore-button');
     await button.focus();
     assert.equal(await button.evaluate(el => getComputedStyle(el).outlineStyle),'solid');
