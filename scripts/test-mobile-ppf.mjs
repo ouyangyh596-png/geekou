@@ -25,7 +25,7 @@ const settle=()=>{
 }
 const assertLayers=raw=>layers.forEach((layer,index)=>{
  const expansion=layerExpansion(raw,index)
- assert.equal(layer.style.transform,`translate3d(0, ${-((4-index)*7+(4-index)*44*expansion)}px, 0)`)
+ assert.equal(layer.style.transform,`translate3d(0, ${-((4-index)*51*expansion)}px, 0)`)
  assert.equal(layer.label.style.opacity,Math.min(1,expansion*1.6))
 })
 flush();assertLayers(0)

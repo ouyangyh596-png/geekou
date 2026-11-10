@@ -496,10 +496,10 @@ p { line-height:1.6; }
 /* Shared code-drawn film; dimensions fit the available sticky stage. */
 .ppf-film-diagram { display:block; width:100%; height:100%; max-width:900px; overflow:visible; }
 .ppf-film-layer,.ppf-film-sheen { will-change:transform; }
-.ppf-film-layer--0 { transform:translateY(-28px); }
-.ppf-film-layer--1 { transform:translateY(-21px); }
-.ppf-film-layer--2 { transform:translateY(-14px); }
-.ppf-film-layer--3 { transform:translateY(-7px); }
+.ppf-film-layer--0 { transform:translateY(0); }
+.ppf-film-layer--1 { transform:translateY(0); }
+.ppf-film-layer--2 { transform:translateY(0); }
+.ppf-film-layer--3 { transform:translateY(0); }
 .ppf-film-label { opacity:0; }
 .ppf-film-label text { fill:#d4dce3; font:12px var(--font-text); }
 @media(prefers-reduced-motion:reduce) {

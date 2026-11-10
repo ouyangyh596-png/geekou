@@ -56,7 +56,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
       const raw = motion.matches ? 1 : rawExpansionAt(progress)
       layersRef.current.forEach((layer, index) => {
         const expansion = layerExpansion(raw, index)
-        layer.style.transform = `translate3d(0, ${-((4 - index) * 7 + (4 - index) * 44 * expansion)}px, 0)`
+        layer.style.transform = `translate3d(0, ${-((4 - index) * 51 * expansion)}px, 0)`
         layer.querySelector('.ppf-film-label').style.opacity = Math.min(1, expansion * 1.6)
       })
       if (!mobile) {
