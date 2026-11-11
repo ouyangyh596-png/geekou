@@ -46,7 +46,7 @@ function useCategories() {
   const { content } = useLanguage();
   return categories.map(category => {
     const translated = content.categories[category.slug];
-    return {...category,name:translated.displayName,description:translated.intro,info:{...category.info,eyebrow:translated.eyebrow,intro:translated.intro,series:category.info.series.map(([name],index) => [name,translated.series[index].description])}};
+    return {...category,name:translated.displayName,description:translated.intro,info:{...category.info,eyebrow:translated.eyebrow,intro:translated.intro,series:category.info.series.map((_,index) => [translated.series[index].name,translated.series[index].description])}};
   });
 }
 

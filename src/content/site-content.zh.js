@@ -170,7 +170,7 @@ export const chineseSiteContent = {
         "fileType": "请选择 PNG、JPEG 或 WebP 图片。",
         "fileSize": "请选择小于 12 MB 的图片。",
         "decode": "无法读取此图片，请选择有效的 PNG、JPEG 或 WebP 图片。",
-        "dimensionsError": "请选择单边不超过 8192 px、总像素不超过 32 megapixels的图片。"
+        "dimensionsError": "请选择单边不超过 8192 px、总像素不超过 32 兆像素的图片。"
       },
       "viewerLabel": "Cybertruck 可打印车身贴膜交互预览",
       "errorHelp": "预览重新加载时，您仍可调整设计图。",
@@ -180,7 +180,7 @@ export const chineseSiteContent = {
       "artworkLabel": "设计图",
       "uploadArtwork": "选择图片",
       "replaceArtwork": "更换图片",
-      "uploadNote": "支持 PNG、JPEG 或 WebP，最大 12 MB，单边不超过 8192 px，总像素不超过 32 megapixels。图片仅留在此浏览器中，不会上传。",
+      "uploadNote": "支持 PNG、JPEG 或 WebP，最大 12 MB，单边不超过 8192 px，总像素不超过 32 兆像素。图片仅留在此浏览器中，不会上传。",
       "noArtwork": "尚未选择图片，当前展示银色电镀基材。",
       "artworkLoading": "正在检查并加载图片…",
       "artworkReady": "图片已就绪。拖动车身上的图片以调整位置。",
@@ -201,111 +201,111 @@ export const chineseSiteContent = {
   },
   "categories": {
     "self-adhesive-vinyl": {
-      "displayName": "Self-Adhesive Vinyl",
-      "eyebrow": "SO-FINE / SELF-ADHESIVE VINYL",
+      "displayName": "自粘乙烯基薄膜",
+      "eyebrow": "SO-FINE / 自粘乙烯基薄膜",
       "intro": "提供不同厚度、表面、胶粘剂和底纸配置，适用于大幅面溶剂、弱溶剂、UV 与乳胶印刷。",
       "series": [
         {
-          "name": "Monomeric PVC",
+          "name": "单体PVC",
           "description": "适合短中期应用和销售点促销，让您的创意更出众！"
         },
         {
-          "name": "Polymeric PVC",
+          "name": "聚合PVC",
           "description": "适用于多种长期数码印刷应用。专门的导气（无气泡）技术使安装更轻松，避免气泡与褶皱。"
         },
         {
-          "name": "Super Transparent PVC Vinyl",
+          "name": "超透明PVC膜",
           "description": "超透明薄膜适合玻璃图形应用，让标识醒目出众，同时保留部分透视效果。"
         },
         {
-          "name": "Super Glossy PVC Vinyl",
-          "description": "希望您的创意更加出彩？薄膜表面光泽度可达 xx (60)，使图形更鲜明，带来突出的视觉吸引力。"
+          "name": "超亮光PVC膜",
+          "description": "希望您的创意更加出彩？薄膜表面光泽度高，使图形更鲜明，带来突出的视觉吸引力。"
         }
       ]
     },
     "one-way-vision": {
-      "displayName": "One Way Vision Film",
-      "eyebrow": "SO-FINE / ONE WAY VISION FILM",
+      "displayName": "单透膜",
+      "eyebrow": "SO-FINE / 单透膜",
       "intro": "采用精选原材料和优化胶粘剂配方的可打印打孔膜，适用于车辆、零售店及建筑玻璃图形。打印性能出色，易于施工，移除后无残胶。",
       "series": [
         {
-          "name": "Monomeric PVC",
+          "name": "单体PVC",
           "description": "低初粘力便于施工。外侧图形鲜明，内侧向外视野清晰。"
         },
         {
-          "name": "Polymeric PVC",
+          "name": "聚合PVC",
           "description": "尺寸稳定性优异，可抵抗收缩与变形，适用于长期户外应用。"
         },
         {
-          "name": "Cast PVC",
+          "name": "铸塑PVC",
           "description": "高贴合性的柔韧材料，适用于严苛应用；提供白/白、白/黑或黑/黑双色结构。"
         },
         {
-          "name": "Perforated PET",
+          "name": "打孔PET",
           "description": "不含 PVC 的长效耐用方案，体现环保承诺。提供带胶与不带胶选项。"
         }
       ]
     },
     "translucent-film": {
-      "displayName": "Translucent Film",
-      "eyebrow": "SO-FINE / TRANSLUCENT FILM",
+      "displayName": "半透明灯膜",
+      "eyebrow": "SO-FINE / 半透明灯膜",
       "intro": "色彩饱满、耐候的聚合物 PVC 半透膜，采用溶剂型压敏胶，适用于发光图形。",
       "series": [
         {
-          "name": "SF6000 Series",
+          "name": "SF6000 系列",
           "description": "宽度可达 2.22m，是全球首款无缝半透膜，适合干贴或湿贴。提供 5 年户外耐候质保。"
         },
         {
-          "name": "SF9000 Series",
+          "name": "SF9000 系列",
           "description": "打孔率为 20% 的半透打孔膜，带来日夜双色视觉效果：自然日光下呈现一种颜色，夜间背光时呈现另一种颜色。"
         }
       ]
     },
     "ppf": {
-      "displayName": "Paint Protection Film",
-      "eyebrow": "AUTOFACE / PAINT PROTECTION FILM",
+      "displayName": "漆面保护膜",
+      "eyebrow": "AUTOFACE / 漆面保护膜",
       "intro": "为汽车漆面提供耐刮擦、易清洁与精致外观的保护及饰面薄膜。",
       "series": [
         {
-          "name": "High-Clarity TPU Protection",
+          "name": "高清TPU保护膜",
           "description": "具有耐刮擦、自修复和耐腐蚀性能的 TPU 漆面保护膜。"
         }
       ]
     },
     "cast-wrap-vinyl": {
-      "displayName": "Cast Wrap Vinyl",
-      "eyebrow": "AUTOFACE / CAST WRAP VINYL",
+      "displayName": "铸塑车身贴膜",
+      "eyebrow": "AUTOFACE / 铸塑车身贴膜",
       "intro": "适用于复杂曲面、高光图形及耐久保护饰面的铸造 PVC 贴膜与覆膜。",
       "series": [
         {
-          "name": "White Printable Film",
+          "name": "白色可打印膜",
           "description": "尺寸稳定性优异，柔韧的 50mic 薄型铸造 PVC 搭配导气可重定位胶，具有出色贴合性，可贴合复合曲面、深槽和铆钉。"
         },
         {
-          "name": "Ultra Clear Printable Film",
+          "name": "超透明可打印膜",
           "description": "高性能超透明薄膜呈现出色的图形与贴花效果。未印刷区域保持光学透明，无需沿图案边缘裁切。"
         },
         {
-          "name": "Reflective Printable Film",
+          "name": "反光可打印膜",
           "description": "高逆反射率的可拉伸薄膜，具有优化的初粘力和出色贴合性，可贴合复合曲面、转角和铆钉，适合局部或全车贴膜。"
         },
         {
-          "name": "Overlaminate Film",
+          "name": "覆膜",
           "description": "低雾度、光学透明，忠实还原原始色彩，提供亮面、柔光和哑光表面。优异的抗黄变性能可保护印刷图形，抵御户外暴晒造成的褪色。"
         }
       ]
     },
     "polymeric-wrap-vinyl": {
-      "displayName": "Polymeric Wrap Vinyl",
-      "eyebrow": "AUTOFACE / POLYMERIC WRAP VINYL",
+      "displayName": "聚合车身贴膜",
+      "eyebrow": "AUTOFACE / 聚合车身贴膜",
       "intro": "尺寸稳定的聚合物 PVC 贴膜与覆膜，用于车辆图形和印刷表面保护。",
       "series": [
         {
-          "name": "White Printable Film",
+          "name": "白色可打印膜",
           "description": "采用高柔韧性聚合物配方的改性高性能 PVC 膜，收缩率低于标准压延膜，适合公交车、商用车广告和中期户外车辆图形。"
         },
         {
-          "name": "Overlaminate Film",
+          "name": "覆膜",
           "description": "柔韧性良好、贴合性适中，可贴合平缓复合曲面和铆钉。内置紫外线稳定剂，抵抗油墨褪色和黄变。提供亮面 / 哑光表面。"
         }
       ]
@@ -316,37 +316,37 @@ export const chineseSiteContent = {
       "intro": "具有金属视觉效果的经典彩色车身贴膜，为汽车美容带来个性化饰面。",
       "series": [
         {
-          "name": "Super Chrome Film classic colours",
+          "name": "Super Chrome Film 经典色系",
           "description": "缎面彩色电镀膜呈现金属反射和随光变化的色彩。铸造 PVC 尺寸稳定，加热后可贴合复杂曲面。"
         },
         {
-          "name": "Printable Super Glossy Chrome Wrap Film",
+          "name": "可打印超亮光电镀车身膜",
           "description": "镜面电镀基材带来真实金属效果，适用于定制车辆贴膜。"
         }
       ]
     },
     "pvc-free-film": {
-      "displayName": "PVC-Free Film",
-      "eyebrow": "AUTOFACE / PVC-FREE FILM",
+      "displayName": "无PVC薄膜",
+      "eyebrow": "AUTOFACE / 无PVC薄膜",
       "intro": "用于车辆图形及表面应用的不含 PVC 贴膜替代方案。",
       "series": [
         {
-          "name": "PVC-Free Film",
+          "name": "无PVC薄膜",
           "description": "不含 PVC 的车身贴膜替代材料。"
         }
       ]
     },
     "cold-lamination": {
-      "displayName": "Cold Lamination Film",
-      "eyebrow": "SO-FINE / COLD LAMINATION FILM",
+      "displayName": "冷裱膜",
+      "eyebrow": "SO-FINE / 冷裱膜",
       "intro": "提供单体 PVC、聚合物 PVC、PET 与地板覆膜等结构的冷裱膜。",
       "series": [
         {
-          "name": "Monomeric PVC",
+          "name": "单体PVC",
           "description": "70 µm 亮面、半哑光和哑光冷裱膜。"
         },
         {
-          "name": "Polymeric PVC",
+          "name": "聚合PVC",
           "description": "60 µm 聚合物冷裱膜，提供亮面和哑光表面。"
         },
         {
@@ -354,33 +354,33 @@ export const chineseSiteContent = {
           "description": "36 µm 亮面 PET 冷裱膜。"
         },
         {
-          "name": "Floor Lamination PVC",
+          "name": "地面用PVC覆膜",
           "description": "颗粒纹理 PVC，用于地板覆膜。"
         }
       ]
     },
     "wall-decals": {
-      "displayName": "Wall Decals Self-Adhesive Material",
-      "eyebrow": "SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL",
+      "displayName": "墙贴自粘材料",
+      "eyebrow": "SO-FINE / 墙贴自粘材料",
       "intro": "装饰性自粘墙面材料，可贴合 90° 转角而不翘边，为任何空间带来个性化的独特效果。",
       "series": [
         {
-          "name": "PVC-Coated Polyester Fabric",
+          "name": "PVC涂层聚酯布",
           "description": "兼容各类墨水的 250gsm PVC 涂层聚酯织物，表面带纹理，适用于墙面、地板和地毯。"
         },
         {
-          "name": "100% Polyester",
+          "name": "100% 聚酯",
           "description": "115gsm 可打印聚酯织物，采用纺织结构和高初粘可移除胶，可替代传统涂料和墙纸进行翻新。"
         }
       ]
     },
     "decorative-film": {
-      "displayName": "Decorative Film",
-      "eyebrow": "SO-FINE / DECORATIVE FILM",
+      "displayName": "装饰膜",
+      "eyebrow": "SO-FINE / 装饰膜",
       "intro": "用于室内翻新、家具升级、商业空间与船舶内饰的高性能自粘装饰膜。",
       "series": [
         {
-          "name": "Decorative Film",
+          "name": "装饰膜",
           "description": "用于室内翻新、家具升级、商业空间与船舶内饰的高性能自粘装饰膜。"
         }
       ]
@@ -417,9 +417,9 @@ chineseSiteContent.specLabels = {
   "Tensile strength (machine direction)": "拉伸强度（纵向）",
   "Elongation at break (machine direction)": "断裂伸长率（纵向）",
   "Shrinkage": "收缩率",
-  "Initial adhesion on steel (20 minutes)": "钢板初粘力（20 minutes）",
-  "Adhesion on steel (24 hours)": "钢板粘附力（24 hours）",
-  "Final adhesion on steel (72 hours)": "钢板最终粘附力（72 hours）",
+  "Initial adhesion on steel (20 minutes)": "钢板初粘力（20 分钟）",
+  "Adhesion on steel (24 hours)": "钢板粘附力（24 小时）",
+  "Final adhesion on steel (72 hours)": "钢板最终粘附力（72 小时）",
   "Minimum application temperature": "最低施工温度",
   "Service temperature": "使用温度",
   "Humidity resistance": "耐湿性",

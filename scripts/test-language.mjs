@@ -64,8 +64,14 @@ assert.equal(normalizeLanguage(null), 'en');
 assert.equal(normalizeLanguage('zh'), 'zh');
 assert.equal(resolveContent('en').home.ppfSequence.layers.length, 4);
 assert.equal(resolveContent('zh').home.ppfSequence.layers[0], '自修复面涂层');
+assert.equal(chineseSiteContent.categories['super-chrome-film'].displayName, 'Super Chrome Film');
 for (const [slug, category] of Object.entries(englishSiteContent.categories)) {
-  assert.equal(chineseSiteContent.categories[slug].displayName, category.displayName);
+  const zhName = chineseSiteContent.categories[slug].displayName;
+  if (slug !== 'super-chrome-film') assert.notEqual(zhName, category.displayName, slug + ' displayName should be Chinese');
+  assert.ok(zhName.length > 0);
+  for (const series of chineseSiteContent.categories[slug].series) {
+    assert.ok(!series.description.includes('xx (60)'), slug + ' must not keep the gloss placeholder');
+  }
 }
 
 const { localizeInquiryError } = await import('../src/inquiry-errors.js');
