@@ -12,7 +12,7 @@ export const englishSiteContent = {
     closeLabel: 'Close navigation'
   },
   home: {
-    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'Fine on Every Surface.', subtitle: 'Films for cars, storefronts, signs and interiors: protect, restyle and refresh.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
+    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'Fine on Every Surface.', subtitle: 'Films for vehicles, public transit, retail POP, signs and interiors: protect, restyle and refresh.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
     heroTitle: 'SUPER CHROME FILM',
     heroAction: 'Explore products',
     heroSubtitle: 'Precision-engineered films for print, wrap and protection.',
@@ -43,10 +43,11 @@ export const englishSiteContent = {
     title: 'Precision is\nthe foundation.',
     introduction: 'Every layer is considered — from selected raw materials to final inspection.',
     capabilities: [
-      { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials' },
-      { name: 'R&D and Quality Control', description: 'Dedicated laboratory testing and well controlled production flow' },
-      { name: 'Integrated Operation', description: 'Raw material handling, coating know-how, manufacturing, service' },
-      { name: 'Application Expertise', description: 'Solutions for digital printing, signage and automotive detailing' }
+      { name: 'Rooted in Industry', description: 'Two decades of focused experience in product innovation, formula development, close track of evolving market demands, customer-oriented technical services' },
+      { name: 'R&D and Quality Control', description: 'Dedicated in-house technical capabilities, standardized quality-management procedures minimize variation and ensure consistent product performance' },
+      { name: 'A Frontrunner', description: 'The-first-of-its-kind cast vinyl production facilities in China, combine innovative material development, driving product iteration and delivering reliable solutions' },
+      { name: 'Application Expertise', description: 'Deliver tailored recommendation to maximize product performance, parameter optimization. Offers comprehensive support across the whole value chain' },
+      { name: 'Hands-on Technical Training', description: 'Film installation, wrapping skills, product knowledge, troubleshooting and best practice guidelines, dedicated to empower distributors, installers and partners' }
     ]
   },
   company: {
@@ -54,8 +55,6 @@ export const englishSiteContent = {
     title: '20 years of industrial expertise.',
     titleLead: '20 years of industrial',
     titleEmphasis: 'expertise.',
-    metricLabels: ['Established', 'Factory area', 'Annual capacity', 'Export countries'],
-    metricPending: 'To be confirmed',
     paragraphs: [
       'Established in 2005, SO-FINE has grown into an integrated group specializing in self-adhesive material handling, manufacturing, scientific research, sales and services.',
       'Our state-of-the-art production facilities with latest technology, well-equipped R&D laboratory and quality-control system, carefully selected domestic and imported raw materials, combined with extensive coating expertise to guarantee superior output for customers.',
@@ -169,7 +168,7 @@ export const englishSiteContent = {
       ]
     },
     'wall-decals': {
-      displayName: 'Wall Decals Self-Adhesive Material',
+      displayName: 'Wall Decals SAV Materials',
       eyebrow: 'SO-FINE / WALL DECALS SELF-ADHESIVE MATERIAL',
       intro: 'Decorative self-adhesive wall-covering materials that conform around 90° corners without lifting, provide a customized and unique touch to any space.',
       series: [
@@ -261,7 +260,7 @@ Object.assign(englishSiteContent.home.ppfSequence, {
   "layers": [
     "Self-Healing Top Coat",
     "High-Clarity TPU",
-    "Glue",
+    "Adhesive",
     "PET Liner"
   ],
   "layersLabel": "Film layers",

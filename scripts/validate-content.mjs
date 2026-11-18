@@ -8,7 +8,7 @@ const expectedCatalogue = {
   'one-way-vision': [
     ['SF1413', 'Monomeric PVC'], ['SF1414', 'Monomeric PVC'], ['SF1912', 'Monomeric PVC'], ['SF1913', 'Monomeric PVC'], ['SF1914', 'Monomeric PVC'], ['SF1132', 'Monomeric PVC'], ['SF1133', 'Monomeric PVC'], ['SF1134', 'Monomeric PVC'], ['SF1974', 'Monomeric PVC'],
     ['SF1963', 'Polymeric PVC'], ['SF1964', 'Polymeric PVC'], ['SF1865', 'Polymeric PVC'], ['SF1994', 'Polymeric PVC'],
-    ['SF1892', 'Cast PVC'], ['SF1893', 'Cast PVC'], ['SF1894', 'Cast PVC'],
+    ['SF1882', 'Cast PVC'], ['SF1883', 'Cast PVC'], ['SF1884', 'Cast PVC'], ['SF9927', 'Cast Reflective PVC'],
     ['SF1503', 'Perforated PET'], ['SF1513', 'Perforated PET'], ['SF1563', 'Perforated PET']
   ],
   'self-adhesive-vinyl': [
@@ -69,12 +69,12 @@ assert.deepEqual(
     'Super Chrome Film',
     'PVC-Free Film',
     'Cold Lamination Film',
-    'Wall Decals Self-Adhesive Material',
+    'Wall Decals SAV Materials',
     'Decorative Film'
   ],
   'Every brochure family must have its exact visible display name'
 )
-assert.equal(catalogProducts.length, 82, 'The brochure catalogue must contain exactly 82 models')
+assert.equal(catalogProducts.length, 83, 'The brochure catalogue must contain exactly 83 models')
 assert.deepEqual(
   [...new Set(catalogProducts.map(product => product.category))].sort(),
   expectedCategories.filter(category => expectedCatalogue[category].length > 0).sort(),

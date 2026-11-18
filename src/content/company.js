@@ -13,7 +13,7 @@ export const contactDetails = {
   factoryAddress: 'No. 99 Wufu Road, Tianzihu Modern Industrial Park, Anji County, Zhejiang, China',
   salesName: 'NINGBO SO-FINE IMPORT AND EXPORT CO., LTD.',
   salesAddress: 'Block 66, No. 31 West Hongtang Road, Hongtang Town, Jiangbei District, Ningbo, Zhejiang, P.R. China 315033',
-  phones: ['+86-574-8716-7701', '+86-574-8716-7702'],
+  phones: ['+86-574-8716-7701'],
   fax: '+86-574-8716-7703',
   email: 'admin@so-fine.com.cn'
 }

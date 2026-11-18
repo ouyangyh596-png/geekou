@@ -37,7 +37,7 @@ const familyTitles = {
   'super-chrome-film': 'Super Chrome Film',
   'pvc-free-film': 'PVC-Free Film',
   'cold-lamination': 'Cold Lamination Film',
-  'wall-decals': 'Wall Decals Self-Adhesive Material',
+  'wall-decals': 'Wall Decals SAV Materials',
   'decorative-film': 'Decorative Film'
 }
 
@@ -105,7 +105,7 @@ function coldLaminate(model, material, thickness, finish, adhesive, liner) {
 
 export const catalogProducts = [
   oneWay('SF1413', 'Monomeric PVC', '140 µm', 'Transparent removable', 'Perforated paper laminated with paper liner', '30%', '1.5 mm', solventCompatible),
-  oneWay('SF1414', 'Monomeric PVC', '160 µm', 'Transparent removable', 'Perforated paper laminated with paper liner', '40%', '1.5 mm'),
+  oneWay('SF1414', 'Monomeric PVC', '140 µm', 'Transparent removable', 'Perforated paper laminated with paper liner', '40%', '1.5 mm', solventCompatible),
   oneWay('SF1912', 'Monomeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
   oneWay('SF1913', 'Monomeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1914', 'Monomeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
@@ -113,13 +113,14 @@ export const catalogProducts = [
   oneWay('SF1133', 'Monomeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1134', 'Monomeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
   oneWay('SF1974', 'Monomeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '40%', '1.0 mm'),
-  oneWay('SF1963', 'Polymeric PVC', '140 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
+  oneWay('SF1963', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1964', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
   oneWay('SF1865', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '50%', '2.0 mm'),
   oneWay('SF1994', 'Polymeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
-  oneWay('SF1892', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
-  oneWay('SF1893', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
-  oneWay('SF1894', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
+  oneWay('SF1882', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
+  oneWay('SF1883', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
+  oneWay('SF1884', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
+  oneWay('SF9927', 'Cast Reflective PVC', '170 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
   oneWay('SF1503', 'Perforated PET', '100 µm', 'Transparent removable', 'One-side PE-coated liner', '30%', '1.5 mm'),
   oneWay('SF1513', 'Perforated PET', '100 µm', 'Transparent removable', 'Perforated paper laminated with PE-coated liner', '30%', '1.5 mm', solventCompatible),
   oneWay('SF1563', 'Perforated PET', '200 µm', 'N/A', '50 µm transparent PET', '30%', '1.5 mm'),

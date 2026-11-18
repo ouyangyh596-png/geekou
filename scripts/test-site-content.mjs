@@ -57,10 +57,11 @@ assert.deepEqual(englishSiteContent.technology, {
   title: 'Precision is\nthe foundation.',
   introduction: 'Every layer is considered — from selected raw materials to final inspection.',
   capabilities: [
-    { name: 'Established in 2005', description: 'Two decades of focused experience in self-adhesive materials' },
-    { name: 'R&D and Quality Control', description: 'Dedicated laboratory testing and well controlled production flow' },
-    { name: 'Integrated Operation', description: 'Raw material handling, coating know-how, manufacturing, service' },
-    { name: 'Application Expertise', description: 'Solutions for digital printing, signage and automotive detailing' }
+    { name: 'Rooted in Industry', description: 'Two decades of focused experience in product innovation, formula development, close track of evolving market demands, customer-oriented technical services' },
+    { name: 'R&D and Quality Control', description: 'Dedicated in-house technical capabilities, standardized quality-management procedures minimize variation and ensure consistent product performance' },
+    { name: 'A Frontrunner', description: 'The-first-of-its-kind cast vinyl production facilities in China, combine innovative material development, driving product iteration and delivering reliable solutions' },
+    { name: 'Application Expertise', description: 'Deliver tailored recommendation to maximize product performance, parameter optimization. Offers comprehensive support across the whole value chain' },
+    { name: 'Hands-on Technical Training', description: 'Film installation, wrapping skills, product knowledge, troubleshooting and best practice guidelines, dedicated to empower distributors, installers and partners' }
   ]
 })
 assert.deepEqual(englishSiteContent.company.paragraphs, [
@@ -210,7 +211,7 @@ for (const [modulePath, inlineCopy] of [
   }
 }
 assert.deepEqual(englishSiteContent.home.ppfSequence, {
-  layers: ['Self-Healing Top Coat', 'High-Clarity TPU', 'Glue', 'PET Liner'],
+  layers: ['Self-Healing Top Coat', 'High-Clarity TPU', 'Adhesive', 'PET Liner'],
   layersLabel: 'Film layers',
   diagramDescription: 'Four protective film layers with curved surfaces, separating and closing as you scroll.',
   presentationLabel: 'PPF product motion presentation',

@@ -31,7 +31,7 @@ console.log('TVC assets, playback policy, native modal and preserved section con
 
 const { englishSiteContent } = await import('../src/content/site-content.js');
 assert.equal(englishSiteContent.home.tvc.title, 'Fine on Every Surface.');
-assert.equal(englishSiteContent.home.tvc.subtitle, 'Films for cars, storefronts, signs and interiors: protect, restyle and refresh.');
+assert.equal(englishSiteContent.home.tvc.subtitle, 'Films for vehicles, public transit, retail POP, signs and interiors: protect, restyle and refresh.');
 assert.match(component, /className="tvc-brand"[^\n]*alt="SO-FINE"/);
 assert.match(main, /<main className=\{isMobile \? 'home-page is-mobile' : 'home-page'\}>\s*<Header \/>\s*<TvcShowcase/);
 assert.equal(englishSiteContent.home.heroTitle, 'SUPER CHROME FILM');

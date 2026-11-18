@@ -44,7 +44,7 @@ assert.doesNotMatch(main,/className="stack-index"/);
 assert.doesNotMatch(main,/stack-model-list/);
 assert.match(main,/className="stack-cta"/);
 assert.match(main,/className="company-evidence[^>]*>.*factory-aerial\.mp4/);
-assert.match(main,/factory-panel/); assert.match(main,/factory-metrics/);
+assert.match(main,/factory-panel/); assert.doesNotMatch(main,/factory-metrics/);
 assert.match(css,/\.statement::after[^}]*rgba\(11,31,58,\.6\)/);
 assert.match(css,/\.ppf-sequence-inner[^}]*grid-template-columns:1fr/);
 assert.match(css,/\.ppf-sequence-copy\.ppf-sequence-copy--top[^}]*opacity:1/);

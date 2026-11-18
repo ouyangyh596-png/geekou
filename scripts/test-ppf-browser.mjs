@@ -100,7 +100,7 @@ try {
         assert.equal((await state()).overflow, false, 'desktop has no horizontal overflow');
         await page.screenshot({path:resolve(output, `desktop-${width}.png`)});
       }
-      for (const [progress, label] of [[0,'Self-Healing Top Coat'], [.3,'High-Clarity TPU'], [.55,'Glue'], [.8,'PET Liner'], [.3,'High-Clarity TPU']]) {
+      for (const [progress, label] of [[0,'Self-Healing Top Coat'], [.3,'High-Clarity TPU'], [.55,'Adhesive'], [.8,'PET Liner'], [.3,'High-Clarity TPU']]) {
         await move(progress);
         assert.equal(await page.locator('.ppf-layer-legend [aria-current="step"]').textContent(), label);
       }
@@ -116,7 +116,7 @@ try {
     assert.notEqual(closed.background, open.background, 'background follows scroll');
     assert.match(open.backgroundImage, /gradient/, 'dark background has visible texture');
     assert.equal(open.overflow, false);
-    assert.deepEqual(await page.locator('.ppf-film-label text').allTextContents(), ['PET Liner','Glue','High-Clarity TPU','Self-Healing Top Coat']);
+    assert.deepEqual(await page.locator('.ppf-film-label text').allTextContents(), ['PET Liner','Adhesive','High-Clarity TPU','Self-Healing Top Coat']);
     await page.screenshot({path:resolve(output, mobile ? 'mobile.png' : 'desktop.png')});
     const reverse = await move(.375);
     assert.deepEqual(reverse.layers, opening.layers, 'reverse retraces layer positions');

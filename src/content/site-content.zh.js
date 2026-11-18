@@ -82,6 +82,10 @@ export const chineseSiteContent = {
       {
         "name": "应用经验",
         "description": "为数码印刷、标识及汽车美容提供材料方案"
+      },
+      {
+        "name": "Hands-on Technical Training",
+        "description": "Film installation, wrapping skills, product knowledge, troubleshooting and best practice guidelines, dedicated to empower distributors, installers and partners"
       }
     ]
   },
@@ -90,13 +94,6 @@ export const chineseSiteContent = {
     "title": "20 年工业制造经验。",
     "titleLead": "20 年工业制造",
     "titleEmphasis": "经验。",
-    "metricLabels": [
-      "成立年份",
-      "工厂面积",
-      "年产能",
-      "出口国家数"
-    ],
-    "metricPending": "待确认",
     "paragraphs": [
       "SO-FINE 成立于 2005 年，现已发展成为集自粘材料加工、制造、科研、销售与服务于一体的企业集团。",
       "我们将采用最新技术的先进生产设施、设备完善的研发实验室和质量控制体系，与精选的国内外原材料及丰富的涂布经验相结合，为客户提供优质产品。",
