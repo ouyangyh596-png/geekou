@@ -75,9 +75,9 @@ function oneWay(model, group, thickness, adhesive, liner, ratio, hole, printComp
   ])
 }
 
-function vinyl(model, group, thickness, finish, adhesive, liner, printCompatibility = compatible) {
+function vinyl(model, group, thickness, finish, adhesive, liner, printCompatibility = compatible, material = group) {
   return product('self-adhesive-vinyl', group, model, [
-    ['Material', group], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive],
+    ['Material', material], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive],
     ['Liner', liner], ['Print compatibility', printCompatibility]
   ])
 }
@@ -139,9 +139,9 @@ export const catalogProducts = [
   vinyl('SF21602', 'Polymeric PVC', '60 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
   vinyl('SF21802', 'Polymeric PVC', '80 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
   vinyl('SF21102', 'Polymeric PVC', '100 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
-  vinyl('SF29160', 'Polymeric PVC', '90 µm', 'High-opacity glossy', 'High-tack removable', 'Double PE-coated paper liner'),
-  vinyl('SF2900', 'Super Transparent PVC Vinyl', '100 µm', 'Polymeric glossy', 'Transparent removable', 'PET liner'),
-  vinyl('SF2901', 'Super Transparent PVC Vinyl', '100 µm', 'Monomeric', 'Transparent removable', 'PET liner'),
+  vinyl('SF29160', 'Polymeric PVC', '90 µm', 'Glossy', 'High-tack removable', 'Double PE-coated paper liner', compatible, 'High-Opacity Polymeric'),
+  vinyl('SF2900', 'Super Transparent PVC Vinyl', '100 µm', 'Glossy', 'Transparent removable', 'PET liner', compatible, 'Polymeric Super Transparent PVC Vinyl'),
+  vinyl('SF2901', 'Super Transparent PVC Vinyl', '100 µm', 'Glossy', 'Transparent removable', 'PET liner', compatible, 'Monomeric Super Transparent PVC Vinyl'),
   vinyl('SF2800', 'Super Glossy PVC Vinyl', '100 µm', 'Super glossy', 'Transparent removable', 'Double PE-coated paper liner'),
   vinyl('SF2832', 'Super Glossy PVC Vinyl', '100 µm', 'Super glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
 
