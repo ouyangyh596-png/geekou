@@ -264,10 +264,13 @@ export const chineseSiteContent = {
       "intro": "为汽车漆面提供耐刮擦、易清洁与精致外观的保护及饰面薄膜。",
       "series": [
         {
-          "name": "高清TPU保护膜",
-          "description": "具有耐刮擦、自修复和耐腐蚀性能的 TPU 漆面保护膜。"
-        }
-      ]
+          "name": "卓越PPF",
+          "description": "亮光 · 哑光"
+        },
+        { "name": "经济PPF", "description": "亮光 · 哑光" },
+        { "name": "彩色PPF", "description": "纯色 · 金属效果 · 碳纤维" }
+      ],
+      "pendingInfo": "产品资料待补充。"
     },
     "cast-wrap-vinyl": {
       "displayName": "铸塑车身贴膜",

@@ -11,7 +11,7 @@ try {
 const { productImageAlt } = productMedia;
 assert.equal(typeof productImageAlt, 'function', 'productImageAlt must be exported');
 
-const fallbackModels = ['SF6000', 'AF1810', 'AF1850'];
+const fallbackModels = ['SF6000', 'AF1880', 'AF1850', 'AF1610', 'AF1650'];
 for (const model of fallbackModels) {
   const product = catalogProducts.find(candidate => candidate.model === model);
   assert.ok(product, `${model}: product is missing`);

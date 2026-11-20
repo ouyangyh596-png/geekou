@@ -160,15 +160,22 @@ export const catalogProducts = [
     ['Application', 'Illuminated graphics; dry or wet application']
   ]),
 
-  // TODO: Supply verified differences between AF1810 and AF1850; source specs are currently identical.
-  product('ppf', 'High-Clarity TPU Protection', 'AF1810', [
-    ['Material', 'High-clarity TPU protection film'],
-    ['Application', 'Paint protection with scratch resistance, self-healing, corrosion resistance, easy cleaning and gloss enhancement']
-  ], { description: 'High-clarity TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }),
-  product('ppf', 'High-Clarity TPU Protection', 'AF1850', [
-    ['Material', 'High-clarity TPU protection film'],
-    ['Application', 'Paint protection with scratch resistance, self-healing, corrosion resistance, easy cleaning and gloss enhancement']
-  ], { description: 'High-clarity TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }),
+  product('ppf', 'premium', 'AF1880', [
+    ['Finish', 'Glossy'], ['Material', 'High-clarity TPU protection Film'],
+    ['Adhesive', 'Transparent Permanent'], ['Liner', 'PET liner Matte']
+  ]),
+  product('ppf', 'premium', 'AF1850', [
+    ['Finish', 'Matte'], ['Material', 'High-clarity TPU protection Film'],
+    ['Adhesive', 'Transparent Permanent'], ['Liner', 'PET liner Matte']
+  ]),
+  product('ppf', 'econo', 'AF1610', [
+    ['Finish', 'Glossy'], ['Material', 'High-clarity TPU protection Film'],
+    ['Adhesive', 'Transparent Permanent'], ['Liner', 'PET liner Matte']
+  ]),
+  product('ppf', 'econo', 'AF1650', [
+    ['Finish', 'Matte'], ['Material', 'High-clarity TPU protection Film'],
+    ['Adhesive', 'Transparent Permanent'], ['Liner', 'PET liner Matte']
+  ]),
 
   wrap('cast-wrap-vinyl', 'SF5501', 'White Printable Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
   wrap('cast-wrap-vinyl', 'SF5511', 'White Printable Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed PET liner'),

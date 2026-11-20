@@ -18,7 +18,7 @@ const expectedCatalogue = {
     ['SF2800', 'Super Glossy PVC Vinyl'], ['SF2832', 'Super Glossy PVC Vinyl']
   ],
   'translucent-film': [['SF6000', 'SF6000 Series']],
-  ppf: [['AF1810', 'High-Clarity TPU Protection'], ['AF1850', 'High-Clarity TPU Protection']],
+  ppf: [['AF1880', 'premium'], ['AF1850', 'premium'], ['AF1610', 'econo'], ['AF1650', 'econo']],
   'cast-wrap-vinyl': [
     ['SF5501', 'White Printable Film'], ['SF5511', 'White Printable Film'],
     ['SF5503', 'Ultra Clear Printable Film'], ['SF5513', 'Ultra Clear Printable Film'],
@@ -74,7 +74,7 @@ assert.deepEqual(
   ],
   'Every brochure family must have its exact visible display name'
 )
-assert.equal(catalogProducts.length, 83, 'The brochure catalogue must contain exactly 83 models')
+assert.equal(catalogProducts.length, 85, 'The brochure catalogue must contain exactly 85 models')
 assert.deepEqual(
   [...new Set(catalogProducts.map(product => product.category))].sort(),
   expectedCategories.filter(category => expectedCatalogue[category].length > 0).sort(),
@@ -142,7 +142,9 @@ for (const [label, value] of [
 
 const expectedFallbacks = {
   SF6000: '/products/translucent-film-family.svg',
-  AF1810: '/products/ppf-family.svg',
+  AF1880: '/products/ppf-family.svg',
+  AF1610: '/products/ppf-family.svg',
+  AF1650: '/products/ppf-family.svg',
   AF1850: '/products/ppf-family.svg',
   SF5601: '/products/polymeric car wrapping film-1.jpg',
   SF5602: '/products/polymeric car wrapping film-1.jpg',

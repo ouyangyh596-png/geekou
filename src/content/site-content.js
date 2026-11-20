@@ -119,7 +119,12 @@ export const englishSiteContent = {
       displayName: 'Paint Protection Film',
       eyebrow: 'AUTOFACE / PAINT PROTECTION FILM',
       intro: 'Automotive protection and finish films designed for scratch resistance, easy cleaning and a refined surface appearance.',
-      series: [{ name: 'High-Clarity TPU Protection', description: 'TPU paint-protection film with scratch resistance, self-healing and corrosion resistance.' }]
+      series: [
+        { name: 'Premium PPF', description: 'Glossy · Matte' },
+        { name: 'Econo PPF', description: 'Glossy · Matte' },
+        { name: 'Colored PPF', description: 'Solid Color · Metallic Finish · Carbon Fiber' }
+      ],
+      pendingInfo: 'Product information to be supplemented.'
     },
     'cast-wrap-vinyl': {
       displayName: 'Cast Wrap Vinyl',

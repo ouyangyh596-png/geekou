@@ -77,3 +77,8 @@ for (const [slug, category] of Object.entries(englishSiteContent.categories)) {
 const { localizeInquiryError } = await import('../src/inquiry-errors.js');
 assert.equal(localizeInquiryError('Please provide a valid email address.', 'zh'), '请输入有效的电子邮箱地址。');
 assert.equal(localizeInquiryError('name must be 120 characters or fewer.', 'zh'), '姓名不得超过 120 个字符。');
+
+assert.deepEqual(resolveContent('en').categories.ppf.series.map(item => item.name), ['Premium PPF', 'Econo PPF', 'Colored PPF']);
+assert.deepEqual(resolveContent('zh').categories.ppf.series.map(item => item.name), ['卓越PPF', '经济PPF', '彩色PPF']);
+assert.equal(resolveContent('en').categories.ppf.series[2].description, 'Solid Color · Metallic Finish · Carbon Fiber');
+assert.equal(resolveContent('zh').categories.ppf.series[2].description, '纯色 · 金属效果 · 碳纤维');

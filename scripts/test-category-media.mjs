@@ -82,7 +82,17 @@ assert.equal(specificationValue(measurementRows[1], 'Thickness'), 'N/A');
 assert.equal(specificationValue(measurementRows[1], 'Missing'), 'N/A');
 assert.equal(specificationValue({ specs: [['Empty', '  ']] }, 'Empty'), 'N/A');
 assert.deepEqual([...numericSpecificationColumns(measurementRows, ['Thickness', 'Weight', 'Temperature', 'Strength', 'Finish', 'Missing'])], ['Thickness', 'Weight', 'Temperature', 'Strength']);
-assert.match(catalog, /TODO:.*AF1810.*AF1850/, 'identical source specs remain marked for verified differences');
-assert.deepEqual(catalogProducts.find(item => item.model === 'AF1810').specs, catalogProducts.find(item => item.model === 'AF1850').specs, 'no model differences are invented');
+const ppf = catalogProducts.filter(item => item.category === 'ppf');
+assert.deepEqual(ppf.map(item => [item.model, item.group]), [
+  ['AF1880', 'premium'], ['AF1850', 'premium'], ['AF1610', 'econo'], ['AF1650', 'econo']
+]);
+assert.ok(!catalogProducts.some(item => item.model === 'AF1810'), 'retired model is absent');
+for (const item of ppf) {
+  assert.deepEqual(item.specs, [
+    ['Finish', ['AF1880', 'AF1610'].includes(item.model) ? 'Glossy' : 'Matte'],
+    ['Material', 'High-clarity TPU protection Film'],
+    ['Adhesive', 'Transparent Permanent'], ['Liner', 'PET liner Matte']
+  ]);
+}
 
 console.log('PASS: validated category media, source specs and numeric column formatting');
