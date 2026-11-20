@@ -68,9 +68,9 @@ function product(category, group, model, specs, options = {}) {
   }
 }
 
-function oneWay(model, group, thickness, adhesive, liner, ratio, hole, printCompatibility = compatible) {
+function oneWay(model, group, thickness, adhesive, liner, ratio, hole, printCompatibility = compatible, material = group) {
   return product('one-way-vision', group, model, [
-    ['Material', group], ['Thickness', thickness], ['Adhesive', adhesive], ['Liner', liner],
+    ['Material', material], ['Thickness', thickness], ['Adhesive', adhesive], ['Liner', liner],
     ['Perforation ratio', ratio], ['Hole size', hole], ['Print compatibility', printCompatibility]
   ])
 }
@@ -120,7 +120,7 @@ export const catalogProducts = [
   oneWay('SF1882', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
   oneWay('SF1883', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1884', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
-  oneWay('SF9927', 'Cast Reflective PVC', '170 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
+  oneWay('SF9927', 'Cast PVC', '170 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm', compatible, 'Cast Reflective PVC'),
   oneWay('SF1503', 'Perforated PET', '100 µm', 'Transparent removable', 'One-side PE-coated liner', '30%', '1.5 mm'),
   oneWay('SF1513', 'Perforated PET', '100 µm', 'Transparent removable', 'Perforated paper laminated with PE-coated liner', '30%', '1.5 mm', solventCompatible),
   oneWay('SF1563', 'Perforated PET', '200 µm', 'N/A', '50 µm transparent PET', '30%', '1.5 mm'),

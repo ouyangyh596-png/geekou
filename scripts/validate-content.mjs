@@ -8,7 +8,7 @@ const expectedCatalogue = {
   'one-way-vision': [
     ['SF1413', 'Monomeric PVC'], ['SF1414', 'Monomeric PVC'], ['SF1912', 'Monomeric PVC'], ['SF1913', 'Monomeric PVC'], ['SF1914', 'Monomeric PVC'], ['SF1132', 'Monomeric PVC'], ['SF1133', 'Monomeric PVC'], ['SF1134', 'Monomeric PVC'], ['SF1974', 'Monomeric PVC'],
     ['SF1963', 'Polymeric PVC'], ['SF1964', 'Polymeric PVC'], ['SF1865', 'Polymeric PVC'], ['SF1994', 'Polymeric PVC'],
-    ['SF1882', 'Cast PVC'], ['SF1883', 'Cast PVC'], ['SF1884', 'Cast PVC'], ['SF9927', 'Cast Reflective PVC'],
+    ['SF1882', 'Cast PVC'], ['SF1883', 'Cast PVC'], ['SF1884', 'Cast PVC'], ['SF9927', 'Cast PVC'],
     ['SF1503', 'Perforated PET'], ['SF1513', 'Perforated PET'], ['SF1563', 'Perforated PET']
   ],
   'self-adhesive-vinyl': [
@@ -87,6 +87,10 @@ for (const [category, expectedModels] of Object.entries(expectedCatalogue)) {
     .map(({ model, group }) => [model, group])
   assert.deepEqual(actualModels, expectedModels, `${category}: model sequence or group mapping differs from the brochure`)
 }
+
+const sf9927 = catalogProducts.find(product => product.model === 'SF9927')
+assert.equal(sf9927.group, 'Cast PVC', 'SF9927 must appear under the Cast PVC series')
+assert.equal(sf9927.specs.find(([label]) => label === 'Material')?.[1], 'Cast Reflective PVC', 'SF9927 displayed Material must remain Cast Reflective PVC')
 
 const models = catalogProducts.map(product => product.model)
 assert.equal(new Set(models).size, models.length, 'Every model must be unique')
