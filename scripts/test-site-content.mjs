@@ -153,7 +153,7 @@ assert.deepEqual(englishSiteContent.categories['super-chrome-film'].series, [
     description: 'Build-in colored chrome film in satin finish, delivers metallic reflection, iridescent color shifts with light angle. Made from cast PVC with very good dimensional stability, conforms to compound curves with heat.'
   },
   {
-    name: 'Printable Super Glossy Chrome Wrap Film',
+    name: 'Printable Super Chrome Film',
     description: 'The stunning printable film is in mirror-chrome base finish, true metallic effect, optimal solution for customized car wrap.'
   }
 ])

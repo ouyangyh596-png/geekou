@@ -15,11 +15,11 @@ const reviewedFamilyAssets = {
   'self-adhesive-vinyl': '/media/families/self-adhesive-bus-graphics.webp',
   'translucent-film': '/media/families/translucent-lightbox-application.webp',
   ppf: '/media/families/paint-protection-film-layers.webp',
-  'cast-wrap-vinyl': '/media/families/car-wrapping-color-rolls.webp',
+  'cast-wrap-vinyl': '/media/families/cast-wrap-sports-car.webp',
   'polymeric-wrap-vinyl': '/media/families/overlaminate-protective-roll.webp',
   'super-chrome-film': '/media/families/car-wrapping-color-rolls.webp',
   'pvc-free-film': '/media/families/overlaminate-protective-roll.webp',
-  'cold-lamination': '/media/families/cold-lamination-film-roll.webp',
+  'cold-lamination': '/media/families/cold-lamination-laminator.webp',
   'wall-decals': '/media/families/interior-wall-decals.webp',
   'decorative-film': '/media/families/interior-wall-decals.webp'
 };

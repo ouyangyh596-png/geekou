@@ -118,7 +118,7 @@ export const chineseSiteContent = {
     "successMessage": "感谢您，咨询已收到。",
     "errorPrefix": "发送失败，请发送邮件至",
     "factoryName": "ZHEJIANG SO-FINE SELF-ADHESIVE PRODUCTS CO., LTD.",
-    "factoryAddress": "中国浙江省安吉县天子湖现代工业园五福路 99 号",
+    "factoryAddress": "中国浙江省安吉县天子湖现代工业园五福路 5 号",
     "salesName": "NINGBO SO-FINE IMPORT AND EXPORT CO., LTD.",
     "salesAddress": "中国浙江省宁波市江北区洪塘镇洪塘西路 31 号 66 幢，邮编 315033"
   },
@@ -391,11 +391,11 @@ export const chineseSiteContent = {
     "self-adhesive-vinyl": "覆有印刷自粘广告图形的粉色旅游巴士",
     "translucent-film": "夜间亮起的店面灯箱与背光窗贴",
     "ppf": "蓝色汽车上方透明漆面保护膜分层示意图",
-    "cast-wrap-vinyl": "用于复杂曲面及图形保护的铸造车身贴膜卷",
+    "cast-wrap-vinyl": "覆有炫彩车身贴膜的跑车",
     "polymeric-wrap-vinyl": "代表尺寸稳定的聚合物车身贴膜的保护膜卷",
     "super-chrome-film": "金属蓝、绿、紫、铜和银色电镀车身贴膜卷",
     "pvc-free-film": "代表不含 PVC 车身贴膜材料的保护膜卷",
-    "cold-lamination": "带离型底纸的薄膜，展示冷裱膜材料细节",
+    "cold-lamination": "正在覆膜的干式冷裱机",
     "wall-decals": "贴有植物图案墙贴壁画的卧室",
     "decorative-film": "贴有植物图案墙贴壁画的卧室"
   },

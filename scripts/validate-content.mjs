@@ -23,21 +23,29 @@ const expectedCatalogue = {
     ['SF5501', 'White Printable Film'], ['SF5511', 'White Printable Film'],
     ['SF5503', 'Ultra Clear Printable Film'], ['SF5513', 'Ultra Clear Printable Film'],
     ['SF9908', 'Reflective Printable Film'],
-    ['SF5601', 'Overlaminate Film'], ['SF5602', 'Overlaminate Film'], ['SF5603', 'Overlaminate Film'], ['SF5606', 'Overlaminate Film'], ['SF5609', 'Overlaminate Film']
+    ['SF5601', 'Overlaminate Film'], ['SF5602', 'Overlaminate Film'], ['SF5602-1', 'Overlaminate Film'], ['SF5603', 'Overlaminate Film'], ['SF5606', 'Overlaminate Film'], ['SF5609', 'Overlaminate Film']
   ],
   'polymeric-wrap-vinyl': [
     ['SF5505', 'White Printable Film'], ['SF5525', 'White Printable Film'],
     ['SF5604', 'Overlaminate Film'], ['SF5607', 'Overlaminate Film']
   ],
   'super-chrome-film': [
-    ['AF-20202M', 'Super Chrome Film classic colours'], ['AF-20403M', 'Super Chrome Film classic colours'], ['AF-20880M', 'Super Chrome Film classic colours'], ['AF-20720M', 'Super Chrome Film classic colours'], ['AF-20800M', 'Super Chrome Film classic colours'], ['AF-20810M', 'Super Chrome Film classic colours'], ['AF-20280M', 'Super Chrome Film classic colours'], ['AF-20700M', 'Super Chrome Film classic colours'], ['AF-20521M', 'Super Chrome Film classic colours'], ['AF-20100M', 'Super Chrome Film classic colours'], ['AF-20601M', 'Super Chrome Film classic colours'], ['AF-20701M', 'Super Chrome Film classic colours'], ['AF-20405M', 'Super Chrome Film classic colours'], ['AF-20850M', 'Super Chrome Film classic colours'],
-    ['AF-20100G', 'Printable Super Glossy Chrome Wrap Film']
+    ['AF-20521M', 'Super Chrome Film classic colours'],
+    ['AF-20280M', 'Super Chrome Film classic colours'],
+    ['AF-20100M', 'Super Chrome Film classic colours'],
+    ['AF-20401M', 'Super Chrome Film classic colours'],
+    ['AF-20850M', 'Super Chrome Film classic colours'],
+    ['AF-20701M', 'Super Chrome Film classic colours'],
+    ['AF-20801M', 'Super Chrome Film classic colours'],
+    ['AF-20601M', 'Super Chrome Film classic colours'],
+    ['AF-20403M', 'Super Chrome Film classic colours'],
+    ['AF-20100G', 'Printable Super Chrome Film']
   ],
   'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film']],
   'cold-lamination': [
     ['SF3180', 'Monomeric PVC'], ['SF3181', 'Monomeric PVC'], ['SF3182', 'Monomeric PVC'],
     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
-    ['SF3400', 'Floor Lamination PVC'], ['SF3401', 'Floor Lamination PVC']
+    ['SF3400', 'Floor Lamination PVC'], ['SF3410', 'Floor Lamination PVC']
   ],
   'wall-decals': [['SF4001', 'PVC-Coated Polyester Fabric'], ['SF4002', '100% Polyester']],
   'decorative-film': []
@@ -74,7 +82,7 @@ assert.deepEqual(
   ],
   'Every brochure family must have its exact visible display name'
 )
-assert.equal(catalogProducts.length, 85, 'The brochure catalogue must contain exactly 85 models')
+assert.equal(catalogProducts.length, 81, 'The brochure catalogue must contain exactly 81 models')
 assert.deepEqual(
   [...new Set(catalogProducts.map(product => product.category))].sort(),
   expectedCategories.filter(category => expectedCatalogue[category].length > 0).sort(),

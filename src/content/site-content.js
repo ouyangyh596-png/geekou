@@ -66,7 +66,7 @@ export const englishSiteContent = {
     title: 'Start with a\nsurface.',
     copyright: 'All rights reserved.',
     factoryName: 'ZHEJIANG SO-FINE SELF-ADHESIVE PRODUCTS CO., LTD.',
-    factoryAddress: 'No. 99 Wufu Road, Tianzihu Modern Industrial Park, Anji County, Zhejiang, China',
+    factoryAddress: 'No. 5 Wufu Road, Tianzihu Modern Industrial Park, Anji County, Zhejiang, China',
     salesName: 'NINGBO SO-FINE IMPORT AND EXPORT CO., LTD.',
     salesAddress: 'Block 66, No. 31 West Hongtang Road, Hongtang Town, Jiangbei District, Ningbo, Zhejiang, P.R. China 315033',
     telLabel: 'Tel',
@@ -152,14 +152,14 @@ export const englishSiteContent = {
       intro: 'Individual classic colour wrap films with a metallic visual finish for automotive detailing.',
       series: [
         { name: 'Super Chrome Film classic colours', description: 'Build-in colored chrome film in satin finish, delivers metallic reflection, iridescent color shifts with light angle. Made from cast PVC with very good dimensional stability, conforms to compound curves with heat.' },
-        { name: 'Printable Super Glossy Chrome Wrap Film', description: 'The stunning printable film is in mirror-chrome base finish, true metallic effect, optimal solution for customized car wrap.' }
+        { name: 'Printable Super Chrome Film', description: 'The stunning printable film is in mirror-chrome base finish, true metallic effect, optimal solution for customized car wrap.' }
       ]
     },
     'pvc-free-film': {
       displayName: 'PVC-Free Film',
       eyebrow: 'AUTOFACE / PVC-FREE FILM',
       intro: 'PVC-free wrap-film alternatives for vehicle graphics and surface applications.',
-      series: [{ name: 'PVC-Free Film', description: 'PVC-free wrap-film alternatives.' }]
+      series: [{ name: 'PVC-Free Film', description: 'PVC-free wrap film alternatives.' }]
     },
     'cold-lamination': {
       displayName: 'Cold Lamination Film',
@@ -276,11 +276,11 @@ englishSiteContent.mediaAlts = {
   "self-adhesive-vinyl": "Pink tour bus covered with printed self-adhesive advertising graphics",
   "translucent-film": "Illuminated storefront light box and backlit window graphics at night",
   "ppf": "Illustration of transparent paint-protection film layers over a blue car",
-  "cast-wrap-vinyl": "Vehicle-wrap film rolls representing cast vinyl for complex curves and protected graphics",
+  "cast-wrap-vinyl": "Sports car with iridescent vinyl wrap",
   "polymeric-wrap-vinyl": "Protective film roll representing dimensionally stable polymeric wrap vinyl",
   "super-chrome-film": "Metallic blue, green, purple, copper and silver super chrome vehicle-wrap film rolls",
   "pvc-free-film": "Protective film roll representing PVC-free vehicle wrap material",
-  "cold-lamination": "Film with release liner, representative cold-lamination material detail",
+  "cold-lamination": "Dry cold roll laminator applying film",
   "wall-decals": "Interior bedroom with an installed botanical wall decal mural",
   "decorative-film": "Interior bedroom with an installed botanical wall decal mural"
 };

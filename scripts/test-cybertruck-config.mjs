@@ -3,19 +3,16 @@ import { classicColours, CYBERTRUCK_MODEL_PATH, DEFAULT_CLASSIC_COLOUR, isLikely
 
 assert.equal(CYBERTRUCK_MODEL_PATH, '/models/Tesla_Cybertruck3.glb')
 assert.ok(classicColours.length >= 6)
-assert.equal(classicColours[0].id, 'china-red')
+assert.equal(classicColours[0].id, 'twilight-purple')
 const expectedClassicColours = new Map([
   ['burgundy-red', '#640000'],
-  ['maillard-copper', '#34270F'],
+  ['bronze-copper', '#34270F'],
   ['dark-green', '#003816'],
   ['dark-blue', '#2A3655'],
-  ['bright-yellow', '#E9E325'],
   ['rose-gold', '#80564D'],
   ['silver', '#B4B4B4'],
-  ['china-red', '#A0000F'],
   ['tungsten-steel', '#646464'],
   ['twilight-purple', '#5E1287'],
-  ['purple-gold', '#AD5400']
 ])
 for (const [id, expectedHex] of expectedClassicColours) {
   assert.equal(classicColours.find(colour => colour.id === id)?.hex, expectedHex, `${id} uses the approved RGB value`)

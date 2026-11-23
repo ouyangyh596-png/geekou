@@ -13,7 +13,7 @@ const styles = readSource('../src/polish.css')
 
 assert.match(main, /React\.lazy\(\(\) => import\('\.\/components\/PrintableWrapConfigurator\.jsx'\)\)/,
   'the printable configurator must be lazy loaded')
-assert.match(main, /const isPrintableChrome = activeSeries === 'Printable Super Glossy Chrome Wrap Film'/,
+assert.match(main, /const isPrintableChrome = activeSeries === 'Printable Super Chrome Film'/,
   'the printable configurator route must match the complete series name exactly')
 assert.match(main, /\{isPrintableChrome && <PrintableWrapConfigurator \/>\}/,
   'the exact printable route must mount the configurator')

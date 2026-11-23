@@ -82,18 +82,18 @@ function vinyl(model, group, thickness, finish, adhesive, liner, printCompatibil
   ])
 }
 
-function wrap(category, model, group, thickness, finish, adhesive, liner, printCompatibility = compatible) {
+function wrap(category, model, group, thickness, finish, adhesive, liner, printCompatibility = compatible, material = group) {
   const specs = [
-    ['Material', group], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive],
+    ['Material', material], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive],
     ['Liner', liner]
   ]
   if (printCompatibility) specs.push(['Print compatibility', printCompatibility])
   return product(category, group, model, specs)
 }
 
-function overlaminate(category, model, group, thickness, finish, adhesive, liner) {
+function overlaminate(category, model, group, thickness, finish, adhesive, liner, material = group) {
   return product(category, group, model, [
-    ['Material', group], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive], ['Liner', liner]
+    ['Material', material], ['Thickness', thickness], ['Finish', finish], ['Adhesive', adhesive], ['Liner', liner]
   ])
 }
 
@@ -116,7 +116,7 @@ export const catalogProducts = [
   oneWay('SF1963', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1964', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
   oneWay('SF1865', 'Polymeric PVC', '160 µm', 'Transparent removable', 'Universal liner', '50%', '2.0 mm'),
-  oneWay('SF1994', 'Polymeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
+  oneWay('SF1994', 'Polymeric PVC', '180 µm', 'Transparent removable', 'Universal liner', '40%', '1.0 mm'),
   oneWay('SF1882', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '20%', '1.5 mm'),
   oneWay('SF1883', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '30%', '1.5 mm'),
   oneWay('SF1884', 'Cast PVC', '120 µm', 'Transparent removable', 'Universal liner', '40%', '1.5 mm'),
@@ -184,27 +184,32 @@ export const catalogProducts = [
   wrap('cast-wrap-vinyl', 'SF9908', 'Reflective Printable Film', '170 µm', 'Reflective film glossy', 'Transparent removable', 'Double PE-coated paper liner'),
   wrap('polymeric-wrap-vinyl', 'SF5505', 'White Printable Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
   wrap('polymeric-wrap-vinyl', 'SF5525', 'White Printable Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
-  wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
-  wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent removable', 'Matte PET liner', null),
+  wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner', compatible, 'TPU'),
+  wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner', null, 'TPU'),
   ...[
-    ['AF-20202M', 'China Red'], ['AF-20403M', 'Maillard Copper'], ['AF-20880M', 'Purple Gold'],
-    ['AF-20720M', 'Bluish Green'], ['AF-20800M', 'Bright Yellow'], ['AF-20810M', 'Glaze Yellow'],
-    ['AF-20280M', 'Burgundy Red'], ['AF-20700M', 'Green'], ['AF-20521M', 'Twilight Purple'],
-    ['AF-20100M', 'Silver'], ['AF-20601M', 'Dark Blue'], ['AF-20701M', 'Dark Green'],
-    ['AF-20405M', 'Tungsten Steel'], ['AF-20850M', 'Rose Gold']
+    ['AF-20521M', 'Twilight Purple'],
+    ['AF-20280M', 'Burgundy Red'],
+    ['AF-20100M', 'Silver'],
+    ['AF-20401M', 'Tungsten Steel'],
+    ['AF-20850M', 'Rose Gold'],
+    ['AF-20701M', 'Dark Green'],
+    ['AF-20801M', 'Bronze Gold'],
+    ['AF-20601M', 'Dark Blue'],
+    ['AF-20403M', 'Bronze Copper']
   ].map(([model, color]) => product('super-chrome-film', 'Super Chrome Film classic colours', model, [['Color', color]], {
     title: color, description: `Classic ${color.toLowerCase()} car wrap film.`
   })),
 
-  wrap('super-chrome-film', 'AF-20100G', 'Printable Super Glossy Chrome Wrap Film', '100 µm', 'Silver super glossy', 'Transparent removable', 'Matte PET liner'),
+  wrap('super-chrome-film', 'AF-20100G', 'Printable Super Chrome Film', '100 µm', 'Silver super glossy', 'Transparent removable', 'Embossed Matte PET Liner', compatible, 'Printable Super Glossy Chrome Wrap Film'),
 
-  overlaminate('cast-wrap-vinyl', 'SF5601', 'Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('cast-wrap-vinyl', 'SF5602', 'Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('cast-wrap-vinyl', 'SF5603', 'Overlaminate Film', '30 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('cast-wrap-vinyl', 'SF5606', 'Overlaminate Film', '50 µm', 'Glossy self-healing', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('cast-wrap-vinyl', 'SF5609', 'Overlaminate Film', '50 µm', 'Matte grainy textured', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('polymeric-wrap-vinyl', 'SF5604', 'Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner'),
-  overlaminate('polymeric-wrap-vinyl', 'SF5607', 'Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner'),
+  overlaminate('cast-wrap-vinyl', 'SF5601', 'Overlaminate Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner', 'Optical Clear PVC Film'),
+  overlaminate('cast-wrap-vinyl', 'SF5602', 'Overlaminate Film', '50 µm', 'Lustre', 'Transparent permanent', 'Matte PET liner', 'Clear PVC Film'),
+  overlaminate('cast-wrap-vinyl', 'SF5602-1', 'Overlaminate Film', '50 µm', 'Matte', 'Transparent permanent', 'Matte PET liner', 'Clear PVC Film'),
+  overlaminate('cast-wrap-vinyl', 'SF5603', 'Overlaminate Film', '30 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner', 'Optical Clear PVC Film'),
+  overlaminate('cast-wrap-vinyl', 'SF5606', 'Overlaminate Film', '50 µm', 'Glossy self-healing', 'Transparent permanent', 'Matte PET liner', 'Optical Clear PVC Film With Self-healing'),
+  overlaminate('cast-wrap-vinyl', 'SF5609', 'Overlaminate Film', '50 µm', 'Matte grainy textured', 'Transparent permanent', 'Matte PET liner', 'Clear PVC Film'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5604', 'Overlaminate Film', '60 µm', 'Matte', 'Transparent permanent', 'Matte PET liner', 'Clear PVC Film'),
+  overlaminate('polymeric-wrap-vinyl', 'SF5607', 'Overlaminate Film', '60 µm', 'Super glossy', 'Transparent permanent', 'Matte PET liner', 'Optical Clear PVC Film'),
 
   coldLaminate('SF3180', 'Monomeric PVC', '70 µm', 'Glossy', 'Transparent permanent', 'PE-coated paper liner'),
   coldLaminate('SF3181', 'Monomeric PVC', '70 µm', 'Semi-matte', 'Transparent permanent', 'PE-coated paper liner'),
@@ -213,7 +218,7 @@ export const catalogProducts = [
   coldLaminate('SF3301', 'Polymeric PVC', '60 µm', 'Matte', 'Transparent permanent', 'PET liner'),
   coldLaminate('SF3200', 'PET', '36 µm', 'Glossy', 'Transparent permanent', 'PET liner'),
   coldLaminate('SF3400', 'Floor Lamination PVC', '200 µm', 'Grainy textured', 'Transparent permanent', 'PE-coated paper liner'),
-  coldLaminate('SF3401', 'Floor Lamination PVC', '100 µm', 'Grainy textured', 'Transparent permanent', 'PE-coated paper liner'),
+  coldLaminate('SF3410', 'Floor Lamination PVC', '100 µm', 'Grainy textured', 'Transparent permanent', 'PE-coated paper liner'),
 
   product('wall-decals', 'PVC-Coated Polyester Fabric', 'SF4001', [
     ['Material', 'PVC-coated polyester fabric'], ['Weight', '250 gsm'], ['Adhesive', 'High-tack removable'],
