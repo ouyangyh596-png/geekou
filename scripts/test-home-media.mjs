@@ -23,7 +23,7 @@ assert.match(css, /\.home-page \.landing-image[^}]*inset:96px 0 0;[^}]*height:au
 assert.match(css, /\.home-page \.landing::after[^}]*z-index:1;[^}]*pointer-events:none/);
 assert.match(css, /\.home-page \.landing-image,\.home-page \.landing::after \{ top:80px/);
 const hero = main.split('<section className="landing"')[1].split('</section>')[0];
-assert.match(hero, /src="\/media\/home\/hero-factory\.mp4"/);
+assert.match(hero, /src="\/media\/home\/hero-factory\.mp4\?v=20261124"/);
 assert.doesNotMatch(hero, /landing-brand-logos|scroll-cue|AUTOFACE|<figcaption/);
 
 for(const key of ['signage','automotive']) assert.ok(existsSync(`public${homeMedia[key]}`));

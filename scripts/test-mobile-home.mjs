@@ -32,7 +32,7 @@ for (const [width, coarse, expected] of [[390,false,true],[820,false,true],[821,
 
 const { createHash } = await import('node:crypto');
 const desktopMarkup = main.slice(main.indexOf('  return <main className={isMobile'), main.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('<PPFLayerAnimation mobile={isMobile} />', '<PPFScrollSequence />');
-assert.equal(createHash('sha256').update(desktopMarkup).digest('hex'), '2a667441a88875f9a2fdeea5f932e33f32377758bcb011554e7614d5cba40a50', 'desktop Home markup is byte-for-byte baseline');
+assert.equal(createHash('sha256').update(desktopMarkup).digest('hex'), '727915acb4d24176b44df1fe42e784a02509195bbbd0b0b31b9e87dd7ee38153', 'desktop Home markup is byte-for-byte baseline');
 console.log('390/1280 device classification, resize cleanup and desktop markup baseline PASS');
 
 const { createTouchGesture } = await import('../src/product-wheel-navigation.js');
