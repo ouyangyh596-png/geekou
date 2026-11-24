@@ -389,7 +389,7 @@ export const chineseSiteContent = {
   "mediaAlts": {
     "one-way-vision": "火车车窗上的单透打孔膜，孔状图案中可见彩色图形，窗外广场视野清晰",
     "self-adhesive-vinyl": "街道围挡上的大幅面印刷自粘乙烯基图形，色彩浓烈并带有热带植物图案",
-    "translucent-film": "黄昏时分以半透明灯膜制成的店面灯箱与背光橱窗图形",
+    "translucent-film": "黄昏商业建筑外墙上的方形背光灯箱，通体覆有钴蓝色哑光半透明刻字膜，镂空雕刻出纯白发光的几何徽标，边缘锐利干净",
     "ppf": "深蓝色车头盖与翼子板特写，表面为高光透明漆面保护膜，水珠均匀挂珠",
     "cast-wrap-vinyl": "覆有炫彩车身贴膜的跑车",
     "polymeric-wrap-vinyl": "覆有青绿与沙色图形的聚合车身贴膜商用面包车",

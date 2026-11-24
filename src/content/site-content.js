@@ -274,7 +274,7 @@ Object.assign(englishSiteContent.home.ppfSequence, {
 englishSiteContent.mediaAlts = {
   "one-way-vision": "Perforated one-way vision film on a train window, with a colorful graphic visible through the hole pattern and a clear view of the plaza outside",
   "self-adhesive-vinyl": "Large-format printed self-adhesive vinyl mural on a street hoarding, with vivid abstract color and tropical foliage",
-  "translucent-film": "Illuminated storefront light boxes and backlit window graphics in translucent film at dusk",
+  "translucent-film": "Backlit square lightbox on a dusk commercial facade, covered in solid matte cobalt-blue translucent film with a plotter-cut geometric emblem glowing white through sharp hollowed edges",
   "ppf": "Close view of a dark blue car hood and fender protected by clear glossy paint protection film, with water beading on the surface",
   "cast-wrap-vinyl": "Sports car with iridescent vinyl wrap",
   "polymeric-wrap-vinyl": "Commercial panel van wrapped in dimensionally stable polymeric vinyl with teal and sand graphic panels",

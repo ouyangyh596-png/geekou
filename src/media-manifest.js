@@ -20,7 +20,7 @@ export const familyMedia = {
   'translucent-film': {
     hero: '/media/families/translucent-film.webp',
     preview: '/media/families/translucent-film.webp',
-    alt: 'Illuminated storefront light boxes and backlit window graphics in translucent film at dusk'
+    alt: 'Backlit square lightbox on a dusk commercial facade, covered in solid matte cobalt-blue translucent film with a plotter-cut geometric emblem glowing white through sharp hollowed edges'
   },
   ppf: {
     hero: '/media/families/ppf.webp',
