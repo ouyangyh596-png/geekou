@@ -7,7 +7,7 @@ export const classicColours = [
   { id: 'tungsten-steel', name: 'Tungsten Steel', hex: '#646464' },
   { id: 'rose-gold', name: 'Rose Gold', hex: '#80564D' },
   { id: 'dark-green', name: 'Dark Green', hex: '#003816' },
-  { id: 'bronze-gold', name: 'Bronze Gold', hex: '#A88746' },
+  { id: 'bronze-gold', name: 'Bronze Gold', hex: '#BB6616' },
   { id: 'dark-blue', name: 'Dark Blue', hex: '#2A3655' },
   { id: 'bronze-copper', name: 'Bronze Copper', hex: '#34270F' }
 ]
