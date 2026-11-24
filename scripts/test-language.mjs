@@ -192,3 +192,17 @@ for (const category of new Set(catalogProducts.map(item => item.category))) {
   assert.deepEqual(overviewColumns(items), [...new Set(items.flatMap(item => item.specs.map(([key]) => key)))]);
 }
 console.log('PASS: contextual film labels, bilingual specifications, 12 ordered colourways and Chrome overview columns');
+
+const printable = catalogProducts.find(item => item.model === 'AF-20100G');
+for (const [key, en, zh] of [
+  ['Material', 'Printable Super Glossy Chrome Wrap Film', '可打印超亮光电镀车身膜'],
+  ['Finish', 'Silver super glossy', '银色超亮光'],
+  ['Adhesive', 'Transparent removable', '透明可移胶'],
+  ['Liner', 'Embossed Matte PET Liner', '压纹哑光 PET 底膜'],
+  ['Thickness', '100 µm', '100 µm'],
+  ['Print compatibility', 'SOL / ESOL / UV / Latex', 'SOL / ESOL / UV / Latex']
+]) {
+  assert.equal(specificationValue(printable, key, resolveContent('en').specValues), en);
+  assert.equal(specificationValue(printable, key, resolveContent('zh').specValues), zh);
+}
+console.log('PASS: Printable authentic EN/ZH values');

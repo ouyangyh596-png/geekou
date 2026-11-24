@@ -441,6 +441,9 @@ chineseSiteContent.specLabels = {
 };
 
 chineseSiteContent.specValues = {
+  "Silver super glossy": "银色超亮光",
+  "Transparent removable": "透明可移胶",
+  "Embossed Matte PET Liner": "压纹哑光 PET 底膜",
   "Matte polymeric PVC": "哑光高分子 PVC",
   "3.2 mil (approx. 80 μm)": "约80 μm（3.2 mil）",
   "2.22 m": "2.22 米",

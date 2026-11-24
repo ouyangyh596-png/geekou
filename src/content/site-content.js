@@ -325,6 +325,9 @@ englishSiteContent.specLabels = {
 };
 
 englishSiteContent.specValues = {
+  "Silver super glossy": "Silver super glossy",
+  "Transparent removable": "Transparent removable",
+  "Embossed Matte PET Liner": "Embossed Matte PET Liner",
   "Matte polymeric PVC": "Matte polymeric PVC",
   "3.2 mil (approx. 80 μm)": "3.2 mil (approx. 80 μm)",
   "2.22 m": "2.22 m",

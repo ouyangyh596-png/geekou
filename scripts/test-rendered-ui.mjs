@@ -196,35 +196,49 @@ async function checkPreviewCatalogue(browser) {
     await reduced.goto(`${origin}/#category=translucent-film`, { waitUntil: 'networkidle' });
     assert.equal(await reduced.locator('.category-page-copy > p').last().textContent(), content.categories['translucent-film'].intro);
     assert.equal(await reduced.locator('.product-spec-table').count(), 2);
-    const sf6000Table = reduced.locator('.product-spec-table').first();
-    assert.deepEqual(await sf6000Table.locator('thead th').allTextContents(), [content.products.productCode, ...['Film', 'SF6000 thickness', 'Maximum width', 'SF6000 liner'].map(key => content.specLabels[key])]);
-    assert.deepEqual(await sf6000Table.locator('tbody td').allTextContents(), ['Matte polymeric PVC', '3.2 mil (approx. 80 μm)', '2.22 m', '75 micron PET'].map(value => content.specValues[value]));
-    const sf9000Table = reduced.locator('.product-spec-table').last();
-    assert.equal(await sf9000Table.locator('tbody tr').count(), 12);
-    assert.equal(await sf9000Table.locator('.film-colour-chip').count(), 12);
-    assert.equal(await sf9000Table.locator('caption').textContent(), content.swatchNotice);
-    assert.deepEqual(await sf9000Table.locator('thead th').allTextContents(), [content.products.productCode, ...['Color', 'Film', 'SF9000 thickness', 'SF9000 perforation', 'SF9000 liner'].map(key => content.specLabels[key])]);
-    assert.deepEqual(await sf9000Table.locator('tbody tr').first().locator('td').allTextContents(), ['Perforated White', 'Dual color polymeric PVC', '180 mic', '20%', '140 gsm PE coated paper'].map(value => content.specValues[value]));
+    const assertTranslucentTable = async (index, content = language === 'zh' ? chineseSiteContent : englishSiteContent) => {
+      const table = reduced.locator('.product-spec-table').nth(await reduced.locator('.product-spec-table').count() === 1 ? 0 : index);
+      const keys = index === 0 ? ['Film', 'SF6000 thickness', 'Maximum width', 'SF6000 liner'] : ['Film', 'SF9000 thickness', 'SF9000 perforation', 'SF9000 liner'];
+      const values = index === 0 ? ['Matte polymeric PVC', '3.2 mil (approx. 80 μm)', '2.22 m', '75 micron PET'] : ['Dual color polymeric PVC', '180 mic', '20%', '140 gsm PE coated paper'];
+      assert.equal(await table.locator('tbody tr').count(), 1);
+      assert.equal(await table.locator('tbody th').textContent(), index === 0 ? 'SF6000Series' : 'SF9000Series');
+      assert.deepEqual(await table.locator('thead th').allTextContents(), [content.products.productCode, ...keys.map(key => content.specLabels[key])]);
+      assert.deepEqual(await table.locator('tbody td').allTextContents(), values.map(value => content.specValues[value]));
+      assert.equal(await table.locator('.film-colour-chip, caption').count(), 0);
+      assert.ok(!(await table.textContent()).includes(content.swatchNotice));
+    };
+    await assertTranslucentTable(0);
+    await assertTranslucentTable(1);
     await reduced.screenshot({ path: resolve(screenshots, `preview-translucent-${language}.png`), fullPage: true });
-    await reduced.locator('.series-card').first().click();
-    await reduced.locator('.series-card-selected').waitFor();
-    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 1);
-    assert.equal(await reduced.locator('.product-spec-table tbody th').textContent(), 'SF6000');
-    await reduced.locator('.series-card').nth(1).click();
-    await reduced.locator('.series-card-selected').nth(0).filter({ hasText: 'SF9000' }).waitFor();
-    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 12);
-    assert.equal(await reduced.locator('.series-card-selected h2').textContent(), content.categories['translucent-film'].series[1].name);
+    for (const index of [0, 1]) {
+      await reduced.locator('.series-card').nth(index).click();
+      await reduced.locator('.series-card-selected').filter({ hasText: index === 0 ? 'SF6000' : 'SF9000' }).waitFor();
+      assert.equal(await reduced.locator('.product-spec-table').count(), 1);
+      assert.equal(await reduced.locator('.series-card-selected h2').textContent(), content.categories['translucent-film'].series[index].name);
+      await assertTranslucentTable(index);
+      await reduced.reload({ waitUntil: 'networkidle' });
+      await assertTranslucentTable(index);
+    }
     await reduced.goto(`${origin}/#category=translucent-film&series=SF9000%20Series`, { waitUntil: 'networkidle' });
-    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 12);
+    await assertTranslucentTable(1);
+    if (language === 'en') {
+      for (const toggle of ['en', 'zh', 'en']) {
+        await reduced.locator(`.language-picker button[lang="${toggle}"]`).click();
+        await assertTranslucentTable(1, toggle === 'zh' ? chineseSiteContent : englishSiteContent);
+      }
+    }
+    console.log(`PASS: ${language} Translucent series rows, four localized specs, no colours, card click-through and deep links`);
     const chromeUrl = `${origin}/#category=super-chrome-film`;
     const printableUrl = `${chromeUrl}&series=Printable%20Super%20Chrome%20Film`;
     const printableTitle = language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Chrome Film';
-    const detailHeaders = language === 'zh'
-      ? ['产品型号', '材料', '厚度', '表面效果', '胶粘剂', '底纸', '打印兼容性']
-      : ['Product code', 'Material', 'Thickness', 'Finish', 'Adhesive', 'Liner', 'Print compatibility'];
-    const detailValues = [language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Glossy Chrome Wrap Film',
-      '100 µm', 'Silver super glossy', 'Transparent removable', 'Embossed Matte PET Liner', 'SOL / ESOL / UV / Latex'];
-    const assertPrintableDetail = async () => {
+    const detailValues = [language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Glossy Chrome Wrap Film'];
+    const reducedLanguage = language;
+    const assertPrintableDetail = async (language = reducedLanguage) => {
+      const detailHeaders = language === 'zh'
+        ? ['产品型号', '材料', '厚度', '表面效果', '胶粘剂', '底纸', '打印兼容性']
+        : ['Product code', 'Material', 'Thickness', 'Finish', 'Adhesive', 'Liner', 'Print compatibility'];
+      const detailValues = [language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Glossy Chrome Wrap Film',
+        '100 µm', ...(language === 'zh' ? ['银色超亮光', '透明可移胶', '压纹哑光 PET 底膜'] : ['Silver super glossy', 'Transparent removable', 'Embossed Matte PET Liner']), 'SOL / ESOL / UV / Latex'];
       const table = reduced.locator('.product-spec-table');
       assert.deepEqual(await table.locator('thead th').allTextContents(), detailHeaders);
       assert.equal(await table.locator('tbody tr').count(), 1);
@@ -247,6 +261,12 @@ async function checkPreviewCatalogue(browser) {
     await reduced.waitForURL(printableUrl);
     await reduced.locator('.series-card-selected').filter({ hasText: printableTitle }).waitFor();
     await assertPrintableDetail();
+    if (language === 'en') {
+      for (const toggle of ['en', 'zh', 'en']) {
+        await reduced.locator(`.language-picker button[lang="${toggle}"]`).click();
+        await assertPrintableDetail(toggle);
+      }
+    }
     // A fresh document must restore the same selected-series detail from its deep link.
     await reduced.reload({ waitUntil: 'networkidle' });
     assert.equal(reduced.url(), printableUrl);
@@ -259,7 +279,7 @@ async function checkPreviewCatalogue(browser) {
   }
   await reduced.screenshot({ path: resolve(screenshots, 'preview-catalogue.png'), fullPage: true });
   await reduced.close();
-  console.log('PASS: preview catalogue EN/ZH toggles, specs, chips, Chrome columns and series routes');
+  console.log('PASS: preview catalogue EN/ZH toggles, series specs without chips, Chrome columns and series routes');
 }
 
 let browser;
