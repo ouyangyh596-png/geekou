@@ -387,17 +387,17 @@ export const chineseSiteContent = {
     }
   },
   "mediaAlts": {
-    "one-way-vision": "从车内观看贴有打孔膜的火车车窗",
-    "self-adhesive-vinyl": "覆有印刷自粘广告图形的粉色旅游巴士",
-    "translucent-film": "夜间亮起的店面灯箱与背光窗贴",
-    "ppf": "蓝色汽车上方透明漆面保护膜分层示意图",
+    "one-way-vision": "火车车窗上的单透打孔膜，孔状图案中可见彩色图形，窗外广场视野清晰",
+    "self-adhesive-vinyl": "街道围挡上的大幅面印刷自粘乙烯基图形，色彩浓烈并带有热带植物图案",
+    "translucent-film": "黄昏时分以半透明灯膜制成的店面灯箱与背光橱窗图形",
+    "ppf": "深蓝色车头盖与翼子板特写，表面为高光透明漆面保护膜，水珠均匀挂珠",
     "cast-wrap-vinyl": "覆有炫彩车身贴膜的跑车",
-    "polymeric-wrap-vinyl": "代表尺寸稳定的聚合物车身贴膜的保护膜卷",
-    "super-chrome-film": "金属蓝、绿、紫、铜和银色电镀车身贴膜卷",
-    "pvc-free-film": "代表不含 PVC 车身贴膜材料的保护膜卷",
+    "polymeric-wrap-vinyl": "覆有青绿与沙色图形的聚合车身贴膜商用面包车",
+    "super-chrome-film": "停在混凝土建筑墙前、覆有缎面香槟金超级电镀膜的豪华轿车",
+    "pvc-free-film": "停在现代建筑与绿植旁、覆有哑光鼠尾草绿与沙色无PVC贴膜的紧凑型跨界车",
     "cold-lamination": "正在覆膜的干式冷裱机",
-    "wall-decals": "贴有植物图案墙贴壁画的卧室",
-    "decorative-film": "贴有植物图案墙贴壁画的卧室"
+    "wall-decals": "当代客厅中贴有植物图案墙贴壁画，并贴合 90° 转角",
+    "decorative-film": "以胡桃木纹与卡拉拉大理石效果装饰膜翻新的现代厨房，用于柜门与岛台"
   },
   "pageTitle": "SO-FINE | 精密制造的表面薄膜"
 };

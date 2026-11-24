@@ -8,24 +8,24 @@ export const homeMedia = {
 
 export const familyMedia = {
   'one-way-vision': {
-    hero: '/media/families/one-way-vision-window-application.webp',
-    preview: '/media/families/one-way-vision-window-application.webp',
-    alt: 'Perforated film installed across a train window, viewed from inside'
+    hero: '/media/families/one-way-vision.webp',
+    preview: '/media/families/one-way-vision.webp',
+    alt: 'Perforated one-way vision film on a train window, with a colorful graphic visible through the hole pattern and a clear view of the plaza outside'
   },
   'self-adhesive-vinyl': {
-    hero: '/media/families/self-adhesive-bus-graphics.webp',
-    preview: '/media/families/self-adhesive-bus-graphics.webp',
-    alt: 'Pink tour bus covered with printed self-adhesive advertising graphics'
+    hero: '/media/families/self-adhesive-vinyl.webp',
+    preview: '/media/families/self-adhesive-vinyl.webp',
+    alt: 'Large-format printed self-adhesive vinyl mural on a street hoarding, with vivid abstract color and tropical foliage'
   },
   'translucent-film': {
-    hero: '/media/families/translucent-lightbox-application.webp',
-    preview: '/media/families/translucent-lightbox-application.webp',
-    alt: 'Illuminated storefront light box and backlit window graphics at night'
+    hero: '/media/families/translucent-film.webp',
+    preview: '/media/families/translucent-film.webp',
+    alt: 'Illuminated storefront light boxes and backlit window graphics in translucent film at dusk'
   },
   ppf: {
-    hero: '/media/families/paint-protection-film-layers.webp',
-    preview: '/media/families/paint-protection-film-layers.webp',
-    alt: 'Illustration of transparent paint-protection film layers over a blue car'
+    hero: '/media/families/ppf.webp',
+    preview: '/media/families/ppf.webp',
+    alt: 'Close view of a dark blue car hood and fender protected by clear glossy paint protection film, with water beading on the surface'
   },
   'cast-wrap-vinyl': {
     hero: '/media/families/cast-wrap-sports-car.webp',
@@ -33,19 +33,19 @@ export const familyMedia = {
     alt: 'Sports car with iridescent vinyl wrap'
   },
   'polymeric-wrap-vinyl': {
-    hero: '/media/families/overlaminate-protective-roll.webp',
-    preview: '/media/families/overlaminate-protective-roll.webp',
-    alt: 'Protective film roll representing dimensionally stable polymeric wrap vinyl'
+    hero: '/media/families/polymeric-wrap-vinyl.webp',
+    preview: '/media/families/polymeric-wrap-vinyl.webp',
+    alt: 'Commercial panel van wrapped in dimensionally stable polymeric vinyl with teal and sand graphic panels'
   },
   'super-chrome-film': {
-    hero: '/media/families/car-wrapping-color-rolls.webp',
-    preview: '/media/families/car-wrapping-color-rolls.webp',
-    alt: 'Metallic blue, green, purple, copper and silver super chrome vehicle-wrap film rolls'
+    hero: '/media/families/super-chrome-film.webp',
+    preview: '/media/families/super-chrome-film.webp',
+    alt: 'Luxury sedan wrapped in satin champagne-gold super chrome film against a concrete architectural wall'
   },
   'pvc-free-film': {
-    hero: '/media/families/overlaminate-protective-roll.webp',
-    preview: '/media/families/overlaminate-protective-roll.webp',
-    alt: 'Protective film roll representing PVC-free vehicle wrap material'
+    hero: '/media/families/pvc-free-film.webp',
+    preview: '/media/families/pvc-free-film.webp',
+    alt: 'Compact electric crossover wrapped in matte sage and sand PVC-free film beside contemporary architecture and greenery'
   },
   'cold-lamination': {
     hero: '/media/families/cold-lamination-laminator.webp',
@@ -53,13 +53,13 @@ export const familyMedia = {
     alt: 'Dry cold roll laminator applying film'
   },
   'wall-decals': {
-    hero: '/media/families/interior-wall-decals.webp',
-    preview: '/media/families/interior-wall-decals.webp',
-    alt: 'Interior bedroom with an installed botanical wall decal mural'
+    hero: '/media/families/wall-decals.webp',
+    preview: '/media/families/wall-decals.webp',
+    alt: 'Contemporary living room with a botanical wall-decal mural wrapping a 90-degree corner'
   },
   'decorative-film': {
-    hero: '/media/families/interior-wall-decals.webp',
-    preview: '/media/families/interior-wall-decals.webp',
-    alt: 'Interior bedroom with an installed botanical wall decal mural'
+    hero: '/media/families/decorative-film.webp',
+    preview: '/media/families/decorative-film.webp',
+    alt: 'Modern kitchen renovated with walnut wood-grain and Calacatta marble-effect decorative film on cabinets and island'
   }
 };

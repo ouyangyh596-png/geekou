@@ -272,17 +272,17 @@ Object.assign(englishSiteContent.home.ppfSequence, {
   "diagramDescription": "Four protective film layers with curved surfaces, separating and closing as you scroll."
 });
 englishSiteContent.mediaAlts = {
-  "one-way-vision": "Perforated film installed across a train window, viewed from inside",
-  "self-adhesive-vinyl": "Pink tour bus covered with printed self-adhesive advertising graphics",
-  "translucent-film": "Illuminated storefront light box and backlit window graphics at night",
-  "ppf": "Illustration of transparent paint-protection film layers over a blue car",
+  "one-way-vision": "Perforated one-way vision film on a train window, with a colorful graphic visible through the hole pattern and a clear view of the plaza outside",
+  "self-adhesive-vinyl": "Large-format printed self-adhesive vinyl mural on a street hoarding, with vivid abstract color and tropical foliage",
+  "translucent-film": "Illuminated storefront light boxes and backlit window graphics in translucent film at dusk",
+  "ppf": "Close view of a dark blue car hood and fender protected by clear glossy paint protection film, with water beading on the surface",
   "cast-wrap-vinyl": "Sports car with iridescent vinyl wrap",
-  "polymeric-wrap-vinyl": "Protective film roll representing dimensionally stable polymeric wrap vinyl",
-  "super-chrome-film": "Metallic blue, green, purple, copper and silver super chrome vehicle-wrap film rolls",
-  "pvc-free-film": "Protective film roll representing PVC-free vehicle wrap material",
+  "polymeric-wrap-vinyl": "Commercial panel van wrapped in dimensionally stable polymeric vinyl with teal and sand graphic panels",
+  "super-chrome-film": "Luxury sedan wrapped in satin champagne-gold super chrome film against a concrete architectural wall",
+  "pvc-free-film": "Compact electric crossover wrapped in matte sage and sand PVC-free film beside contemporary architecture and greenery",
   "cold-lamination": "Dry cold roll laminator applying film",
-  "wall-decals": "Interior bedroom with an installed botanical wall decal mural",
-  "decorative-film": "Interior bedroom with an installed botanical wall decal mural"
+  "wall-decals": "Contemporary living room with a botanical wall-decal mural wrapping a 90-degree corner",
+  "decorative-film": "Modern kitchen renovated with walnut wood-grain and Calacatta marble-effect decorative film on cabinets and island"
 };
 englishSiteContent.pageTitle = "SO-FINE | Engineered Surface Films";
 
