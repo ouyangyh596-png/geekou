@@ -109,10 +109,10 @@ export const englishSiteContent = {
     'translucent-film': {
       displayName: 'Translucent Film',
       eyebrow: 'SO-FINE / TRANSLUCENT FILM',
-      intro: 'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.',
+      intro: 'Solid-color translucent films for plotter-cut logos and lightbox lettering; not for printing.',
       series: [
         { name: 'SF6000 Series', description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.' },
-        { name: 'SF9000 Series', description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.' }
+        { name: 'SF9000 PERFORATED DUAL-COLOR FILM', description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.' }
       ]
     },
     ppf: {
@@ -287,6 +287,14 @@ englishSiteContent.mediaAlts = {
 englishSiteContent.pageTitle = "SO-FINE | Engineered Surface Films";
 
 englishSiteContent.specLabels = {
+  "Film": "Film",
+  "SF6000 thickness": "Film thickness",
+  "Maximum width": "Maximum width",
+  "SF6000 liner": "Liner",
+  "SF9000 thickness": "Film thickness",
+  "SF9000 perforation": "Perforation ratio",
+  "SF9000 liner": "Liner",
+
   "Material": "Material",
   "Thickness": "Thickness",
   "Adhesive": "Adhesive",
@@ -315,3 +323,37 @@ englishSiteContent.specLabels = {
   "Color": "Color",
   "Weight": "Weight"
 };
+
+englishSiteContent.specValues = {
+  "Matte polymeric PVC": "Matte polymeric PVC",
+  "3.2 mil (approx. 80 μm)": "3.2 mil (approx. 80 μm)",
+  "2.22 m": "2.22 m",
+  "75 micron PET": "75 micron PET",
+  "Dual color polymeric PVC": "Dual color polymeric PVC",
+  "180 mic": "180 mic",
+  "20%": "20%",
+  "140 gsm PE coated paper": "140 gsm PE coated paper",
+  "Printable Super Glossy Chrome Wrap Film": "Printable Super Glossy Chrome Wrap Film",
+  "Twilight Purple": "Twilight Purple",
+  "Burgundy Red": "Burgundy Red",
+  "Silver": "Silver",
+  "Tungsten Steel": "Tungsten Steel",
+  "Rose Gold": "Rose Gold",
+  "Dark Green": "Dark Green",
+  "Bronze Gold": "Bronze Gold",
+  "Dark Blue": "Dark Blue",
+  "Bronze Copper": "Bronze Copper",
+  "Perforated White": "Perforated White",
+  "Perforated Regal Red": "Perforated Regal Red",
+  "Perforated Sultan Blue": "Perforated Sultan Blue",
+  "Perforated Holly Green": "Perforated Holly Green",
+  "Perforated Gold Nugget": "Perforated Gold Nugget",
+  "Perforated Dark Blue": "Perforated Dark Blue",
+  "Perforated China Red": "Perforated China Red",
+  "Perforated Cool Grey": "Perforated Cool Grey",
+  "Perforated Black": "Perforated Black",
+  "Perforated Gold Metallic": "Perforated Gold Metallic",
+  "Perforated Deep Brown": "Perforated Deep Brown",
+  "Perforated Burgundy": "Perforated Burgundy"
+};
+englishSiteContent.swatchNotice = "Swatches are illustrative screen colours, not official colour values.";

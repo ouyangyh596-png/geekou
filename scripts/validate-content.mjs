@@ -17,7 +17,7 @@ const expectedCatalogue = {
     ['SF2900', 'Super Transparent PVC Vinyl'], ['SF2901', 'Super Transparent PVC Vinyl'],
     ['SF2800', 'Super Glossy PVC Vinyl'], ['SF2832', 'Super Glossy PVC Vinyl']
   ],
-  'translucent-film': [['SF6000', 'SF6000 Series']],
+  'translucent-film': [['SF6000', 'SF6000 Series'], ...['SF-9010', 'SF-9011', 'SF-9012', 'SF-9013', 'SF-9014', 'SF-9015', 'SF-9016', 'SF-9017', 'SF-9019', 'SF-9020', 'SF-9021', 'SF-9023'].map(model => [model, 'SF9000 PERFORATED DUAL-COLOR FILM'])],
   ppf: [['AF1880', 'premium'], ['AF1850', 'premium'], ['AF1610', 'econo'], ['AF1650', 'econo']],
   'cast-wrap-vinyl': [
     ['SF5501', 'White Printable Film'], ['SF5511', 'White Printable Film'],
@@ -82,7 +82,7 @@ assert.deepEqual(
   ],
   'Every brochure family must have its exact visible display name'
 )
-assert.equal(catalogProducts.length, 81, 'The brochure catalogue must contain exactly 81 models')
+assert.equal(catalogProducts.length, 93, 'The brochure catalogue must contain exactly 93 models')
 assert.deepEqual(
   [...new Set(catalogProducts.map(product => product.category))].sort(),
   expectedCategories.filter(category => expectedCatalogue[category].length > 0).sort(),
@@ -139,17 +139,20 @@ assert.equal(
 
 const sf6000 = catalogProducts.find(product => product.model === 'SF6000')
 assert.ok(sf6000, 'SF6000 is missing')
-for (const [label, value] of [
-  ['Face thickness without adhesive', '80 µm (ISO 534-80)'],
-  ['Face thickness with adhesive', '100 µm (ISO 534-80)'],
-  ['Release liner', '75 µm matte PET (ISO 534-80)'],
-  ['Features', '2.22 m seamless width'],
-  ['Features', 'High release power; no curling'],
-  ['Features', 'Five-year outdoor weathering warranty'],
-  ['Features', 'High strength and tear resistance; mildew and UV resistance'],
-  ['Features', 'Vibrant high-saturation color; low day/night color variation']
-]) {
-  assert.ok(sf6000.specs.some(([actualLabel, actualValue]) => actualLabel === label && actualValue === value), `SF6000: missing ${label} - ${value}`)
+assert.deepEqual(sf6000.specs, [
+  ['Film', 'Matte polymeric PVC'], ['SF6000 thickness', '3.2 mil (approx. 80 μm)'],
+  ['Maximum width', '2.22 m'], ['SF6000 liner', '75 micron PET']
+])
+const sf9000 = catalogProducts.filter(product => product.group === 'SF9000 PERFORATED DUAL-COLOR FILM')
+assert.equal(sf9000.length, 12)
+for (const item of sf9000) assert.deepEqual(item.specs, [
+  ['Film', 'Dual color polymeric PVC'], ['SF9000 thickness', '180 mic'],
+  ['SF9000 perforation', '20%'], ['SF9000 liner', '140 gsm PE coated paper']
+])
+const printableChrome = catalogProducts.find(product => product.model === 'AF-20100G')
+assert.equal(new Map(printableChrome.specs).get('Color'), 'Printable Super Glossy Chrome Wrap Film')
+for (const key of ['Material', 'Thickness', 'Finish', 'Adhesive', 'Liner', 'Print compatibility']) {
+  assert.ok(new Map(printableChrome.specs).get(key), `AF-20100G preserves ${key}`)
 }
 
 const expectedFallbacks = {

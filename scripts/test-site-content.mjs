@@ -37,7 +37,7 @@ function assertEditorSafeContent(value, location = 'englishSiteContent') {
   }
 }
 
-const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck', 'mediaAlts', 'pageTitle', 'specLabels']
+const sections = ['navigation', 'home', 'technology', 'company', 'contact', 'categories', 'products', 'cybertruck', 'mediaAlts', 'pageTitle', 'specLabels', 'specValues', 'swatchNotice']
 assert.deepEqual(Object.keys(englishSiteContent), sections)
 for (const section of sections) assert.ok(englishSiteContent[section], `Missing ${section}`)
 for (const key of ['products', 'technology', 'company', 'contact', 'talk']) {
@@ -99,7 +99,7 @@ assert.deepEqual(
 )
 assert.equal(
   englishSiteContent.categories['translucent-film'].intro,
-  'Translucent polymeric PVC film with saturated colour, excellent weathering resistance and coated with solvent-based pressure-sensitive adhesive for illuminated graphics.'
+  'Solid-color translucent films for plotter-cut logos and lightbox lettering; not for printing.'
 )
 assert.deepEqual(englishSiteContent.categories['translucent-film'].series, [
   {
@@ -107,7 +107,7 @@ assert.deepEqual(englishSiteContent.categories['translucent-film'].series, [
     description: 'Up to 2.22m width, the first seamless translucent film in the world, suitable for dry or wet application. 5-year outdoor weathering warranty.'
   },
   {
-    name: 'SF9000 Series',
+    name: 'SF9000 PERFORATED DUAL-COLOR FILM',
     description: 'Perforated translucent film with 20% perforation ratio, dual-color visual effect for day & night: different color appears under natural daylight and one color visible when backlit at night.'
   }
 ])

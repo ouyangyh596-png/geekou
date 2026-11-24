@@ -44,7 +44,7 @@ const familyTitles = {
 const familyDescriptions = {
   'one-way-vision': 'Perforated printable film for vehicle, retail and building-glass graphics.',
   'self-adhesive-vinyl': 'Self-adhesive vinyl for large-format digital printing applications.',
-  'translucent-film': 'Translucent polymeric PVC film for illuminated graphics.',
+  'translucent-film': 'Solid-color translucent films for plotter-cut logos and lightbox lettering; not for printing.',
   ppf: 'Automotive protection and finish film.',
   'cast-wrap-vinyl': 'Cast PVC wrap and overlaminate film for demanding curves and protected graphics.',
   'polymeric-wrap-vinyl': 'Dimensionally stable polymeric wrap and overlaminate film.',
@@ -88,6 +88,7 @@ function wrap(category, model, group, thickness, finish, adhesive, liner, printC
     ['Liner', liner]
   ]
   if (printCompatibility) specs.push(['Print compatibility', printCompatibility])
+  if (model === 'AF-20100G') specs.push(['Color', 'Printable Super Glossy Chrome Wrap Film'])
   return product(category, group, model, specs)
 }
 
@@ -146,19 +147,30 @@ export const catalogProducts = [
   vinyl('SF2832', 'Super Glossy PVC Vinyl', '100 µm', 'Super glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
 
   product('translucent-film', 'SF6000 Series', 'SF6000', [
-    ['Material', '3.2 mil polymeric PVC film'],
-    ['Face thickness without adhesive', '80 µm (ISO 534-80)'], ['Face thickness with adhesive', '100 µm (ISO 534-80)'],
-    ['Finish', 'Matte'], ['Adhesive', 'Solvent-based pressure-sensitive adhesive'], ['Release liner', '75 µm matte PET (ISO 534-80)'],
-    ['Tensile strength (machine direction)', '>22 MPa (ISO 527)'], ['Elongation at break (machine direction)', '>150% (ISO 527)'],
-    ['Shrinkage', '0.20 mm (FTM14)'], ['Initial adhesion on steel (20 minutes)', '8 N/25 mm (FTM1)'],
-    ['Adhesion on steel (24 hours)', '9 N/25 mm (FTM1)'], ['Final adhesion on steel (72 hours)', '10 N/25 mm (FTM1)'],
-    ['Minimum application temperature', '10 °C'], ['Service temperature', '-40 to +90 °C'],
-    ['Humidity resistance', 'No effect (10 days exposure)'], ['Water resistance', 'No effect (24 hours immersion)'],
-    ['Detergent (1% solution)', 'No effect (24 hours immersion)'], ['Isopropyl alcohol/water (20/80)', 'No effect (10 days exposure)'],
-    ['Features', '2.22 m seamless width'], ['Features', 'High release power; no curling'], ['Features', 'Five-year outdoor weathering warranty'],
-    ['Features', 'High strength and tear resistance; mildew and UV resistance'], ['Features', 'Vibrant high-saturation color; low day/night color variation'],
-    ['Application', 'Illuminated graphics; dry or wet application']
+    ['Film', 'Matte polymeric PVC'], ['SF6000 thickness', '3.2 mil (approx. 80 μm)'],
+    ['Maximum width', '2.22 m'], ['SF6000 liner', '75 micron PET']
   ]),
+  // Illustrative screen colours only; no official RGB values have been supplied.
+  ...[
+    ["SF-9010", "Perforated White", "#eeeeea"],
+    ["SF-9011", "Perforated Regal Red", "#a92838"],
+    ["SF-9012", "Perforated Sultan Blue", "#254f98"],
+    ["SF-9013", "Perforated Holly Green", "#236447"],
+    ["SF-9014", "Perforated Gold Nugget", "#b39853"],
+    ["SF-9015", "Perforated Dark Blue", "#263653"],
+    ["SF-9016", "Perforated China Red", "#c23530"],
+    ["SF-9017", "Perforated Cool Grey", "#92979b"],
+    ["SF-9019", "Perforated Black", "#292929"],
+    ["SF-9020", "Perforated Gold Metallic", "#b29c69"],
+    ["SF-9021", "Perforated Deep Brown", "#594035"],
+    ["SF-9023", "Perforated Burgundy", "#702e40"]
+  ].map(([model, color, illustrativeColor]) => ({
+    ...product('translucent-film', 'SF9000 PERFORATED DUAL-COLOR FILM', model, [
+      ['Film', 'Dual color polymeric PVC'], ['SF9000 thickness', '180 mic'],
+      ['SF9000 perforation', '20%'], ['SF9000 liner', '140 gsm PE coated paper']
+    ], { title: color }),
+    color, illustrativeColor
+  })),
 
   product('ppf', 'premium', 'AF1880', [
     ['Finish', 'Glossy'], ['Material', 'High-clarity TPU protection Film'],

@@ -31,6 +31,7 @@
     "test-printable-wrap-scene": "node scripts/test-printable-wrap-scene.mjs && node scripts/test-printable-wrap-webgl.mjs",
     "test-printable-wrap-viewer": "node scripts/test-printable-wrap-viewer.mjs",
     "test-printable-wrap-configurator": "node scripts/test-printable-wrap-configurator.mjs",
+    "test-preview-catalogue": "CATALOGUE_UI_ONLY=1 node scripts/test-rendered-ui.mjs",
     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
     "test-polish": "node scripts/test-site-polish.mjs",

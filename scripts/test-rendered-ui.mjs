@@ -187,10 +187,53 @@ async function checkTvc(page, motion) {
 }
 
 const { chromium } = await import(pathToFileURL(playwrightModule));
+async function checkPreviewCatalogue(browser) {
+  const reduced = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  await reduced.goto(`${origin}/#category=translucent-film`, { waitUntil: 'networkidle' });
+  for (const language of ['en', 'zh', 'en']) {
+    await reduced.locator(`.language-picker button[lang="${language}"]`).click();
+    const content = language === 'zh' ? chineseSiteContent : englishSiteContent;
+    await reduced.goto(`${origin}/#category=translucent-film`, { waitUntil: 'networkidle' });
+    assert.equal(await reduced.locator('.category-page-copy > p').last().textContent(), content.categories['translucent-film'].intro);
+    assert.equal(await reduced.locator('.product-spec-table').count(), 2);
+    const sf6000Table = reduced.locator('.product-spec-table').first();
+    assert.deepEqual(await sf6000Table.locator('thead th').allTextContents(), [content.products.productCode, ...['Film', 'SF6000 thickness', 'Maximum width', 'SF6000 liner'].map(key => content.specLabels[key])]);
+    assert.deepEqual(await sf6000Table.locator('tbody td').allTextContents(), ['Matte polymeric PVC', '3.2 mil (approx. 80 μm)', '2.22 m', '75 micron PET'].map(value => content.specValues[value]));
+    const sf9000Table = reduced.locator('.product-spec-table').last();
+    assert.equal(await sf9000Table.locator('tbody tr').count(), 12);
+    assert.equal(await sf9000Table.locator('.film-colour-chip').count(), 12);
+    assert.equal(await sf9000Table.locator('caption').textContent(), content.swatchNotice);
+    assert.deepEqual(await sf9000Table.locator('thead th').allTextContents(), [content.products.productCode, ...['Color', 'Film', 'SF9000 thickness', 'SF9000 perforation', 'SF9000 liner'].map(key => content.specLabels[key])]);
+    assert.deepEqual(await sf9000Table.locator('tbody tr').first().locator('td').allTextContents(), ['Perforated White', 'Dual color polymeric PVC', '180 mic', '20%', '140 gsm PE coated paper'].map(value => content.specValues[value]));
+    await reduced.screenshot({ path: resolve(screenshots, `preview-translucent-${language}.png`), fullPage: true });
+    await reduced.locator('.series-card').first().click();
+    await reduced.locator('.series-card-selected').waitFor();
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 1);
+    assert.equal(await reduced.locator('.product-spec-table tbody th').textContent(), 'SF6000');
+    await reduced.locator('.series-card').nth(1).click();
+    await reduced.locator('.series-card-selected').nth(0).filter({ hasText: 'SF9000' }).waitFor();
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 12);
+    assert.equal(await reduced.locator('.series-card-selected h2').textContent(), content.categories['translucent-film'].series[1].name);
+    await reduced.goto(`${origin}/#category=translucent-film&series=SF9000%20Series`, { waitUntil: 'networkidle' });
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 12);
+    for (const [series, count] of [['', 10], ['Super Chrome Film classic colours', 9], ['Printable Super Chrome Film', 1]]) {
+      await reduced.goto(`${origin}/#category=super-chrome-film${series ? '&series=' + encodeURIComponent(series) : ''}`, { waitUntil: 'networkidle' });
+      assert.deepEqual(await reduced.locator('.product-spec-table thead th').allTextContents(), [content.products.productCode, content.specLabels.Color]);
+      assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), count);
+      if (count !== 9) assert.equal(await reduced.locator('.product-spec-table tbody tr').last().locator('td').textContent(), content.specValues['Printable Super Glossy Chrome Wrap Film']);
+    }
+  }
+  await reduced.screenshot({ path: resolve(screenshots, 'preview-catalogue.png'), fullPage: true });
+  await reduced.close();
+  console.log('PASS: preview catalogue EN/ZH toggles, specs, chips, Chrome columns and series routes');
+}
+
 let browser;
 try {
   await waitForServer();
   browser = await chromium.launch({ headless: true, executablePath: browserExecutable });
+  await checkPreviewCatalogue(browser);
+  if (process.env.CATALOGUE_UI_ONLY !== '1') {
   for (const width of [1440, 1024, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     page.setDefaultTimeout(15000);
@@ -249,8 +292,10 @@ try {
   assert.equal(await reduced.locator('.product-spec-table tbody th[scope="row"]').first().textContent(), 'SF6000');
   assert.equal(await reduced.locator('.category-page-media img').getAttribute('src'), familyMedia['translucent-film'].hero);
   await auditPage(reduced, '1440-reduced-selected-series');
+
   await reduced.close();
   console.log(`PASS: responsive routes, typography, media, carousel, TVC, language and reduced motion; screenshots: ${screenshots}`);
+  }
 } finally {
   if (browser) await browser.close();
   server.kill('SIGTERM');

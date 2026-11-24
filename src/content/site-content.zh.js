@@ -246,15 +246,15 @@ export const chineseSiteContent = {
     "translucent-film": {
       "displayName": "半透明灯膜",
       "eyebrow": "SO-FINE / 半透明灯膜",
-      "intro": "色彩饱满、耐候的聚合物 PVC 半透膜，采用溶剂型压敏胶，适用于发光图形。",
+      "intro": "纯色 logo 雕刻膜与半透明灯箱刻字膜，用于刻字切割，不适用于打印。",
       "series": [
         {
           "name": "SF6000 系列",
-          "description": "宽度可达 2.22m，是全球首款无缝半透膜，适合干贴或湿贴。提供 5 年户外耐候质保。"
+          "description": "宽度可达 2.22 米，是全球首款无缝半透膜，适合干贴或湿贴。提供 5 年户外耐候质保。"
         },
         {
-          "name": "SF9000 系列",
-          "description": "打孔率为 20% 的半透打孔膜，带来日夜双色视觉效果：自然日光下呈现一种颜色，夜间背光时呈现另一种颜色。"
+          "name": "SF9000 带孔双色膜",
+          "description": "开孔率为 20% 的带孔双色膜，带来日夜双色视觉效果：自然日光下呈现一种颜色，夜间背光时呈现另一种颜色。"
         }
       ]
     },
@@ -403,6 +403,14 @@ export const chineseSiteContent = {
 };
 
 chineseSiteContent.specLabels = {
+  "Film": "膜材",
+  "SF6000 thickness": "膜厚",
+  "Maximum width": "最大幅宽",
+  "SF6000 liner": "底膜",
+  "SF9000 thickness": "厚度",
+  "SF9000 perforation": "开孔率",
+  "SF9000 liner": "底纸",
+
   "Material": "材料",
   "Thickness": "厚度",
   "Adhesive": "胶粘剂",
@@ -431,3 +439,37 @@ chineseSiteContent.specLabels = {
   "Color": "颜色",
   "Weight": "克重"
 };
+
+chineseSiteContent.specValues = {
+  "Matte polymeric PVC": "哑光高分子 PVC",
+  "3.2 mil (approx. 80 μm)": "约80 μm（3.2 mil）",
+  "2.22 m": "2.22 米",
+  "75 micron PET": "75 μm PET",
+  "Dual color polymeric PVC": "高分子双色 PVC",
+  "180 mic": "180 μm",
+  "20%": "20%",
+  "140 gsm PE coated paper": "140 g/m² PE 底纸",
+  "Printable Super Glossy Chrome Wrap Film": "可打印超亮光电镀车身膜",
+  "Twilight Purple": "暮光紫",
+  "Burgundy Red": "酒红色",
+  "Silver": "银色",
+  "Tungsten Steel": "钨钢色",
+  "Rose Gold": "玫瑰金",
+  "Dark Green": "深绿色",
+  "Bronze Gold": "青铜金",
+  "Dark Blue": "深蓝色",
+  "Bronze Copper": "古铜色",
+  "Perforated White": "白色双色膜",
+  "Perforated Regal Red": "皇家红双色膜",
+  "Perforated Sultan Blue": "苏丹蓝双色膜",
+  "Perforated Holly Green": "冬青绿双色膜",
+  "Perforated Gold Nugget": "金色双色膜",
+  "Perforated Dark Blue": "深蓝双色膜",
+  "Perforated China Red": "中国红双色膜",
+  "Perforated Cool Grey": "冷灰双色膜",
+  "Perforated Black": "黑色双色膜",
+  "Perforated Gold Metallic": "茅台金双色膜",
+  "Perforated Deep Brown": "棕色双色膜",
+  "Perforated Burgundy": "酒红色双色膜"
+};
+chineseSiteContent.swatchNotice = "色块仅为屏幕示意色，并非官方色值。";

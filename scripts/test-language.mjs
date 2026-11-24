@@ -82,3 +82,111 @@ assert.deepEqual(resolveContent('en').categories.ppf.series.map(item => item.nam
 assert.deepEqual(resolveContent('zh').categories.ppf.series.map(item => item.name), ['卓越PPF', '经济PPF', '彩色PPF']);
 assert.equal(resolveContent('en').categories.ppf.series[2].description, 'Solid Color · Metallic Finish · Carbon Fiber');
 assert.equal(resolveContent('zh').categories.ppf.series[2].description, '纯色 · 金属效果 · 碳纤维');
+
+const { catalogProducts } = await import('../src/catalog.js');
+const { specificationValue, overviewColumns } = await import('../src/product-specs.js');
+const colourways = [
+  [
+    "SF-9010",
+    "Perforated White",
+    "白色双色膜"
+  ],
+  [
+    "SF-9011",
+    "Perforated Regal Red",
+    "皇家红双色膜"
+  ],
+  [
+    "SF-9012",
+    "Perforated Sultan Blue",
+    "苏丹蓝双色膜"
+  ],
+  [
+    "SF-9013",
+    "Perforated Holly Green",
+    "冬青绿双色膜"
+  ],
+  [
+    "SF-9014",
+    "Perforated Gold Nugget",
+    "金色双色膜"
+  ],
+  [
+    "SF-9015",
+    "Perforated Dark Blue",
+    "深蓝双色膜"
+  ],
+  [
+    "SF-9016",
+    "Perforated China Red",
+    "中国红双色膜"
+  ],
+  [
+    "SF-9017",
+    "Perforated Cool Grey",
+    "冷灰双色膜"
+  ],
+  [
+    "SF-9019",
+    "Perforated Black",
+    "黑色双色膜"
+  ],
+  [
+    "SF-9020",
+    "Perforated Gold Metallic",
+    "茅台金双色膜"
+  ],
+  [
+    "SF-9021",
+    "Perforated Deep Brown",
+    "棕色双色膜"
+  ],
+  [
+    "SF-9023",
+    "Perforated Burgundy",
+    "酒红色双色膜"
+  ]
+];
+const sf9000 = catalogProducts.filter(item => item.group === 'SF9000 PERFORATED DUAL-COLOR FILM');
+assert.deepEqual(sf9000.map(item => [item.model, item.color]), colourways.map(([code, en]) => [code, en]));
+for (const [code, en, zh] of colourways) {
+  const item = sf9000.find(item => item.model === code);
+  assert.equal(specificationValue(item, 'Color', resolveContent('en').specValues), en);
+  assert.equal(specificationValue(item, 'Color', resolveContent('zh').specValues), zh);
+}
+const expectedSpecs = {
+  SF6000: [
+    ['Film', '膜材', 'Matte polymeric PVC', '哑光高分子 PVC'],
+    ['Film thickness', '膜厚', '3.2 mil (approx. 80 μm)', '约80 μm（3.2 mil）'],
+    ['Maximum width', '最大幅宽', '2.22 m', '2.22 米'],
+    ['Liner', '底膜', '75 micron PET', '75 μm PET']
+  ],
+  'SF-9010': [
+    ['Film', '膜材', 'Dual color polymeric PVC', '高分子双色 PVC'],
+    ['Film thickness', '厚度', '180 mic', '180 μm'],
+    ['Perforation ratio', '开孔率', '20%', '20%'],
+    ['Liner', '底纸', '140 gsm PE coated paper', '140 g/m² PE 底纸']
+  ]
+};
+for (const [code, expected] of Object.entries(expectedSpecs)) {
+  const item = catalogProducts.find(item => item.model === code);
+  assert.equal(item.specs.length, 4);
+  for (const [index, [key]] of item.specs.entries()) {
+    assert.deepEqual([
+      resolveContent('en').specLabels[key], resolveContent('zh').specLabels[key],
+      specificationValue(item, key, resolveContent('en').specValues),
+      specificationValue(item, key, resolveContent('zh').specValues)
+    ], expected[index]);
+  }
+}
+const chrome = catalogProducts.filter(item => item.category === 'super-chrome-film');
+assert.deepEqual(overviewColumns(chrome), ['Color']);
+for (const group of new Set(chrome.map(item => item.group))) {
+  assert.deepEqual(overviewColumns(chrome.filter(item => item.group === group)), ['Color']);
+}
+for (const category of new Set(catalogProducts.map(item => item.category))) {
+  if (['super-chrome-film', 'translucent-film'].includes(category)) continue;
+  const items = catalogProducts.filter(item => item.category === category);
+  assert.deepEqual(overviewColumns(items), [...new Set(items.flatMap(item => item.specs.map(([key]) => key)))]);
+}
+console.log('PASS: contextual film labels, bilingual specifications, 12 ordered colourways and Chrome overview columns');
