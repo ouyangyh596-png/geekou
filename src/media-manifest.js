@@ -20,7 +20,7 @@ export const familyMedia = {
   'translucent-film': {
     hero: '/media/families/translucent-film.webp',
     preview: '/media/families/translucent-film.webp',
-    alt: 'Backlit square lightbox on a dusk commercial facade, covered in solid matte cobalt-blue translucent film with a plotter-cut geometric emblem glowing white through sharp hollowed edges'
+    alt: 'Backlit square lightbox on a dusk commercial facade, covered in solid matte cobalt-blue translucent film with the official SO-FINE® wordmark plotter-cut and glowing white through sharp hollowed edges'
   },
   ppf: {
     hero: '/media/families/ppf.webp',
