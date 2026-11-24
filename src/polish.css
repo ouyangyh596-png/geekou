@@ -380,6 +380,13 @@ p { line-height:1.6; }
 .product-spec-table tr>:first-child { position:sticky; left:0; z-index:1; background:inherit; min-width:112px; }
 .product-spec-table thead tr>:first-child { background:var(--colour-navy); }
 .product-spec-table .numeric { text-align:right; font-variant-numeric:tabular-nums; }
+/* Shared five-column axes for the SF6000/SF9000 overview and series tables. */
+.translucent-series .product-spec-table table { table-layout:fixed; }
+.translucent-series .product-spec-table thead th:nth-child(1) { width:18%; }
+.translucent-series .product-spec-table thead th:nth-child(2) { width:24%; }
+.translucent-series .product-spec-table thead th:nth-child(3) { width:20%; }
+.translucent-series .product-spec-table thead th:nth-child(4) { width:18%; }
+.translucent-series .product-spec-table thead th:nth-child(5) { width:20%; }
 .category-back { padding-block:64px; }
 @media(max-width:800px) { .category-page-head { grid-template-columns:1fr; padding-block:128px 48px; } .series-grid { grid-template-columns:1fr; padding-block:48px; } }
 

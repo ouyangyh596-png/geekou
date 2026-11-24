@@ -187,6 +187,59 @@ async function checkTvc(page, motion) {
 }
 
 const { chromium } = await import(pathToFileURL(playwrightModule));
+async function checkTranslucentLayout(page, language, mobile = false) {
+  await page.evaluate(() => document.fonts.ready);
+  const measurements = await page.locator('.translucent-series .product-spec-table').evaluateAll(wrappers => wrappers.map(wrapper => {
+    wrapper.scrollLeft = 0;
+    const table = wrapper.querySelector('table');
+    const box = element => {
+      const { left, right, width } = element.getBoundingClientRect();
+      return { left, right, width };
+    };
+    const cells = [...table.querySelectorAll('th, td')];
+    const clipped = cells.filter(cell => {
+      const range = document.createRange();
+      range.selectNodeContents(cell);
+      const bounds = cell.getBoundingClientRect();
+      return [...range.getClientRects()].some(rect => rect.left < bounds.left - 1 || rect.right > bounds.right + 1 || rect.bottom > bounds.bottom + 1);
+    }).map(cell => cell.textContent);
+    const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+    wrapper.scrollLeft = maxScroll;
+    const reachedScroll = wrapper.scrollLeft;
+    const rightReachable = table.getBoundingClientRect().right <= wrapper.getBoundingClientRect().right + 1;
+    wrapper.scrollLeft = 0;
+    return {
+      headers: [...table.querySelectorAll('thead tr:first-child > th')].map(box),
+      // The series code is a row-header th; the remaining four values are td.
+      values: [...table.querySelectorAll('tbody tr:first-child > th, tbody tr:first-child > td')].map(box),
+      clipped, maxScroll, reachedScroll, rightReachable,
+      overflowX: getComputedStyle(wrapper).overflowX,
+      wrapperWidth: wrapper.clientWidth, tableWidth: table.getBoundingClientRect().width
+    };
+  }));
+  assert.equal(measurements.length, 2);
+  const labels = ['Product code', 'Film', 'Film thickness (index 2)', '4th column: Maximum width / Perforation ratio (index 3)', 'Liner'];
+  for (const [index, table] of measurements.entries()) {
+    assert.deepEqual(table.clipped, [], `${language} ${mobile ? 'mobile' : 'desktop'} table ${index}: cell text must fit without clipping`);
+    assert.equal(table.headers.length, 5);
+    assert.equal(table.values.length, 5);
+    if (mobile && table.maxScroll > 1) {
+      assert.ok(['auto', 'scroll'].includes(table.overflowX), `${language} table ${index}: horizontal overflow must be scrollable`);
+      assert.ok(Math.abs(table.reachedScroll - table.maxScroll) <= 1 && table.rightReachable, `${language} table ${index}: last column must be reachable by scrolling`);
+    }
+  }
+  for (const kind of ['headers', 'values']) {
+    for (let column = 0; column < 5; column += 1) {
+      for (const edge of ['left', 'right', 'width']) {
+        const a = measurements[0][kind][column][edge];
+        const b = measurements[1][kind][column][edge];
+        assert.ok(Math.abs(a - b) <= 1, `${language} ${mobile ? 'mobile (scroll reset)' : 'desktop'} ${kind} ${labels[column]} ${edge}: SF6000=${a}, SF9000=${b}`);
+      }
+    }
+  }
+  console.log(`PASS: ${language} ${mobile ? 'mobile 390 scroll/clipping' : 'desktop 1440 column boundaries'} ${JSON.stringify(measurements)}`);
+}
+
 async function checkPreviewCatalogue(browser) {
   const reduced = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
   await reduced.goto(`${origin}/#category=translucent-film`, { waitUntil: 'networkidle' });
@@ -209,6 +262,10 @@ async function checkPreviewCatalogue(browser) {
     };
     await assertTranslucentTable(0);
     await assertTranslucentTable(1);
+    await checkTranslucentLayout(reduced, language);
+    await reduced.setViewportSize({ width: 390, height: 844 });
+    await checkTranslucentLayout(reduced, language, true);
+    await reduced.setViewportSize({ width: 1440, height: 900 });
     await reduced.screenshot({ path: resolve(screenshots, `preview-translucent-${language}.png`), fullPage: true });
     for (const index of [0, 1]) {
       await reduced.locator('.series-card').nth(index).click();
