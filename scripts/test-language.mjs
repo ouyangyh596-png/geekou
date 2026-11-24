@@ -182,7 +182,9 @@ for (const [code, expected] of Object.entries(expectedSpecs)) {
 const chrome = catalogProducts.filter(item => item.category === 'super-chrome-film');
 assert.deepEqual(overviewColumns(chrome), ['Color']);
 for (const group of new Set(chrome.map(item => item.group))) {
-  assert.deepEqual(overviewColumns(chrome.filter(item => item.group === group)), ['Color']);
+  assert.deepEqual(overviewColumns(chrome.filter(item => item.group === group)), group === 'Printable Super Chrome Film'
+    ? ['Material', 'Thickness', 'Finish', 'Adhesive', 'Liner', 'Print compatibility']
+    : ['Color']);
 }
 for (const category of new Set(catalogProducts.map(item => item.category))) {
   if (['super-chrome-film', 'translucent-film'].includes(category)) continue;

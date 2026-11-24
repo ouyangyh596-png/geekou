@@ -216,12 +216,46 @@ async function checkPreviewCatalogue(browser) {
     assert.equal(await reduced.locator('.series-card-selected h2').textContent(), content.categories['translucent-film'].series[1].name);
     await reduced.goto(`${origin}/#category=translucent-film&series=SF9000%20Series`, { waitUntil: 'networkidle' });
     assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 12);
-    for (const [series, count] of [['', 10], ['Super Chrome Film classic colours', 9], ['Printable Super Chrome Film', 1]]) {
-      await reduced.goto(`${origin}/#category=super-chrome-film${series ? '&series=' + encodeURIComponent(series) : ''}`, { waitUntil: 'networkidle' });
-      assert.deepEqual(await reduced.locator('.product-spec-table thead th').allTextContents(), [content.products.productCode, content.specLabels.Color]);
-      assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), count);
-      if (count !== 9) assert.equal(await reduced.locator('.product-spec-table tbody tr').last().locator('td').textContent(), content.specValues['Printable Super Glossy Chrome Wrap Film']);
-    }
+    const chromeUrl = `${origin}/#category=super-chrome-film`;
+    const printableUrl = `${chromeUrl}&series=Printable%20Super%20Chrome%20Film`;
+    const printableTitle = language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Chrome Film';
+    const detailHeaders = language === 'zh'
+      ? ['产品型号', '材料', '厚度', '表面效果', '胶粘剂', '底纸', '打印兼容性']
+      : ['Product code', 'Material', 'Thickness', 'Finish', 'Adhesive', 'Liner', 'Print compatibility'];
+    const detailValues = [language === 'zh' ? '可打印超亮光电镀车身膜' : 'Printable Super Glossy Chrome Wrap Film',
+      '100 µm', 'Silver super glossy', 'Transparent removable', 'Embossed Matte PET Liner', 'SOL / ESOL / UV / Latex'];
+    const assertPrintableDetail = async () => {
+      const table = reduced.locator('.product-spec-table');
+      assert.deepEqual(await table.locator('thead th').allTextContents(), detailHeaders);
+      assert.equal(await table.locator('tbody tr').count(), 1);
+      assert.equal(await table.locator('tbody th').textContent(), 'AF-20100G');
+      assert.deepEqual(await table.locator('tbody td').allTextContents(), detailValues);
+      for (const cell of await table.locator('th, td').all()) assert.ok(await cell.isVisible(), 'all authentic specification cells must be visible');
+      await reduced.locator('.printable-wrap-config').waitFor({ state: 'visible' });
+    };
+    await reduced.goto(chromeUrl, { waitUntil: 'networkidle' });
+    assert.deepEqual(await reduced.locator('.product-spec-table thead th').allTextContents(), [content.products.productCode, content.specLabels.Color]);
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 10);
+    assert.deepEqual(await reduced.locator('.product-spec-table tbody th').allTextContents(), [
+      'AF-20521M', 'AF-20280M', 'AF-20100M', 'AF-20401M', 'AF-20850M',
+      'AF-20701M', 'AF-20801M', 'AF-20601M', 'AF-20403M', 'AF-20100G'
+    ]);
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').last().locator('th').textContent(), 'AF-20100G');
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').last().locator('td').textContent(), detailValues[0]);
+    // Exercise the real category-card transition, not just the hash route.
+    await reduced.locator('.series-card').filter({ has: reduced.getByRole('heading', { name: printableTitle, exact: true }) }).click();
+    await reduced.waitForURL(printableUrl);
+    await reduced.locator('.series-card-selected').filter({ hasText: printableTitle }).waitFor();
+    await assertPrintableDetail();
+    // A fresh document must restore the same selected-series detail from its deep link.
+    await reduced.reload({ waitUntil: 'networkidle' });
+    assert.equal(reduced.url(), printableUrl);
+    await assertPrintableDetail();
+    await reduced.screenshot({ path: resolve(screenshots, `preview-printable-${language}.png`), fullPage: true });
+    await reduced.goto(`${chromeUrl}&series=${encodeURIComponent('Super Chrome Film classic colours')}`, { waitUntil: 'networkidle' });
+    assert.deepEqual(await reduced.locator('.product-spec-table thead th').allTextContents(), [content.products.productCode, content.specLabels.Color]);
+    assert.equal(await reduced.locator('.product-spec-table tbody tr').count(), 9);
+    console.log(`PASS: ${language} Chrome overview, Printable card click-through, six visible specifications, configurator and deep link`);
   }
   await reduced.screenshot({ path: resolve(screenshots, 'preview-catalogue.png'), fullPage: true });
   await reduced.close();

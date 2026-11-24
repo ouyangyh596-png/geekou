@@ -12,7 +12,11 @@ export function numericSpecificationColumns(items, columns) {
 }
 
 export function overviewColumns(items) {
-  if (items.length && items.every(item => item.category === 'super-chrome-film')) return ['Color'];
+  if (items.length && items.every(item => item.category === 'super-chrome-film')) {
+    // Mixed-series overview and classic colours use Color; Printable keeps its wrap specs.
+    if (!items.every(item => item.group === 'Printable Super Chrome Film')) return ['Color'];
+    return [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))].filter(label => label !== 'Color');
+  }
   const columns = [...new Set(items.flatMap(item => item.specs.map(([label]) => label)))];
   return items.some(item => item.color) ? ['Color', ...columns] : columns;
 }
