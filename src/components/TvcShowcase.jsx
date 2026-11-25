@@ -24,6 +24,11 @@ export default function TvcShowcase() {
 
   useEffect(() => {
     if (!allowMotion || !loop.current) return;
+    // Keep Home mounted in browsers without viewport observation.
+    if (typeof IntersectionObserver !== 'function') {
+      loop.current.pause();
+      return;
+    }
     const video = loop.current;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !isOpen) video.play().catch(() => {});
@@ -68,7 +73,7 @@ export default function TvcShowcase() {
     </video>}
     <div className="tvc-copy container">
       <div className="tvc-brand"><img src="/so-fine-logo.svg" alt="SO-FINE" /></div>
-      <h2 id="tvc-title">{copy.title}</h2>
+      <h2 id="tvc-title" className="reveal headline-reveal">{copy.title}</h2>
       <p className="tvc-subtitle">{copy.subtitle}</p>
       <button ref={trigger} className="tvc-watch" onClick={open} type="button" aria-haspopup="dialog"><Play size={20} aria-hidden="true" />{copy.watch}</button>
     </div>

@@ -31,7 +31,9 @@ for (const [width, coarse, expected] of [[390,false,true],[820,false,true],[821,
 }
 
 const { createHash } = await import('node:crypto');
-const desktopMarkup = main.slice(main.indexOf('  return <main className={isMobile'), main.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('<PPFLayerAnimation mobile={isMobile} />', '<PPFScrollSequence />');
+// Ignore the explicitly scoped headline-motion attributes; preserve the content/layout baseline.
+const baselineMain = main.replace('ref={homeRef} ', '').replaceAll('reveal headline-reveal', 'reveal').replace('landing-title reveal', 'landing-title');
+const desktopMarkup = baselineMain.slice(baselineMain.indexOf('  return <main className={isMobile'), baselineMain.indexOf('\nfunction MaterialStory')).replace("className={isMobile ? 'home-page is-mobile' : 'home-page'}", 'className="home-page"').replace('<PPFLayerAnimation mobile={isMobile} />', '<PPFScrollSequence />');
 assert.equal(createHash('sha256').update(desktopMarkup).digest('hex'), '727915acb4d24176b44df1fe42e784a02509195bbbd0b0b31b9e87dd7ee38153', 'desktop Home markup is byte-for-byte baseline');
 console.log('390/1280 device classification, resize cleanup and desktop markup baseline PASS');
 

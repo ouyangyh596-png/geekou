@@ -545,3 +545,16 @@ p { line-height:1.6; }
   .ppf-sequence:not(.ppf-sequence-mobile) .ppf-sequence-stage { height:760px; }
   .ppf-layer-legend li { transition:none; }
 }
+
+/* Home headline entrances share the reveal observer, with no scroll transforms.
+   Unarmed/remounted headings stay readable even without JS or IntersectionObserver. */
+.home-page .headline-reveal { opacity:1; transform:none; transition:none; }
+.home-page .headline-reveal.headline-pending:not(.is-visible) { opacity:0; transform:translateY(12px); }
+.home-page .headline-reveal.headline-armed.is-visible { animation:home-headline-enter 600ms cubic-bezier(.22,1,.36,1) backwards; }
+@keyframes home-headline-enter {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .home-page .headline-reveal { opacity:1!important; transform:none!important; animation:none!important; transition:none!important; }
+}

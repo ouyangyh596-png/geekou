@@ -101,7 +101,7 @@ export default function PPFLayerAnimation({ mobile = false }) {
         <div className="ppf-sequence-inner">
           <div className="ppf-sequence-copy ppf-sequence-copy--top">
             <p className="kicker">{content.kicker}</p>
-            <h2 className="ppf-brand-title"><img src="/media/home/autoface-logo-light.svg" alt="AUTOFACE" className="ppf-brand-logo" /><em>{content.titleEmphasis}</em></h2>
+            <h2 className="ppf-brand-title reveal headline-reveal"><img src="/media/home/autoface-logo-light.svg" alt="AUTOFACE" className="ppf-brand-logo" /><em>{content.titleEmphasis}</em></h2>
             <p>{content.description}</p>
             <a className="ppf-explore-button" href="#category=ppf"><span>{content.action}</span> <ArrowUpRight size={16} aria-hidden="true" /></a>
             {!mobile && <ol className="ppf-layer-legend" aria-label={content.layersLabel}>

@@ -35,6 +35,7 @@
     "test-rendered-ui": "node scripts/test-rendered-ui.mjs",
     "test-cybertruck": "node scripts/test-cybertruck-config.mjs && node scripts/test-cybertruck-scene.mjs",
     "test-polish": "node scripts/test-site-polish.mjs",
+    "test-headline-motion": "node scripts/test-headline-motion.mjs",
     "test-typography": "node scripts/test-typography.mjs",
     "test-release": "npm run validate:content && npm run test-polish && npm run test-typography && npm run test-cybertruck && npm run test-scroll && npm run test-language && npm run test-header-directory && npm run test-home-media && npm run test-tvc && npm run test-factory-refresh && npm run test-ppf && npm run test-mobile && npm run test-product-wheel && npm run test-category-media && npm run test-accessibility-assets && npm run test-printable-wrap && npm run test-ppf-category"
   },

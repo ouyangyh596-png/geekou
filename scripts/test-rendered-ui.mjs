@@ -76,6 +76,8 @@ async function auditPage(page, label) {
 async function checkContrastPanels(page) {
   for (const selector of ['.factory-panel', '.ppf-sequence-copy']) {
     for (const panel of await page.locator(selector).all()) {
+      await panel.locator('h2').scrollIntoViewIfNeeded();
+      await page.waitForFunction(selector => [...document.querySelectorAll(selector + ' h2')].every(el => getComputedStyle(el).opacity === '1' && el.getAnimations().length === 0), selector);
       const ratio = await panel.evaluate(element => {
         const rgba = value => (value.match(/[\d.]+/g) || []).map(Number);
         const blend = (front, back) => front.slice(0, 3).map((value, index) => value * (front[3] ?? 1) + back[index] * (1 - (front[3] ?? 1)));
