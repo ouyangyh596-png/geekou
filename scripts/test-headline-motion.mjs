@@ -54,6 +54,23 @@ try {
   await waitForServer();
   const { chromium } = await import(pathToFileURL(playwrightModule).href);
   browser = await chromium.launch({headless:true, executablePath:browserExecutable});
+  // A live accessibility preference change must settle pending titles permanently.
+  for (const viewport of [{width:1440,height:900},{width:390,height:844}]) for (const lang of ['en','zh']) {
+    const context = await browser.newContext({viewport, reducedMotion:'no-preference'});
+    await context.addInitScript(lang => localStorage.setItem('sofine-language',lang),lang);
+    const page = await context.newPage();
+    await page.goto(origin, {waitUntil:'domcontentloaded'});
+    await page.locator('#contact h2.headline-pending').waitFor({state:'attached'});
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await page.waitForTimeout(80);
+    for (const selector of titles) await finalState(page,selector);
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    await page.waitForTimeout(80);
+    assert.equal(await page.locator('.headline-pending').count(),0,'live reduced motion settles pending headings without re-hiding');
+    for (const selector of titles) await finalState(page,selector);
+    await context.close();
+    console.log(`${viewport.width}px ${lang} live reduced-motion: passed`);
+  }
   for (const viewport of [{width:1440,height:900},{width:390,height:844}]) {
     for (const lang of ['en','zh']) {
       for (const mode of ['motion','reduced','no-io']) {

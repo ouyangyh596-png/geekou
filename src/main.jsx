@@ -5,6 +5,8 @@ import './styles.css';
 import './polish.css';
 import './mobile.css';
 import './chinese.css';
+import './home-module-motion.css';
+import { installHomeModuleMotion } from './home-module-motion.js';
 import { useIsMobile } from './use-is-mobile.js';
 import PPFLayerAnimation from './components/PPFLayerAnimation.jsx';
 import { catalogProducts } from './catalog.js';
@@ -185,10 +187,12 @@ function Home() {
   const [technologyTitleLead, technologyTitleEmphasis] = content.technology.title.split('\n');
   const [contactTitleLead, contactTitleEmphasis] = content.contact.title.split('\n');
   const homeRef = useRef(null);
+  useEffect(() => installHomeModuleMotion(homeRef.current), [lang, isMobile]);
   useEffect(() => {
     const elements = [...homeRef.current.querySelectorAll('.reveal')];
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     // Visible by default: only arm entrances once observation is available.
-    if (typeof IntersectionObserver !== 'function' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (typeof IntersectionObserver !== 'function' || motion.matches) {
       elements.forEach(element => element.classList.add('is-visible'));
       return;
     }
@@ -212,7 +216,17 @@ function Home() {
       }
       observer.observe(element);
     });
+    const settleForReducedMotion = () => {
+      if (!motion.matches) return;
+      observer.disconnect();
+      elements.forEach(element => {
+        element.classList.remove('headline-pending', 'headline-armed');
+        element.classList.add('is-visible');
+      });
+    };
+    motion.addEventListener('change', settleForReducedMotion);
     return () => {
+      motion.removeEventListener('change', settleForReducedMotion);
       observer.disconnect();
       elements.forEach(element => element.classList.remove('headline-pending'));
     };

@@ -1,0 +1,35 @@
+/* Boundary decoration only. Sections and sticky ancestors keep normal geometry. */
+.home-page.module-motion > :is(.landing,.ppf-sequence,.showcase,.technology,.contact) { position:relative; }
+.home-page.module-motion > :is(.landing,.ppf-sequence,.statement,.showcase,.technology,.contact)::before {
+  content:'';
+  position:absolute;
+  inset:0 0 auto;
+  height:clamp(64px,14svh,128px);
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(to bottom,#0b1f3a,rgba(11,31,58,.65) 25%,transparent);
+  opacity:var(--module-seam,0);
+}
+/* Keep light-section washes entirely in the top padding, away from reading text. */
+.home-page.module-motion > :is(.showcase,.technology)::before { height:64px; }
+.home-page.module-motion > .showcase::before { background:linear-gradient(to bottom,rgba(11,31,58,.2),transparent); }
+.home-page.module-motion > .technology::before { background:linear-gradient(to bottom,#e8eef3,transparent); }
+.home-page.module-motion > .contact::before { height:24px; background:linear-gradient(to bottom,#fff,transparent); }
+.home-page.module-motion > .tvc-showcase::before {
+  content:''; position:absolute; inset:auto 0 0; height:clamp(64px,14svh,128px);
+  z-index:1; pointer-events:none;
+  background:linear-gradient(to top,#0b1f3a,transparent);
+  opacity:var(--module-exit-seam,0);
+}
+/* Clip only media. Never overflow/transform the PPF section or its sticky track. */
+.home-page.module-motion .tvc-showcase { overflow:clip; }
+.home-page.module-motion .landing-image { overflow:hidden; }
+.home-page.module-motion :is(.tvc-poster,.tvc-loop,.landing-video,.company-evidence-video) {
+  top:-40px; bottom:auto; height:calc(100% + 80px);
+  transform:translate3d(0,var(--module-depth,0px),0);
+  transition:none;
+}
+@media(prefers-reduced-motion:reduce) {
+  .home-page.module-motion > section::before { opacity:0!important; }
+  .home-page.module-motion :is(.tvc-poster,.tvc-loop,.landing-video,.company-evidence-video) { transform:none!important; }
+}
