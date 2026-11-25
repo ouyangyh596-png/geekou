@@ -1,0 +1,90 @@
+{
+  "applications": [
+    {
+      "file": "02_kitchen-pale-oak-island.webp",
+      "en": "Kitchen cabinetry",
+      "zh": "厨房柜门",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "05_living-wood-feature-wall.webp",
+      "en": "Living room walls",
+      "zh": "客厅墙面",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "09_bedroom-wardrobe-door.webp",
+      "en": "Wardrobes",
+      "zh": "衣柜饰面",
+      "width": 864,
+      "height": 1152
+    },
+    {
+      "file": "11_entry-flush-doors-panels.webp",
+      "en": "Doors and panels",
+      "zh": "室内门与墙板",
+      "width": 864,
+      "height": 1152
+    },
+    {
+      "file": "12_hotel-reception-oak.webp",
+      "en": "Hotel reception",
+      "zh": "酒店前台",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "14_office-conference-cabinetry.webp",
+      "en": "Office interiors",
+      "zh": "办公空间",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "15_boutique-retail-oak.webp",
+      "en": "Retail displays",
+      "zh": "零售展陈",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "16_yacht-cabin-teak.webp",
+      "en": "Marine interiors",
+      "zh": "船舱内饰",
+      "width": 1152,
+      "height": 864
+    },
+    {
+      "file": "17_bathroom-oak-vanity.webp",
+      "en": "Bathroom furniture",
+      "zh": "浴室柜体",
+      "width": 1152,
+      "height": 864
+    }
+  ],
+  "textures": [
+    {
+      "file": "wood.webp",
+      "en": "Wood",
+      "zh": "木纹",
+      "width": 421,
+      "height": 720
+    },
+    {
+      "file": "marble-stone.webp",
+      "en": "Marble Stone",
+      "zh": "石材纹理",
+      "width": 420,
+      "height": 720
+    },
+    {
+      "file": "pattern-fabric.webp",
+      "en": "Pattern Fabric",
+      "zh": "织物纹理",
+      "width": 421,
+      "height": 720
+    }
+  ]
+}
