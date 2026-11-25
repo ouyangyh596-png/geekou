@@ -198,9 +198,21 @@ p { line-height:1.6; }
 .header-cta,.landing .header-cta { background:var(--colour-navy); color:white; border-radius:8px; padding:16px; font-size:14px; }
 .language-picker { display:flex; align-items:center; flex-shrink:0; font-size:14px; white-space:nowrap; }
 .language-picker>span { display:inline-flex; align-items:center; }
-.language-picker button { min-width:44px; min-height:48px; padding:0 4px; color:#a0a8b2; background:transparent; cursor:pointer; }
+.language-picker button { position:relative; min-width:44px; min-height:48px; padding:0 4px; border-radius:6px; color:#a0a8b2; background:transparent; cursor:pointer; transition:background-color 180ms ease, transform 180ms ease; }
+.language-picker button::after { content:''; position:absolute; width:18px; height:2px; left:calc(50% - 9px); bottom:9px; border-radius:1px; background:currentColor; opacity:0; }
+.language-picker button[aria-pressed="true"]::after { opacity:1; }
+@media (hover:hover) and (pointer:fine) {
+  .language-picker button:hover { color:#0A60C8; background:rgba(10,96,200,.08); }
+  .language-picker button:hover::after { opacity:.5; }
+  .language-picker button[aria-pressed="true"]:hover::after { opacity:1; }
+}
+/* Enter the press state immediately; retain it across the language update. */
+.language-picker button.is-pressed { background:rgba(10,96,200,.20); transform:translateY(1px); transition:none; }
+@media (prefers-reduced-motion:reduce) {
+  .language-picker button, .language-picker button.is-pressed { transform:none; transition:none; }
+}
 .language-picker button[aria-pressed="true"] { color:#0A60C8; }
-.language-divider { color:#a0a8b2; }
+.language-divider { width:4px; text-align:center; color:#a0a8b2; }
 .language-picker button:focus-visible { outline:2px solid #0A60C8; outline-offset:2px; }
 
 .product-nav-item { position:relative; height:auto; }
