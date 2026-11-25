@@ -447,7 +447,7 @@ chineseSiteContent.specValues = {
   "Matte polymeric PVC": "哑光高分子 PVC",
   "3.2 mil (approx. 80 μm)": "约80 μm（3.2 mil）",
   "2.22 m": "2.22 米",
-  "75 micron PET": "75 μm PET",
+  "75 μm PET": "75 μm PET",
   "Dual color polymeric PVC": "高分子双色 PVC",
   "180 mic": "180 μm",
   "20%": "20%",

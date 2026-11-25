@@ -572,3 +572,93 @@ p { line-height:1.6; }
 @media(prefers-reduced-motion:reduce) {
   .home-page .headline-reveal { opacity:1!important; transform:none!important; animation:none!important; transition:none!important; }
 }
+
+/* Cohesive typography: real local weights, independent of component import order.
+   Display = Barlow 600; subheads = Manrope 500/600; prose = Manrope 400.
+   Chinese uses the explicit system sans stack in chinese.css. */
+body, .home-page, .category-page {
+  font-weight:400;
+  line-height:1.65;
+  font-synthesis:none;
+}
+.home-page :is(h1,h2), .home-page .landing h1.landing-title, .home-page .tvc-copy h2, .category-page h1,
+.category-page :is(.decorative-applications-heading,.printable-wrap-heading,.cybertruck-config,.translucent-series,.ppf-detail) h2 {
+  font-family:var(--font-display);
+  font-weight:600;
+  line-height:1.15;
+  letter-spacing:-.015em;
+  text-wrap:balance;
+}
+.home-page :is(.statement,.showcase,.technology,.contact) h2,
+.category-page :is(.decorative-applications-heading,.printable-wrap-heading,.cybertruck-config,.translucent-series) h2 {
+  font-size:var(--type-section);
+}
+.home-page h2 em {
+  font-family:var(--font-serif);
+  font-weight:400;
+  letter-spacing:-.035em;
+  line-height:inherit;
+}
+.home-page .statement h2 .company-title-years { font-family:var(--font-display); font-weight:600; letter-spacing:inherit; }
+.home-page .tech-card h3, .category-page .series-card h2,
+.category-page .ppf-subtypes h3, .category-page .ppf-series-name {
+  font-family:var(--font-text);
+  font-size:var(--type-card);
+  font-weight:500;
+  line-height:1.3;
+  letter-spacing:-.015em;
+  text-wrap:balance;
+}
+.home-page .tech-card h3 { font-size:20px; font-weight:600; }
+.home-page .stack-card-content strong, .home-page .stack-card-content strong em {
+  font-family:var(--font-display); font-weight:600; line-height:1.18; letter-spacing:-.015em;
+}
+.home-page :is(.statement-copy p,.tech-card p,.form-heading p,.landing-subtitle,.showcase-head > p),
+.category-page :is(.category-page-copy > p:not(.kicker),.series-card p,.printable-wrap-heading > p,.cybertruck-config > div > p:not(.kicker)) {
+  font-size:var(--type-body); font-weight:400; line-height:1.65; letter-spacing:0; max-width:60ch;
+}
+.home-page .tech-intro { font-size:var(--type-body); font-weight:400; line-height:1.65; }
+.home-page .stack-card-content small, .home-page .ppf-sequence-copy--top > p:not(.kicker),
+.category-page :is(.ppf-series-hint,.ppf-pending) {
+  font-size:15px; font-weight:400; line-height:1.6;
+}
+.home-page .stack-card-content small { display:block; -webkit-line-clamp:unset; overflow:visible; }
+.category-page .decorative-application figcaption { font-size:16px; font-weight:500; line-height:1.5; }
+.category-page .decorative-texture figcaption { font-family:var(--font-text); font-size:20px; font-weight:500; line-height:1.35; letter-spacing:-.01em; }
+.home-page .kicker, .category-page .kicker { font-size:12px; font-weight:600; line-height:1.5; letter-spacing:.1em; }
+.category-page .decorative-applications-heading p,
+.category-page :is(.printable-upload-note,.printable-upload-status,.printable-control-help),
+.home-page .copyright { font-size:14px; font-weight:400; line-height:1.6; letter-spacing:0; }
+.category-page .series-card > span { font-size:13px; font-weight:500; letter-spacing:.06em; }
+.home-page .inquiry-form label,
+.category-page :is(.printable-control-group legend,.printable-control-label,.printable-sliders label) {
+  font-size:13px; font-weight:600; line-height:1.5; letter-spacing:.04em;
+}
+.home-page .inquiry-form :is(input,textarea,select) { font-size:16px; font-weight:400; line-height:1.6; letter-spacing:0; }
+.home-page :is(.form-actions button,.tvc-watch,.text-link,.stack-cta),
+.category-page :is(.text-link,.printable-upload-control,.printable-segmented button,.printable-finish-options label,.printable-actions button) {
+  font-size:14px; font-weight:600; line-height:1.5; letter-spacing:0;
+}
+.home-page .contact-company :is(b,span,a), .home-page .copyright { font-size:14px; line-height:1.65; }
+.home-page .contact-company b { font-weight:600; }
+.home-page .contact-company :is(span,a) { font-weight:400; }
+.category-page :is(.product-spec-table,.ppf-spec-table) { font-family:var(--font-text); font-size:14px; line-height:1.55; }
+.category-page :is(.product-spec-table,.ppf-spec-table) td { font-weight:400; }
+.category-page :is(.product-spec-table,.ppf-spec-table) th { font-weight:600; }
+.category-page .product-spec-table caption { font-size:13px; font-weight:400; line-height:1.55; }
+.home-page .tvc-player-heading h2 { font-family:var(--font-text); font-size:16px; font-weight:600; line-height:1.4; letter-spacing:0; }
+html[lang="zh"] :is(.home-page,.category-page) :is(h1,h2) { line-height:1.3; }
+html[lang="zh"] .home-page h2 em { font-weight:500; }
+html[lang="zh"] :is(.home-page,.category-page) :is(.statement-copy p,.tech-card p,.category-page-copy > p:not(.kicker),.series-card p,.form-heading p) { line-height:1.7; }
+@media(max-width:800px) {
+  .home-page .tech-card h3 { font-size:19px; }
+  .home-page .ppf-sequence-copy--top h2 { line-height:1.15; }
+}
+
+/* Final bounded copy arrangement and display-box correction. */
+.home-page .tvc-showcase .tvc-copy h2 { line-height:1.25; }
+.home-page .tvc-subtitle { white-space:pre-line; }
+.home-page .tech-card:last-child p { max-width:calc((100% - 90px) / 2); }
+@media(max-width:800px) { .home-page .tech-card:last-child p { max-width:100%; } }
+
+html[lang="zh"] .home-page .tvc-showcase .tvc-copy h2, html[lang="zh"] .home-page .landing h1.landing-title { line-height:1.4; }

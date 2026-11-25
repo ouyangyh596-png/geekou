@@ -66,7 +66,7 @@ try {
       assert.equal(await page.locator('.ppf-detail').count(), 1);
       assert.equal(await page.locator('.ppf-detail button, .ppf-detail a').count(), 0);
       const text = await page.locator('.ppf-detail').innerText();
-      assert.doesNotMatch(text, /AF1810|AF1831|AF1840|Thickness/);
+      assert.doesNotMatch(text, /AF1810|AF1831|AF1841|Thickness/);
       if (index < 2) {
         const models = index === 0 ? ['AF1880', 'AF1850'] : ['AF1610', 'AF1650'];
         for (const model of models) assert.ok(text.includes(model));
@@ -150,7 +150,7 @@ try {
     await page.goto(origin + '/#category=pvc-free-film');
     assert.equal(await page.getByRole('radio').count(), 0);
     assert.equal(await page.locator('.series-card').count(), 1);
-    assert.match(await page.locator('.product-spec-table').innerText(), /AF1831[\s\S]*AF1840/);
+    assert.match(await page.locator('.product-spec-table').innerText(), /AF1831[\s\S]*AF1841/);
     if (lang === 'en' && !mobile) await page.screenshot({path: resolve(output, 'en-desktop-pvc-free.png'), fullPage: true});
     assert.deepEqual(errors, []);
     await page.close();

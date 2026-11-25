@@ -41,7 +41,7 @@ const expectedCatalogue = {
     ['AF-20403M', 'Super Chrome Film classic colours'],
     ['AF-20100G', 'Printable Super Chrome Film']
   ],
-  'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1840', 'PVC-Free Film']],
+  'pvc-free-film': [['AF1831', 'PVC-Free Film'], ['AF1841', 'PVC-Free Film']],
   'cold-lamination': [
     ['SF3180', 'Monomeric PVC'], ['SF3181', 'Monomeric PVC'], ['SF3182', 'Monomeric PVC'],
     ['SF3300', 'Polymeric PVC'], ['SF3301', 'Polymeric PVC'], ['SF3200', 'PET'],
@@ -121,9 +121,9 @@ for (const product of catalogProducts) {
 
 assertCleanStrings(brochureSeries, 'brochureSeries')
 
-const af1840 = catalogProducts.find(product => product.model === 'AF1840')
-assert.ok(af1840, 'AF1840 is missing')
-assert.ok(!af1840.specs.some(([label]) => label === 'Print compatibility'), 'AF1840 must not claim unsupported print compatibility')
+const af1840 = catalogProducts.find(product => product.model === 'AF1841')
+assert.ok(af1840, 'AF1841 is missing')
+assert.ok(!af1840.specs.some(([label]) => label === 'Print compatibility'), 'AF1841 must not claim unsupported print compatibility')
 
 const sf1503 = catalogProducts.find(product => product.model === 'SF1503')
 assert.ok(sf1503, 'SF1503 is missing')
@@ -141,7 +141,7 @@ const sf6000 = catalogProducts.find(product => product.model === 'SF6000')
 assert.ok(sf6000, 'SF6000 is missing')
 assert.deepEqual(sf6000.specs, [
   ['Film', 'Matte polymeric PVC'], ['SF6000 thickness', '3.2 mil (approx. 80 μm)'],
-  ['Maximum width', '2.22 m'], ['SF6000 liner', '75 micron PET']
+  ['Maximum width', '2.22 m'], ['SF6000 liner', '75 μm PET']
 ])
 const sf9000 = catalogProducts.filter(product => product.group === 'SF9000 PERFORATED DUAL-COLOR FILM')
 assert.equal(sf9000.length, 12)

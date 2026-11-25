@@ -175,12 +175,12 @@ assert.deepEqual(
 )
 assert.equal(
   englishSiteContent.categories['decorative-film'].intro,
-  'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+  'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.'
 )
 assert.deepEqual(englishSiteContent.categories['decorative-film'].series, [
   {
     name: 'Decorative Film',
-    description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+    description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.'
   }
 ])
 assert.deepEqual(
@@ -188,10 +188,10 @@ assert.deepEqual(
   {
     displayName: 'Decorative Film',
     eyebrow: 'SO-FINE / DECORATIVE FILM',
-    intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
+    intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.',
     series: [[
       'Decorative Film',
-      'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+      'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.'
     ]]
   }
 )

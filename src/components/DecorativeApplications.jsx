@@ -11,7 +11,6 @@ export default function DecorativeApplications() {
   return <section className="decorative-applications" aria-labelledby="decorative-applications-title">
     <div className="decorative-applications-heading">
       <h2 id="decorative-applications-title">{zh ? '应用场景' : 'Applications'}</h2>
-      <p>{zh ? 'AI生成应用示意图' : 'AI-generated application inspiration'}</p>
     </div>
     <div className="decorative-applications-grid">
       {images.applications.map((item, index) => <figure className="decorative-application" key={item.file}>

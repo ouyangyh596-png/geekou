@@ -159,7 +159,7 @@ const expectedSpecs = {
     ['Film', '膜材', 'Matte polymeric PVC', '哑光高分子 PVC'],
     ['Film thickness', '膜厚', '3.2 mil (approx. 80 μm)', '约80 μm（3.2 mil）'],
     ['Maximum width', '最大幅宽', '2.22 m', '2.22 米'],
-    ['Liner', '底膜', '75 micron PET', '75 μm PET']
+    ['Liner', '底膜', '75 μm PET', '75 μm PET']
   ],
   'SF-9010': [
     ['Film', '膜材', 'Dual color polymeric PVC', '高分子双色 PVC'],

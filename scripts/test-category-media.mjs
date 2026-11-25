@@ -11,7 +11,7 @@ const catalog = await readFile(new URL('../src/catalog.js', import.meta.url), 'u
 
 assert.match(catalog, /'decorative-film': '\/media\/families\/interior-wall-decals\.webp'/, 'catalog includes Decorative Film family image metadata');
 assert.match(catalog, /'decorative-film': 'Decorative Film'/, 'catalog includes Decorative Film family title metadata');
-assert.match(catalog, /'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications\.'/,
+assert.match(catalog, /'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications\.'/,
   'catalog includes the approved Decorative Film family description');
 assert.deepEqual(familyMedia['decorative-film'], {
   hero: '/media/families/interior-wall-decals.webp',
@@ -29,7 +29,7 @@ const decorativeFilmItems = catalogProducts.filter(product => product.category =
 
 assert.equal(decorativeFilmSlug, 'decorative-film', 'Decorative Film hash resolves to its category slug');
 assert.equal(decorativeFilmInfo.displayName, 'Decorative Film', 'Decorative Film route resolves its heading');
-assert.equal(decorativeFilmInfo.intro, 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.', 'Decorative Film route resolves its approved copy');
+assert.equal(decorativeFilmInfo.intro, 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.', 'Decorative Film route resolves its approved copy');
 assert.equal(familyMedia[decorativeFilmSlug].hero, '/media/families/interior-wall-decals.webp', 'Decorative Film route resolves its shared family image');
 assert.equal(decorativeFilmSeries, 'Decorative Film', 'Decorative Film route selects its sole series');
 assert.deepEqual(decorativeFilmItems, [], 'Decorative Film route has no product-table items');

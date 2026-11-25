@@ -1,6 +1,6 @@
-html[lang="zh"] body { font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif!important; line-height:1.7; }
+html[lang="zh"] body { font-family:var(--font-cjk)!important; line-height:1.7; }
 html[lang="zh"] body :is(h1,h2,h3,h4,p,a,button,input,textarea,select,label,figcaption,div,span,small,strong,b,em,dt,dd,th,td,text,tspan) {
-  font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif!important;
+  font-family:var(--font-cjk)!important;
   font-style:normal!important; text-transform:none!important; letter-spacing:normal!important;
 }
 html[lang="zh"] :is(h1,h2,h3,p,button,a) { overflow-wrap:break-word; }

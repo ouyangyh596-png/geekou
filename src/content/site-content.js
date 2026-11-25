@@ -12,7 +12,7 @@ export const englishSiteContent = {
     closeLabel: 'Close navigation'
   },
   home: {
-    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'Fine on Every Surface.', subtitle: 'Films for vehicles, public transit, retail POP, signs and interiors: protect, restyle and refresh.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
+    tvc: { kicker: 'SO-FINE / BRAND FILM', title: 'Fine on Every Surface.', subtitle: 'Films for vehicles, public transit, retail POP, signs and interiors:\nProtect, Restyle and Refresh.', watch: 'Watch the film', filmTitle: 'SO-FINE — Full film', close: 'Close film', unsupported: 'Your browser does not support video playback.' },
     heroTitle: 'SUPER CHROME FILM',
     heroAction: 'Explore products',
     heroSubtitle: 'Precision-engineered films for print, wrap and protection.',
@@ -158,7 +158,7 @@ export const englishSiteContent = {
     'pvc-free-film': {
       displayName: 'PVC-Free Film',
       eyebrow: 'AUTOFACE / PVC-FREE FILM',
-      intro: 'PVC-free wrap-film alternatives for vehicle graphics and surface applications.',
+      intro: 'PVC-free wrap film alternatives for vehicle graphics and surface applications.',
       series: [{ name: 'PVC-Free Film', description: 'PVC-free wrap film alternatives.' }]
     },
     'cold-lamination': {
@@ -184,9 +184,9 @@ export const englishSiteContent = {
     'decorative-film': {
       displayName: 'Decorative Film',
       eyebrow: 'SO-FINE / DECORATIVE FILM',
-      intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.',
+      intro: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.',
       series: [
-        { name: 'Decorative Film', description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.' }
+        { name: 'Decorative Film', description: 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.' }
       ]
     }
   },
@@ -331,7 +331,7 @@ englishSiteContent.specValues = {
   "Matte polymeric PVC": "Matte polymeric PVC",
   "3.2 mil (approx. 80 μm)": "3.2 mil (approx. 80 μm)",
   "2.22 m": "2.22 m",
-  "75 micron PET": "75 micron PET",
+  "75 μm PET": "75 μm PET",
   "Dual color polymeric PVC": "Dual color polymeric PVC",
   "180 mic": "180 mic",
   "20%": "20%",

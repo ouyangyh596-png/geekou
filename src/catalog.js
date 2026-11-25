@@ -49,10 +49,10 @@ const familyDescriptions = {
   'cast-wrap-vinyl': 'Cast PVC wrap and overlaminate film for demanding curves and protected graphics.',
   'polymeric-wrap-vinyl': 'Dimensionally stable polymeric wrap and overlaminate film.',
   'super-chrome-film': 'Classic-colour metallic vehicle wrap film.',
-  'pvc-free-film': 'PVC-free wrap-film alternative.',
+  'pvc-free-film': 'PVC-free wrap film alternative.',
   'cold-lamination': 'Cold lamination film for graphic protection.',
   'wall-decals': 'Decorative self-adhesive material for interior surfaces.',
-  'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior apaoplications.'
+  'decorative-film': 'High-performance self-adhesive vinyl designed for interior renovation, furniture upgrading, commercial space decoration and marine interior applications.'
 }
 
 const compatible = 'SOL / ESOL / UV / Latex'
@@ -140,7 +140,7 @@ export const catalogProducts = [
   vinyl('SF21602', 'Polymeric PVC', '60 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
   vinyl('SF21802', 'Polymeric PVC', '80 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
   vinyl('SF21102', 'Polymeric PVC', '100 µm', 'Glossy', 'Grey removable', 'Embossed double PE-coated paper liner'),
-  vinyl('SF29160', 'Polymeric PVC', '90 µm', 'Glossy', 'High-tack removable', 'Double PE-coated paper liner', compatible, 'High-Opacity Polymeric'),
+  vinyl('SF29160', 'Polymeric PVC', '90 µm', 'Glossy', 'High-tack removable', 'Double PE-coated paper liner', compatible, 'High-Opacity Polymeric PVC'),
   vinyl('SF2900', 'Super Transparent PVC Vinyl', '100 µm', 'Glossy', 'Transparent removable', 'PET liner', compatible, 'Polymeric Super Transparent PVC Vinyl'),
   vinyl('SF2901', 'Super Transparent PVC Vinyl', '100 µm', 'Glossy', 'Transparent removable', 'PET liner', compatible, 'Monomeric Super Transparent PVC Vinyl'),
   vinyl('SF2800', 'Super Glossy PVC Vinyl', '100 µm', 'Super glossy', 'Transparent removable', 'Double PE-coated paper liner'),
@@ -148,7 +148,7 @@ export const catalogProducts = [
 
   product('translucent-film', 'SF6000 Series', 'SF6000', [
     ['Film', 'Matte polymeric PVC'], ['SF6000 thickness', '3.2 mil (approx. 80 μm)'],
-    ['Maximum width', '2.22 m'], ['SF6000 liner', '75 micron PET']
+    ['Maximum width', '2.22 m'], ['SF6000 liner', '75 μm PET']
   ]),
   // Illustrative screen colours only; no official RGB values have been supplied.
   ...[
@@ -197,7 +197,7 @@ export const catalogProducts = [
   wrap('polymeric-wrap-vinyl', 'SF5505', 'White Printable Film', '50 µm', 'Glossy', 'Light grey removable', 'Micro-embossed double PE-coated paper liner'),
   wrap('polymeric-wrap-vinyl', 'SF5525', 'White Printable Film', '60 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner'),
   wrap('pvc-free-film', 'AF1831', 'PVC-Free Film', '50 µm', 'Glossy', 'Light grey removable', 'Embossed double PE-coated paper liner', compatible, 'TPU'),
-  wrap('pvc-free-film', 'AF1840', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner', null, 'TPU'),
+  wrap('pvc-free-film', 'AF1841', 'PVC-Free Film', '50 µm', 'Glossy', 'Transparent permanent', 'Matte PET liner', null, 'TPU'),
   ...[
     ['AF-20521M', 'Twilight Purple'],
     ['AF-20280M', 'Burgundy Red'],

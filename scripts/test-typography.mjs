@@ -15,5 +15,11 @@ assert.doesNotMatch(polish,/font-family:\s*"(?:DM Mono|Space Grotesk)"/);
 console.log('Typography tokens, local fonts, containers and accessible motion passed');
 
 assert.doesNotMatch(polish, /--(?:type-(?:display|hero|section|card|body|small|label)|page-gutter)\s*:/, 'polish must consume shared typography and gutter tokens');
-assert.match(base, /--type-display:54px; --type-hero:42px; --type-section:30px; --type-card:18px; --type-body:12\.75px; --type-small:12px; --section-space:72px/, 'mobile scale respects the 12px minimum');
+assert.match(base, /--type-display:54px; --type-hero:42px; --type-section:30px; --type-card:20px; --type-body:16px; --type-small:14px; --section-space:72px/, 'mobile prose uses a readable 16px scale');
 assert.match(main, /threshold: 0, rootMargin: '0px 0px -10% 0px'/, 'reveal starts early without a visibility threshold');
+
+assert.match(base, /--font-cjk: "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Microsoft YaHei", sans-serif/);
+assert.match(polish, /font-weight: 200 800/, 'Manrope exposes its real variable weight range');
+assert.match(polish, /font-family:var\(--font-display\);\s*font-weight:600/, 'display uses the available Barlow semibold');
+assert.match(polish, /\.header nav > \.nav-link[^}]+font-weight:700/s, 'header Bold 700 remains explicit');
+assert.match(polish, /\.home-page \.tvc-player-heading h2[^}]+font-size:16px; font-weight:600/, 'native dialog title stays distinct from display headings');

@@ -254,9 +254,9 @@ async function checkPreviewCatalogue(browser) {
     const assertTranslucentTable = async (index, content = language === 'zh' ? chineseSiteContent : englishSiteContent) => {
       const table = reduced.locator('.product-spec-table').nth(await reduced.locator('.product-spec-table').count() === 1 ? 0 : index);
       const keys = index === 0 ? ['Film', 'SF6000 thickness', 'Maximum width', 'SF6000 liner'] : ['Film', 'SF9000 thickness', 'SF9000 perforation', 'SF9000 liner'];
-      const values = index === 0 ? ['Matte polymeric PVC', '3.2 mil (approx. 80 μm)', '2.22 m', '75 micron PET'] : ['Dual color polymeric PVC', '180 mic', '20%', '140 gsm PE coated paper'];
+      const values = index === 0 ? ['Matte polymeric PVC', '3.2 mil (approx. 80 μm)', '2.22 m', '75 μm PET'] : ['Dual color polymeric PVC', '180 mic', '20%', '140 gsm PE coated paper'];
       assert.equal(await table.locator('tbody tr').count(), 1);
-      assert.equal(await table.locator('tbody th').textContent(), index === 0 ? 'SF6000Series' : 'SF9000Series');
+      assert.equal(await table.locator('tbody th').textContent(), index === 0 ? 'SF6000 Series' : 'SF9000 Series');
       assert.deepEqual(await table.locator('thead th').allTextContents(), [content.products.productCode, ...keys.map(key => content.specLabels[key])]);
       assert.deepEqual(await table.locator('tbody td').allTextContents(), values.map(value => content.specValues[value]));
       assert.equal(await table.locator('.film-colour-chip, caption').count(), 0);
