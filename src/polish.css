@@ -16,7 +16,8 @@
   font-family: Manrope;
   src: url("/fonts/manrope-latin.woff2") format("woff2");
   font-style: normal;
-  font-weight: 400 600;
+  /* Variable axis wght 200–800 includes a real Bold 700 instance. */
+  font-weight: 200 800;
   font-display: swap;
 }
 .product-gesture-hint {
