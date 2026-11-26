@@ -69,23 +69,23 @@ export const chineseSiteContent = {
     "capabilities": [
       {
         "name": "成立于 2005 年",
-        "description": "深耕自粘材料领域二十年"
+        "description": "深耕自粘材料领域二十年。"
       },
       {
         "name": "研发与质量控制",
-        "description": "专门的实验室检测与严格管控的生产流程"
+        "description": "专门的实验室检测与严格管控的生产流程。"
       },
       {
         "name": "一体化运营",
-        "description": "覆盖原料处理、涂布工艺、制造与服务"
+        "description": "覆盖原料处理、涂布工艺、制造与服务。"
       },
       {
         "name": "应用经验",
-        "description": "为数码印刷、标识及汽车美容提供材料方案"
+        "description": "为数码印刷、标识及汽车美容提供材料方案。"
       },
       {
         "name": "Hands-on Technical Training",
-        "description": "Film installation, wrapping skills, product knowledge, troubleshooting and best practice guidelines, dedicated to empower distributors, installers and partners"
+        "description": "Film installation, wrapping skills, product knowledge, troubleshooting and best practice guidelines, dedicated to empower distributors, installers and partners."
       }
     ]
   },
